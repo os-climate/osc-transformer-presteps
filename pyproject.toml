@@ -1,0 +1,101 @@
+[project]
+name = "osc-data-extractor"
+version = "0.1.0"
+description = "OS-Climate Data Extraction Tool"
+authors = [
+    {name = "David Besslich",email = "mwatkins@linuxfoundation.org"},
+]
+requires-python = ">=3.9"
+readme = "README.rst"
+license = {file = "LICENSE.txt"}
+classifiers = [
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: Unix",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.9",
+  "Topic :: Office/Business :: Financial",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Software Development",
+]
+
+[project.urls]
+Homepage = "https://github.com/os-climate/osc-data-extraction"
+Repository = "https://github.com/os-climate/osc-data-extraction"
+Downloads = "https://github.com/os-climate/osc-data-extraction/releases"
+"Bug Tracker" = "https://github.com/os-climate/osc-data-extraction/issues"
+Documentation = "https://github.com/os-climate/osc-data-extraction/tree/main/docs"
+"Source Code" = "https://github.com/os-climate/osc-data-extraction"
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[metadata]
+license-files = ["LICENSES.txt"]
+
+[project.scripts]
+osc-data-extractor = "osc_data_extractor.skeleton:run"
+
+[project.optional-dependencies]
+  dev = [
+  "pylint",
+  "toml",
+  "yapf",
+  "pdm"
+]
+test = [
+  "pytest",
+  "pytest-cov",
+]
+
+[tool.pdm.scripts]
+pre_release = "scripts/dev-versioning.sh"
+release = "scripts/release-versioning.sh"
+test = "pytest"
+tox = "tox"
+docs = { shell = "cd docs && mkdocs serve", help = "Start the dev server for doc preview" }
+lint = "pre-commit run --all-files"
+complete = { call = "tasks.complete:main", help = "Create autocomplete files for bash and fish" }
+
+[tool.pdm.dev-dependencies]
+test = ["pdm[pytest]", "pytest", "pytest-cov"]
+tox = ["tox", "tox-pdm>=0.5"]
+docs = ["sphinx>=7.2.6", "sphinx-copybutton>=0.5.2"]
+dev = ["tox>=4.11.3", "tox-pdm>=0.7.0"]
+lint = ["pre-commit", "pyproject-flake8"]
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests/",
+]
+addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.yapf]
+blank_line_before_nested_class_or_def = true
+column_limit = 88
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = "120"
+extend-ignore = [
+  "E501",
+]
+
+[tool.mypy]
+ignore_missing_imports = true

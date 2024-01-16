@@ -1,5 +1,5 @@
 ---
-name: "🗒️ Build documentation"
+name: "🗒️ Build documentation (Matrix)"
 
 # yamllint disable-line rule:truthy
 on:

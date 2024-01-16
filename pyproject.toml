@@ -1,5 +1,5 @@
 [project]
-name = "osc-data-extractor"
+name = "osc-transformer-presteps"
 version = "0.1.0"
 description = "OS-Climate Data Extraction Tool"
 authors = [
@@ -42,7 +42,7 @@ build-backend = "pdm.backend"
 license-files = ["LICENSES.txt"]
 
 [project.scripts]
-osc-data-extractor = "osc_data_extractor.skeleton:run"
+osc-transformer-presteps = "osc_data_extractor.skeleton:run"
 
 [project.optional-dependencies]
   dev = [

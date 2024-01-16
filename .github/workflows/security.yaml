@@ -4,7 +4,7 @@
 # For more information see:
 # https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: "⛔️ Security auditing"
+name: "⛔️ Security auditing (Matrix)"
 
 # yamllint disable-line rule:truthy
 on:
@@ -19,10 +19,13 @@ jobs:
   build:
     name: "Audit Python dependencies"
     runs-on: ubuntu-latest
+    # Don't run when pull request is merged
+    if: github.event.pull_request.merged == false
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
+
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
@@ -48,10 +51,3 @@ jobs:
 
       - name: "Run: pip-audit"
         uses: pypa/gh-action-pip-audit@v1.0.8
-        with:
-          ignore-vulns: |
-            PYSEC-2023-163
-
-# Name | Version | ID |
-# --- | --- | --- | --- | ---
-# numexpr | 2.8.7 | PYSEC-2023-163 |

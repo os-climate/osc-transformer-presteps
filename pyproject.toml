@@ -56,6 +56,8 @@ test = [
   "pytest-cov",
 ]
 
+[tool.setuptools_scm]
+
 [tool.pdm.scripts]
 pre_release = "scripts/dev-versioning.sh"
 release = "scripts/release-versioning.sh"

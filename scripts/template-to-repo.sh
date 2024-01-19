@@ -5,7 +5,7 @@
 THIS_SCRIPT=$(basename "$0")
 echo "This script: $SELF"
 
-TEMPLATE_NAME=osc-data-extractor
+TEMPLATE_NAME=osc-data-extraction
 ALT_TEMPLATE_NAME="${TEMPLATE_NAME//-/_}"
 
 ### Shared functions
@@ -13,7 +13,7 @@ ALT_TEMPLATE_NAME="${TEMPLATE_NAME//-/_}"
 # Renames files/folders containing template name
 rename_object() {
     if [ $# -ne 1 ]; then
-        echo "Function requires an argumeent: rename_object [filesystem object]"; exit 1
+        echo "Function requires an argument: rename_object [filesystem object]"; exit 1
     else
         FS_OBJECT="$1"
     fi
@@ -60,6 +60,13 @@ file_content_substitution() {
     if [ "$BASE_FILENAME" = "$THIS_SCRIPT" ]; then
         echo "Skipping self: $THIS_SCRIPT"
         return
+    fi
+
+    if [ "$BASE_FILENAME" != "pyproject.toml" ]; then
+        return
+    else
+        echo "Processing: pyproject.toml"
+        set -x
     fi
 
     COUNT=0

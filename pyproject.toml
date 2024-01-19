@@ -42,7 +42,7 @@ build-backend = "pdm.backend"
 license-files = ["LICENSES.txt"]
 
 [project.scripts]
-osc-transformer-presteps = "osc_data_extractor.skeleton:run"
+osc-transformer-presteps = "osc_transformer_presteps.skeleton:run"
 
 [project.optional-dependencies]
   dev = [

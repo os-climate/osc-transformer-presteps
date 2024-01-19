@@ -1,5 +1,5 @@
 """
-    Dummy conftest.py for osc_data_extractor.
+    Dummy conftest.py for osc_transformer_presteps.
 
     If you don't know what this is for, just leave it empty.
     Read more about conftest.py under:

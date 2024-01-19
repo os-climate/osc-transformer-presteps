@@ -1,6 +1,5 @@
 import pytest
-
-from osc_data_extractor.skeleton import fib, main
+from osc_transformer_presteps.skeleton import fib, main
 
 __author__ = "Matthew Watkins"
 __copyright__ = "Matthew Watkins"

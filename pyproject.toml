@@ -27,12 +27,12 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/os-climate/osc-data-extraction"
-Repository = "https://github.com/os-climate/osc-data-extraction"
-Downloads = "https://github.com/os-climate/osc-data-extraction/releases"
-"Bug Tracker" = "https://github.com/os-climate/osc-data-extraction/issues"
-Documentation = "https://github.com/os-climate/osc-data-extraction/tree/main/docs"
-"Source Code" = "https://github.com/os-climate/osc-data-extraction"
+Homepage = "https://github.com/os-climate/osc-transformer-presteps"
+Repository = "https://github.com/os-climate/osc-transformer-presteps"
+Downloads = "https://github.com/os-climate/osc-transformer-presteps/releases"
+"Bug Tracker" = "https://github.com/os-climate/osc-transformer-presteps/issues"
+Documentation = "https://github.com/os-climate/osc-transformer-presteps/tree/main/docs"
+"Source Code" = "https://github.com/os-climate/osc-transformer-presteps"
 
 [build-system]
 requires = ["pdm-backend"]

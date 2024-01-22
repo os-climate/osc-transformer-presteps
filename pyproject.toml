@@ -45,15 +45,29 @@ license-files = ["LICENSES.txt"]
 osc-transformer-presteps = "osc_transformer_presteps.skeleton:run"
 
 [project.optional-dependencies]
-  dev = [
+dev = [
   "pylint",
   "toml",
   "yapf",
-  "pdm"
+  "pdm",
+  "tox",
+  "tox-pdm"
 ]
 test = [
   "pytest",
   "pytest-cov",
+]
+tox = [
+  "tox",
+  "tox-pdm>=0.5",
+]
+docs = [
+  "sphinx>=7.2.6",
+  "sphinx-copybutton>=0.5.2"
+]
+lint = [
+  "pre-commit",
+  "pyproject-flake8"
 ]
 
 [tool.setuptools_scm]
@@ -66,13 +80,6 @@ tox = "tox"
 docs = { shell = "cd docs && mkdocs serve", help = "Start the dev server for doc preview" }
 lint = "pre-commit run --all-files"
 complete = { call = "tasks.complete:main", help = "Create autocomplete files for bash and fish" }
-
-[tool.pdm.dev-dependencies]
-test = ["pdm[pytest]", "pytest", "pytest-cov"]
-tox = ["tox", "tox-pdm>=0.5"]
-docs = ["sphinx>=7.2.6", "sphinx-copybutton>=0.5.2"]
-dev = ["tox>=4.11.3", "tox-pdm>=0.7.0"]
-lint = ["pre-commit", "pyproject-flake8"]
 
 [tool.pytest.ini_options]
 testpaths = [

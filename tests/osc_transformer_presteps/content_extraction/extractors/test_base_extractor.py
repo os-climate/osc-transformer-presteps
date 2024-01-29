@@ -32,15 +32,15 @@ class TestBaseExtractor:
         """This function tests if we get a ValueError in case a subclass has not changed extractor_name to
         something different then base.
         """
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Subclass must define an extractor_name not equal to 'base'."):
             concrete_base_extractor("base")
 
     def test_get_settings(self, base_extractor):
         settings = base_extractor.get_settings()
         assert settings["annotation_folder"] is None
         assert settings["min_paragraph_length"] == 20
-        assert settings["skip_extracted_files"] == False
-        assert settings["store_to_file"] == True
+        assert settings["skip_extracted_files"] is False
+        assert settings["store_to_file"] is True
 
     def test_get_extractions(self, base_extractor):
         base_extractor._extraction_dict = {"a": "b"}

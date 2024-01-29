@@ -12,6 +12,7 @@ exclude: |
       dco-signoffs/$
   )$
 
+
 repos:
 
   # - repo: https://gitlab.com/vojko.pribudic/pre-commit-update
@@ -20,15 +21,16 @@ repos:
   #     - id: pre-commit-update
   #       args: [--dry-run]
 
-  - repo: local
-    hooks:
-      - id: tomllint
-        name: "Script: scripts/tomllint.sh"
-        language: script
-        # pass_filenames: false
-        files: \^*.toml
-        types: [file]
-        entry: scripts/tomllint.sh .
+  # WINDOWS ISSUE: On Windows machine this has to be commented out
+  # - repo: local
+  #  hooks:
+  #    - id: tomllint
+  #      name: "Script: scripts/tomllint.sh"
+  #      language: script
+  #      # pass_filenames: false
+  #      files: \^*.toml
+  #      types: [file]
+  #      entry: scripts/tomllint.sh .
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -58,20 +60,22 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
 
-  # Autoformat: YAML, JSON, Markdown, etc.
-  - repo: https://github.com/prettier/pre-commit
-    rev: v2.2.0
-    hooks:
-      - id: prettier
-        args:
-          ['--ignore-unknown']
+  # Currently facing proxy issue with that. Is not a general issue.
+  # # Autoformat: YAML, JSON, Markdown, etc.
+  # - repo: https://github.com/prettier/pre-commit
+  #   rev: v2.2.0
+  #   hooks:
+  #     - id: prettier
+  #       args:
+  #         ['--ignore-unknown']
 
-  # Lint: Markdown
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.38.0
-    hooks:
-      - id: markdownlint
-        args: ["--fix"]
+  # Currently facing proxy issue with that. Is not a general issue.
+  # # Lint: Markdown
+  # - repo: https://github.com/igorshubovych/markdownlint-cli
+  #   rev: v0.38.0
+  #   hooks:
+  #     - id: markdownlint
+  #       args: ["--fix --proxy={env:HTTP_PROXY}'"]
 
   # - repo: https://github.com/asottile/pyupgrade
   #   rev: v3.15.0
@@ -124,11 +128,12 @@ repos:
       - id: isort
         args: ["--profile", "black"]
 
-  - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.33.0
-    hooks:
-      - id: yamllint
-        args: [--strict]
+  # Currently facing proxy issue with that. Is not a general issue.
+  # - repo: https://github.com/adrienverge/yamllint.git
+  #   rev: v1.33.0
+  #   hooks:
+  #    - id: yamllint
+  #      args: ['--strict --proxy={{env:HTTP_PROXY}}']
 
   - repo: https://github.com/Mateusz-Grzelinski/actionlint-py
     rev: v1.6.26.11
@@ -136,11 +141,11 @@ repos:
       - id: actionlint
 
   # If like to embrace black styles even in the docs:
-  # - repo: https://github.com/asottile/blacken-docs
-  #   rev: v1.13.0
-  #   hooks:
-  #   - id: blacken-docs
-  #     additional_dependencies: [black]
+  - repo: https://github.com/asottile/blacken-docs
+    rev: 1.13.0
+    hooks:
+    - id: blacken-docs
+      additional_dependencies: [black]
 
   - repo: https://github.com/pycqa/flake8
     rev: "6.1.0"

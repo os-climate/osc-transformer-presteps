@@ -87,10 +87,12 @@ class PDFExtractor(BaseExtractor):
         self.extract_pdf_by_page(str(input_file_path))
 
         _logger.info(f"The number of pages extracted: {len(self._extraction_dict)}")
-        _logger.info(
-            f"The number of paragraphs found: "
-            f"{max(self._extraction_dict[max(self._extraction_dict.keys())].keys())}"
+        paragraphs = (
+            0
+            if len(self._extraction_dict.keys()) == 0
+            else max(self._extraction_dict[max(self._extraction_dict.keys())].keys())
         )
+        _logger.info(f"The number of paragraphs found: {paragraphs}.")
 
     def extract_pdf_by_page(self, pdf_file):
         """Read the content of each page in a pdf file, this method uses pdfminer and stores the output to

@@ -10,6 +10,7 @@
 import os
 import shutil
 import sys
+from typing import Dict
 
 # -- Path setup --------------------------------------------------------------
 
@@ -231,7 +232,7 @@ htmlhelp_basename = "osc-data-extractor-doc"
 
 # -- Options for LaTeX output ------------------------------------------------
 
-latex_elements = {
+latex_elements: Dict[str, str] = {
     # The paper size ("letterpaper" or "a4paper").
     # "papersize": "letterpaper",
     # The font size ("10pt", "11pt" or "12pt").

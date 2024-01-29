@@ -116,37 +116,15 @@ jobs:
             # Set a flag for use by the next action/step
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-          if [ -n "$GITHUB_TOKEN" ]; then
-            git add .
-            if ! (git commit -as -S -m "Chore: Update DevOps tooling from central repository [skip-ci]" \
-              -m "This commit created by automation/scripting" --no-verify); then
-              echo "Commit failed; aborting"; exit 1
-            else
-              git push --set-upstream origin update-devops-tooling
-              # ToDo: need to verify if we are running in a GHA
-              gh pr create --title \
-                "Chore: Pull DevOps tooling from upstream repository" \
-                --body 'Automated by a GitHub workflow: bootstrap.yaml'
-            fi
+          git add .
+          if ! (git commit -as -S -m "Chore: Update DevOps tooling from central repository [skip-ci]" \
+            -m "This commit created by automation/scripting" --no-verify); then
+            echo "Commit failed; aborting"; exit 1
           else
-            echo "Script running in GitHub Actions workflow; proceeding to next step"
+            git push --set-upstream origin update-devops-tooling
+            # ToDo: need to verify if we are running in a GHA
+            gh pr create --title \
+              "Chore: Pull DevOps tooling from upstream repository" \
+              --body 'Automated by a GitHub workflow: bootstrap.yaml'
           fi
           ### SHELL CODE END ###
-
-      - name: Create Pull Request
-        if: steps.update-repository.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v5
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          token: ${{ github.token }}
-          commit-message: "Chore: Update DevOps tooling from central repository [skip-ci]"
-          signoff: "true"
-          branch: update-devops-tooling
-          delete-branch: true
-          title: "Chore: Update DevOps tooling from central repository [skip-ci]"
-          body: |
-            Update repository with content from upstream: os-climate/devops-toolkit
-          labels: |
-            automated pr
-          draft: false

@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Callable, Optional
 
 from .extractors.base_extractor import BaseExtractor
 from .extractors.pdf_text_extractor import PDFExtractor
@@ -8,8 +8,8 @@ _extractors: dict = {}
 _logger = logging.getLogger(__name__)
 
 
-def register_extractor(extractor_type: str) -> callable:
-    def decorator(extractor_cls: callable) -> callable:
+def register_extractor(extractor_type: str) -> Callable:
+    def decorator(extractor_cls: Callable) -> Callable:
         _extractors[extractor_type] = extractor_cls
         return extractor_cls
 

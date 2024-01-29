@@ -41,14 +41,20 @@ Notes
 
 For adding new dependencies use pdm. First install via pip:
 
-.. code-block:: python
+.. code-block:: shell
 
-    pip install pdm
-    pdm add <new_package>==<version>
+    $ pip install pdm
+
+And then you could add new packages via pdm add. For example numpy via:
+
+.. code-block:: shell
+
+    $ pdm add numpy
+
 
 For running linting tools just to the following:
 
-.. code-block:: python
+.. code-block:: shell
 
-    pip install tox
-    tox -e lint
+    $ pip install tox
+    $ tox -e lint

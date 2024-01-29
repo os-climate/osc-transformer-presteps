@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from pydantic_settings import BaseSettings
 
@@ -33,15 +33,15 @@ class BaseExtractor(ABC):
     """
 
     extractor_name = "base"
-    _extraction_dict = {}
+    _extraction_dict: Dict[str, Any] = {}
 
     def __init__(self, settings: Optional[dict] = None):
         """
         Initializes a BaseExtractor instance.
         """
-        settings = {} if settings is None else settings
-        settings = _BaseSettings(**settings).model_dump()
-        self._settings = settings
+        settings_base: dict = {} if settings is None else settings
+        settings_base = _BaseSettings(**settings_base).model_dump()
+        self._settings: dict = settings_base
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -54,7 +54,7 @@ class BaseExtractor(ABC):
     def get_extractions(self):
         return self._extraction_dict
 
-    def check_for_skip_files(self, input_file_path: Path, output_folder_path: Path) -> None:
+    def check_for_skip_files(self, input_file_path: Path, output_folder_path: Optional[Path]) -> bool:
         """
         Check if a JSON file already exists in the output folder and determine whether to skip processing.
 
@@ -63,7 +63,9 @@ class BaseExtractor(ABC):
             output_folder_path (Path): The path of the output folder.
         """
         if (
-            self._settings["skip_extracted_files"]
+            "skip_extracted_files" in self._settings.keys()
+            and self._settings["skip_extracted_files"]
+            and output_folder_path is not None
             and input_file_path.with_suffix(".json") in output_folder_path.iterdir()
         ):
             _logger.info(f"The extracted JSON for `{input_file_path.name}` already exists. Skipping...")

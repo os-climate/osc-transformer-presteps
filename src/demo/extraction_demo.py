@@ -41,14 +41,14 @@ def specify_root_logger(log_level: str):
     """
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
-    log_level = log_levels[log_level.upper()]
+    log_level_value = log_levels[log_level.upper()]
 
     handler = logging.StreamHandler()
-    handler.setLevel(log_level)
+    handler.setLevel(log_level_value)
     handler.setFormatter(formatter)
 
     logging.root.handlers = [handler]
-    logging.root.setLevel(log_level)
+    logging.root.setLevel(log_level_value)
 
 
 def extract_main(
@@ -82,7 +82,7 @@ def extract_main(
     if not extractor.check_for_skip_files(input_file_path, output_file_path):
         extractor.extract(input_file_path=input_file_path)
 
-    if extractor.get_settings()["store_to_file"]:
+    if extractor.get_settings()["store_to_file"] and output_file_path is not None:
         extractor.save_extraction_to_file(output_file_path=output_file_path)
 
     return extractor.get_extractions()
@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
         input_file_path_main = input_folder / file_name
         output_file_path_main = output_folder / input_file_path_main.with_suffix(".json").name
-        settings_main = {"skip_extracted_files": False, "store_to_file": False}
+        settings_main: Optional[Dict[str, Union[str, bool]]] = {"skip_extracted_files": False, "store_to_file": False}
 
         _logger.info(f"Input file path is :\n {input_file_path_main}.")
         extraction_dict = extract_main(

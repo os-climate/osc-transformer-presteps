@@ -12,5 +12,5 @@ class TestGetExtractor:
         assert isinstance(extractor, PDFExtractor)
 
     def test_get_non_existing_extractor(self):
-        with pytest.raises(KeyError):
+        with pytest.raises(KeyError, match="Invalid extractor type"):
             get_extractor(".thisdoesnotexist")

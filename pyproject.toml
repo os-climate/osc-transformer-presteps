@@ -26,6 +26,10 @@ classifiers = [
   "Topic :: Software Development",
 ]
 
+dependencies = [
+    "numpy>=1.26.3",
+]
+
 [project.urls]
 Homepage = "https://github.com/os-climate/osc-transformer-presteps"
 Repository = "https://github.com/os-climate/osc-transformer-presteps"
@@ -69,8 +73,6 @@ lint = [
   "pre-commit",
   "pyproject-flake8"
 ]
-
-[tool.setuptools_scm]
 
 [tool.pdm.scripts]
 pre_release = "scripts/dev-versioning.sh"

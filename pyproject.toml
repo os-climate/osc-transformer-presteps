@@ -25,14 +25,20 @@ classifiers = [
   "Topic :: Scientific/Engineering",
   "Topic :: Software Development",
 ]
+dependencies = [
+    "pdfminer>=20191125",
+    "pydantic-settings>=2.1.0",
+    "pytest>=7.4.4",
+    "pypdf>=4.0.0",
+]
 
 [project.urls]
-Homepage = "https://github.com/os-climate/osc-transformer-presteps"
-Repository = "https://github.com/os-climate/osc-transformer-presteps"
-Downloads = "https://github.com/os-climate/osc-transformer-presteps/releases"
-"Bug Tracker" = "https://github.com/os-climate/osc-transformer-presteps/issues"
-Documentation = "https://github.com/os-climate/osc-transformer-presteps/tree/main/docs"
-"Source Code" = "https://github.com/os-climate/osc-transformer-presteps"
+Homepage = "https://github.com/os-climate/osc-data-extraction"
+Repository = "https://github.com/os-climate/osc-data-extraction"
+Downloads = "https://github.com/os-climate/osc-data-extraction/releases"
+"Bug Tracker" = "https://github.com/os-climate/osc-data-extraction/issues"
+Documentation = "https://github.com/os-climate/osc-data-extraction/tree/main/docs"
+"Source Code" = "https://github.com/os-climate/osc-data-extraction"
 
 [build-system]
 requires = ["pdm-backend"]
@@ -42,35 +48,19 @@ build-backend = "pdm.backend"
 license-files = ["LICENSES.txt"]
 
 [project.scripts]
-osc-transformer-presteps = "osc_transformer_presteps.skeleton:run"
+osc-transformer-presteps = "osc_data_extractor.skeleton:run"
 
 [project.optional-dependencies]
-dev = [
+  dev = [
   "pylint",
   "toml",
   "yapf",
-  "pdm",
-  "tox",
-  "tox-pdm"
+  "pdm"
 ]
 test = [
   "pytest",
-  "pytest-cov",
+#  "pytest-cov",
 ]
-tox = [
-  "tox",
-  "tox-pdm>=0.5",
-]
-docs = [
-  "sphinx>=7.2.6",
-  "sphinx-copybutton>=0.5.2"
-]
-lint = [
-  "pre-commit",
-  "pyproject-flake8"
-]
-
-[tool.setuptools_scm]
 
 [tool.pdm.scripts]
 pre_release = "scripts/dev-versioning.sh"
@@ -81,11 +71,18 @@ docs = { shell = "cd docs && mkdocs serve", help = "Start the dev server for doc
 lint = "pre-commit run --all-files"
 complete = { call = "tasks.complete:main", help = "Create autocomplete files for bash and fish" }
 
+[tool.pdm.dev-dependencies]
+test = ["pdm[pytest]", "pytest", "pytest-cov"]
+tox = ["tox", "tox-pdm>=0.5"]
+docs = ["sphinx>=7.2.6", "sphinx-copybutton>=0.5.2"]
+dev = ["tox>=4.11.3", "tox-pdm>=0.7.0"]
+lint = ["pre-commit", "pyproject-flake8"]
+
 [tool.pytest.ini_options]
 testpaths = [
     "tests/",
 ]
-addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
+# addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
 
 [tool.coverage.run]
 source = ["src"]

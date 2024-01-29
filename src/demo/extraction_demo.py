@@ -1,10 +1,12 @@
 import logging
-from pathlib import Path
-from typing import Dict, Union, Optional
-from pprint import pformat
 import traceback
+from pathlib import Path
+from pprint import pformat
+from typing import Dict, Optional, Union
 
-from src.osc_transformer_presteps.content_extraction.extraction_factory import get_extractor
+from src.osc_transformer_presteps.content_extraction.extraction_factory import (
+    get_extractor,
+)
 
 __author__ = "David Besslich"
 __copyright__ = "David Besslich"

@@ -1,6 +1,9 @@
 import pytest
+
 from osc_transformer_presteps.content_extraction.extraction_factory import get_extractor
-from osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor import PDFExtractor
+from osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor import (
+    PDFExtractor,
+)
 
 
 class TestGetExtractor:

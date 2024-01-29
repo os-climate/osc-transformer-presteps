@@ -2,7 +2,7 @@ import io
 import logging
 import re
 from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
 import numpy as np
 from pdfminer.converter import TextConverter

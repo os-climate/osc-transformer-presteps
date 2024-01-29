@@ -1,5 +1,5 @@
-from pathlib import Path
 import json
+from pathlib import Path
 
 
 def dict_to_json(json_path: Path, dictionary: dict) -> None:

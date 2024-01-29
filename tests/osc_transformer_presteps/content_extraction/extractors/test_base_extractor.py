@@ -1,7 +1,11 @@
-import pytest
 from pathlib import Path
-from osc_transformer_presteps.content_extraction.extractors.base_extractor import BaseExtractor
 from typing import Optional
+
+import pytest
+
+from osc_transformer_presteps.content_extraction.extractors.base_extractor import (
+    BaseExtractor,
+)
 
 
 def concrete_base_extractor(name: str):

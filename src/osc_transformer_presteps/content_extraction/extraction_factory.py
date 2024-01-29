@@ -1,5 +1,6 @@
 import logging
 from typing import Optional
+
 from .extractors.base_extractor import BaseExtractor
 from .extractors.pdf_text_extractor import PDFExtractor
 

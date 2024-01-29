@@ -1,6 +1,9 @@
-from osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor import PDFExtractor
 import json
 from pathlib import Path
+
+from osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor import (
+    PDFExtractor,
+)
 
 
 class TestPdfExtractor:

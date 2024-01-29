@@ -2,7 +2,9 @@ import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Optional
+
 from pydantic_settings import BaseSettings
+
 from .utils import dict_to_json
 
 _logger = logging.getLogger(__name__)

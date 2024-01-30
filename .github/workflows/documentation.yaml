@@ -48,6 +48,7 @@ jobs:
 
       - name: "Build documentation: (tox/sphinx)"
         run: |
+          pip install --upgrade tox
           tox -e docs
 
       - name: "Publish documentation"

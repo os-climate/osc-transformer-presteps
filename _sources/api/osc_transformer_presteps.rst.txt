@@ -1,0 +1,18 @@
+osc\_transformer\_presteps package
+==================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   osc_transformer_presteps.content_extraction
+
+Module contents
+---------------
+
+.. automodule:: osc_transformer_presteps
+   :members:
+   :undoc-members:
+   :show-inheritance:

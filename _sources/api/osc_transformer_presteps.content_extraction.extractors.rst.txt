@@ -1,0 +1,37 @@
+osc\_transformer\_presteps.content\_extraction.extractors package
+=================================================================
+
+Submodules
+----------
+
+osc\_transformer\_presteps.content\_extraction.extractors.base\_extractor module
+--------------------------------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.content_extraction.extractors.base_extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+osc\_transformer\_presteps.content\_extraction.extractors.pdf\_text\_extractor module
+-------------------------------------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+osc\_transformer\_presteps.content\_extraction.extractors.utils module
+----------------------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.content_extraction.extractors.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: osc_transformer_presteps.content_extraction.extractors
+   :members:
+   :undoc-members:
+   :show-inheritance:

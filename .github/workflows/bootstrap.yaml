@@ -105,10 +105,10 @@ jobs:
           FILES=".pre-commit-config.yaml .prettierignore .gitignore"
           for FILE in ${FILES}; do
             if (perform_operation "$FILE"); then
-              echo "Opted out of file: $FILE"
-            else
               echo "Copying file: $FILE"
               cp .devops/"$FILE" "$FILE"
+            else
+              echo "Opted out of file: $FILE"
             fi
           done
 

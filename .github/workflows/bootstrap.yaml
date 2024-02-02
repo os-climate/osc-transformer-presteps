@@ -59,6 +59,7 @@ jobs:
               if grep -Fxq "$ELEMENT" "$OPT_OUT"
               then
                 # Element is excluded from processing
+                echo "File excluded from operations: $ELEMENT"
                 return 0
               else
                 # Element should be processed
@@ -84,7 +85,7 @@ jobs:
           for FOLDER in ${FOLDERS}; do
             # Check to see if operation should be skipped
             if (perform_operation "$FOLDER"); then
-              echo "Opted out of DevOps folder: $FOLDER"
+              echo "Opted out of folder: $FOLDER"
               continue
             else
               # If necessary, create target folder
@@ -94,7 +95,10 @@ jobs:
               fi
               # Update folder contents
               echo "Updating folder contents: $FOLDER"
-              cp -a .devops/"$FOLDER"/. "$FOLDER"
+              for FILE in find $FOLDER -type f; do
+                echo "Copying: $FILE into $FOLDER"
+                cp $FILE $FOLDER
+              done
             fi
           done
 
@@ -127,4 +131,5 @@ jobs:
               "Chore: Pull DevOps tooling from upstream repository" \
               --body 'Automated by a GitHub workflow: bootstrap.yaml'
           fi
+
           ### SHELL CODE END ###

@@ -54,15 +54,15 @@ jobs:
             ELEMENT="$1"
             if [ ! -f "$OPT_OUT" ]; then
               # Opt-out file does not exist; all operations will be performed
-              return 1
+              return 0
             else
               if grep -Fxq "$ELEMENT" "$OPT_OUT"
               then
                 # Element is excluded from processing
-                return 0
+                return 1
               else
                 # Element should be processed
-                return 1
+                return 0
               fi
             fi
           }
@@ -83,8 +83,8 @@ jobs:
           FOLDERS=".github .github/workflows scripts"
           for FOLDER in ${FOLDERS}; do
             # Check to see if operation should be skipped
-            if (perform_operation "$FOLDER"); then
-              echo "Opted out of DevOps folder: $FOLDER"
+            if ! (perform_operation "$FOLDER"); then
+              echo "Opted out of folder: $FOLDER"
               continue
             else
               # If necessary, create target folder
@@ -94,7 +94,10 @@ jobs:
               fi
               # Update folder contents
               echo "Updating folder contents: $FOLDER"
-              cp -a .devops/"$FOLDER"/. "$FOLDER"
+              for FILE in find $FOLDER -type f; do
+                echo "Copying: $FILE into $FOLDER"
+                cp "$FILE" "$FOLDER"
+              done
             fi
           done
 
@@ -102,7 +105,7 @@ jobs:
           FILES=".pre-commit-config.yaml .prettierignore .gitignore"
           for FILE in ${FILES}; do
             if (perform_operation "$FILE"); then
-              echo "Opted out of DevOps file: $FILE"
+              echo "Opted out of file: $FILE"
             else
               echo "Copying file: $FILE"
               cp .devops/"$FILE" "$FILE"
@@ -127,4 +130,5 @@ jobs:
               "Chore: Pull DevOps tooling from upstream repository" \
               --body 'Automated by a GitHub workflow: bootstrap.yaml'
           fi
+
           ### SHELL CODE END ###

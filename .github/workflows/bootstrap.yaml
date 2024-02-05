@@ -89,7 +89,7 @@ jobs:
               fi
               # Update folder contents
               echo "Updating folder contents: $FOLDER"
-              for FILE in $(find "$FOLDER" -type f); do
+              for FILE in $(find .devops/"$FOLDER" -type f); do
                 echo "Copying: $FILE into $FOLDER"
                 cp "$FILE" "$FOLDER"
               done

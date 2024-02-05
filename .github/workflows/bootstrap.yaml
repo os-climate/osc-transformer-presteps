@@ -67,10 +67,8 @@ jobs:
             fi
           }
 
-          echo "Removing remote branch if it exists: update-devops-tooling"
-          git push origin --delete update-devops-tooling || :
           STRING=$(dd if=/dev/urandom bs=1k count=1 2>/dev/null | tr -dc 'a-zA-Z0-9' | head -c 10)
-          git checkout -b "update-$STRING"
+          git checkout -b "devops-update-$STRING"
 
           # Configure GIT
           TEST=$(git config -l)
@@ -83,10 +81,7 @@ jobs:
           FOLDERS=".github .github/workflows scripts"
           for FOLDER in ${FOLDERS}; do
             # Check to see if operation should be skipped
-            if ! (perform_operation "$FOLDER"); then
-              echo "Opted out of folder: $FOLDER"
-              continue
-            else
+            if (perform_operation "$FOLDER"); then
               # If necessary, create target folder
               if [ ! -d "$FOLDER" ]; then
                 echo "Creating target folder: $FOLDER"
@@ -94,15 +89,18 @@ jobs:
               fi
               # Update folder contents
               echo "Updating folder contents: $FOLDER"
-              for FILE in find $FOLDER -type f; do
+              for FILE in $(find "$FOLDER" -type f); do
                 echo "Copying: $FILE into $FOLDER"
                 cp "$FILE" "$FOLDER"
               done
+            else
+             echo "Opted out of folder: $FOLDER"
+            continue
             fi
           done
 
           # Copy specified files into repository root
-          FILES=".pre-commit-config.yaml .prettierignore .gitignore"
+          FILES=".pre-commit-config.yaml .prettierignore .gitignore .devops-exclusions"
           for FILE in ${FILES}; do
             if (perform_operation "$FILE"); then
               echo "Copying file: $FILE"

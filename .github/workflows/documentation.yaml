@@ -7,8 +7,8 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - "*"
-      - "!update-devops-tooling"
+      - '*'
+      - '!devops-update-**'
 
 jobs:
   build_and_deploy:

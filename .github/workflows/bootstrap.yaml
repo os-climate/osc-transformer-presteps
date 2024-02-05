@@ -110,6 +110,9 @@ jobs:
             fi
           done
 
+          # Add changed files, if present
+          git add .
+
           # If no changes required, do not throw an error
           if [ -z "$(git status --porcelain)" ]; then
             echo "No updates/changes to commit"; exit 0
@@ -117,8 +120,9 @@ jobs:
             # Set a flag for use by the next action/step
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
+
+          # Only create PR here if NOT running in a GitHub Actions workflow
           if [ -n "$GITHUB_TOKEN" ]; then
-            git add .
             if ! (git commit -as -S -m "Chore: Update DevOps tooling from central repository [skip-ci]" \
               -m "This commit created by automation/scripting" --no-verify); then
               echo "Commit failed; aborting"; exit 1

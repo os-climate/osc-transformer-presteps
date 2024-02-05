@@ -115,6 +115,7 @@ jobs:
 
           # Add any/all changed files, if present
           echo "Adding any changed/modified files"
+          # Add changed files, if present
           git add .
 
           # If no changes required, do not throw an error
@@ -127,6 +128,8 @@ jobs:
             # Write the branch name into the job output
             echo "branch-name=$BRANCH-NAME" >> "$GITHUB_OUTPUT"
           fi
+
+          # Only create PR here if NOT running in a GitHub Actions workflow
           if [ -n "$GITHUB_TOKEN" ]; then
             if ! (git commit -as -S -m "Chore: Update DevOps tooling from central repository [skip-ci]" \
               -m "This commit created by automation/scripting" --no-verify); then

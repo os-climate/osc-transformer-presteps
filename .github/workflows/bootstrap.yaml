@@ -37,7 +37,7 @@ jobs:
         # yamllint disable rule:line-length
         run: |
           ### SHELL CODE START ###
-
+          set -xeu -o pipefail
           REPO_DIR=$(git rev-parse --show-toplevel)
           # Ensure working from top-level of GIT repository
           CURRENT_DIR=$(pwd)
@@ -93,8 +93,8 @@ jobs:
               # Update folder contents
               echo "Updating folder contents: $FOLDER"
               for FILE in $(find .devops/"$FOLDER" -maxdepth 0 -type f); do
-                echo "Copying: $FILE into $FOLDER"
-                cp "$FILE" "$FOLDER"
+                echo "Copying: $FOLDER/$FILE into $FOLDER"
+                cp .devops/"$FOLDER"/"$FILE" "$FOLDER"
               done
             else
              echo "Opted out of folder: $FOLDER"
@@ -115,8 +115,8 @@ jobs:
 
           # Add any/all changed files, if present
           echo "Adding any changed/modified files"
-          # Add changed files, if present
-          git add .
+          # Report any changes to local content
+          git status
 
           # If no changes required, do not throw an error
           if [ -z "$(git status --porcelain)" ]; then
@@ -126,11 +126,12 @@ jobs:
             # Set a flag for use by the next action/step
             echo "changed=true" >> "$GITHUB_OUTPUT"
             # Write the branch name into the job output; currently unused
-            echo "BRANCHNAME=$BRANCHNAME" >> "$GITHUB_OUTPUT"
+            echo "branchname=$BRANCHNAME" >> "$GITHUB_OUTPUT"
           fi
 
           # Only create PR here if NOT running in a GitHub Actions workflow
           if [ -n "$GITHUB_TOKEN" ]; then
+            git add .
             if ! (git commit -as -S -m "Chore: Update DevOps tooling from central repository [skip-ci]" \
               -m "This commit created by automation/scripting" --no-verify); then
               echo "Commit failed; aborting"; exit 1
@@ -154,7 +155,8 @@ jobs:
           token: ${{ github.token }}
           commit-message: "Chore: Update DevOps tooling from central repository [skip-ci]"
           signoff: "true"
-          branch: main
+          base: main
+          branch: ${{ steps.update-repository.outputs.branchname }}
           delete-branch: true
           title: "Chore: Update DevOps tooling from central repository [skip-ci]"
           body: |

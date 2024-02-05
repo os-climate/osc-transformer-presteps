@@ -8,7 +8,7 @@ on:
     types: [opened, reopened, edited, synchronize]
     branches:
       - "*"
-      - "!update-devops-tooling"
+      - '!devops-update-**'
 
 jobs:
   linting:

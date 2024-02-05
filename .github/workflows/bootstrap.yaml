@@ -131,7 +131,8 @@ jobs:
           fi
 
           # Only create PR here if NOT running in a GitHub Actions workflow
-          if [ -n "$GH_TOKEN" ]; then
+          if [ -z ${GH_TOKEN+x} ]; then
+            # GH_TOKEN is undefined
             if ! (git commit -as -S -m "Chore: Update DevOps tooling from central repository [skip-ci]" \
               -m "This commit created by automation/scripting" --no-verify); then
               echo "Commit failed; aborting"; exit 1

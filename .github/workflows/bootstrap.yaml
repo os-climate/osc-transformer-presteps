@@ -116,6 +116,7 @@ jobs:
           # Add any/all changed files, if present
           echo "Adding any changed/modified files"
           # Report any changes to local content
+          git add .
           git status
 
           # If no changes required, do not throw an error
@@ -130,8 +131,7 @@ jobs:
           fi
 
           # Only create PR here if NOT running in a GitHub Actions workflow
-          if [ -n "$GITHUB_TOKEN" ]; then
-            git add .
+          if [ -n "$GH_TOKEN" ]; then
             if ! (git commit -as -S -m "Chore: Update DevOps tooling from central repository [skip-ci]" \
               -m "This commit created by automation/scripting" --no-verify); then
               echo "Commit failed; aborting"; exit 1

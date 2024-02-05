@@ -69,8 +69,8 @@ jobs:
 
           # Create a unique branch name
           STRING=$(dd if=/dev/urandom bs=1k count=1 2>/dev/null | tr -dc 'a-zA-Z0-9' | head -c 10)
-          BRANCH-NAME="devops-update-$STRING"
-          git checkout -b "$BRANCH-NAME"
+          BRANCHNAME="devops-update-$STRING"
+          git checkout -b "$BRANCHNAME"
 
           # Configure GIT only if NOT alredy configured
           # i.e. when running in a GitHub Actions workflow
@@ -125,14 +125,14 @@ jobs:
             # Set a flag for use by the next action/step
             echo "changed=true" >> "$GITHUB_OUTPUT"
             # Write the branch name into the job output
-            echo "branch-name=$BRANCH-NAME" >> "$GITHUB_OUTPUT"
+            echo "BRANCHNAME=$BRANCHNAME" >> "$GITHUB_OUTPUT"
           fi
           if [ -n "$GITHUB_TOKEN" ]; then
             if ! (git commit -as -S -m "Chore: Update DevOps tooling from central repository [skip-ci]" \
               -m "This commit created by automation/scripting" --no-verify); then
               echo "Commit failed; aborting"; exit 1
             else
-              git push --set-upstream origin "$BRANCH-NAME"
+              git push --set-upstream origin "$BRANCHNAME"
               gh pr create --title \
                 "Chore: Pull DevOps tooling from upstream repository" \
                 --body 'Automated by a GitHub workflow: bootstrap.yaml'
@@ -151,7 +151,7 @@ jobs:
           token: ${{ github.token }}
           commit-message: "Chore: Update DevOps tooling from central repository [skip-ci]"
           signoff: "true"
-          branch: ${{ steps.update-repository.outputs.branch-name }}
+          branch: ${{ steps.update-repository.outputs.BRANCHNAME }}
           delete-branch: true
           title: "Chore: Update DevOps tooling from central repository [skip-ci]"
           body: |

@@ -151,7 +151,7 @@ jobs:
           token: ${{ github.token }}
           commit-message: "Chore: Update DevOps tooling from central repository [skip-ci]"
           signoff: "true"
-          branch: ${{ update-repository.outputs.branch-name }}
+          branch: ${{ steps.update-repository.outputs.branch-name }}
           delete-branch: true
           title: "Chore: Update DevOps tooling from central repository [skip-ci]"
           body: |

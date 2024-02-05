@@ -69,7 +69,7 @@ jobs:
 
           # Create a unique branch name
           STRING=$(dd if=/dev/urandom bs=1k count=1 2>/dev/null | tr -dc 'a-zA-Z0-9' | head -c 10)
-          BRANCH-NAME="$BRANCH-NAME"
+          BRANCH-NAME="devops-update-$STRING"
           git checkout -b "$BRANCH-NAME"
 
           # Configure GIT only if NOT alredy configured

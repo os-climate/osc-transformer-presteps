@@ -125,7 +125,7 @@ jobs:
             echo "Changes require a PR be raised"
             # Set a flag for use by the next action/step
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            # Write the branch name into the job output
+            # Write the branch name into the job output; currently unused
             echo "BRANCHNAME=$BRANCHNAME" >> "$GITHUB_OUTPUT"
           fi
 
@@ -154,7 +154,7 @@ jobs:
           token: ${{ github.token }}
           commit-message: "Chore: Update DevOps tooling from central repository [skip-ci]"
           signoff: "true"
-          branch: ${{ steps.update-repository.outputs.BRANCHNAME }}
+          branch: main
           delete-branch: true
           title: "Chore: Update DevOps tooling from central repository [skip-ci]"
           body: |

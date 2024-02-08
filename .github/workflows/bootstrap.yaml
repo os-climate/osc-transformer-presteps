@@ -144,7 +144,7 @@ jobs:
             fi
           else
             echo "Pushing branch $BRANCHNAME to origin"
-            git push -u origin
+            git push --set-upstream origin $BRANCHNAME
             echo "Script running in GitHub Actions workflow; proceeding to next step"
           fi
           ### SHELL CODE END ###

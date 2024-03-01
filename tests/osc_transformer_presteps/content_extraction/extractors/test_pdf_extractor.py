@@ -14,8 +14,8 @@ class TestPdfExtractor:
         """
         extractor = PDFExtractor()
         input_file_path = Path(__file__).resolve().parent / "test_issue.pdf"
-        extractor.extract(input_file_path=input_file_path)
-        assert extractor.get_extractions() == {}
+        extraction_response = extractor.extract(input_file_path=input_file_path)
+        assert extraction_response.dictionary == {}
 
     def test_pdf_with_no_extraction_issues(self):
         """
@@ -24,10 +24,10 @@ class TestPdfExtractor:
         """
         extractor = PDFExtractor()
         input_file_path = Path(__file__).resolve().parent / "test.pdf"
-        extractor.extract(input_file_path=input_file_path)
+        extraction_response = extractor.extract(input_file_path=input_file_path)
 
         json_file_path = str(Path(__file__).resolve().parent / "test_data.json")
         with open(json_file_path, "r") as file:
             json_data = file.read()
         test_data = json.loads(json_data)
-        assert extractor.get_extractions() == test_data
+        assert extraction_response.dictionary == test_data

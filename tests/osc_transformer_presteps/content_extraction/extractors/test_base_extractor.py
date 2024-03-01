@@ -5,6 +5,7 @@ import pytest
 
 from osc_transformer_presteps.content_extraction.extractors.base_extractor import (
     BaseExtractor,
+    ExtractionResponse,
 )
 
 
@@ -14,7 +15,7 @@ def concrete_base_extractor(name: str):
     class ConcreteBaseExtractor(BaseExtractor):
         extractor_name = name
 
-        def extract(
+        def _generate_extractions(
             self,
             input_file_path: Path,
         ) -> Optional[dict]:
@@ -43,8 +44,9 @@ class TestBaseExtractor:
         assert settings["store_to_file"] is True
 
     def test_get_extractions(self, base_extractor):
-        base_extractor._extraction_dict = {"a": "b"}
-        assert base_extractor.get_extractions() == {"a": "b"}
+        base_extractor._extraction_response = ExtractionResponse(**{"dictionary": {"a": "b"}, "success": True})
+        assert base_extractor.get_extractions().dictionary == {"a": "b"}
+        assert base_extractor.get_extractions().success is True
 
     def test_check_for_skip_files(self, base_extractor):
         input_file_path = Path(__file__).resolve().parent / "test.pdf"
@@ -66,11 +68,10 @@ class TestBaseExtractor:
         json_file_path.unlink(missing_ok=True)
 
     def test_save_extraction_to_file(self, base_extractor):
-        """
-        The
-        """
         output_file_path = Path(__file__).resolve().parent / "output.json"
-        base_extractor._extraction_dict = {"key": "value"}
+        er = ExtractionResponse()
+        er.dictionary = {"key": "value"}
+        base_extractor._extraction_response = er
         base_extractor.save_extraction_to_file(output_file_path)
         assert output_file_path.exists()
         output_file_path.unlink(missing_ok=True)

@@ -7,8 +7,8 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - "*"
-      - "!update-devops-tooling"
+      - '*'
+      - '!devops-update-**'
 
 jobs:
   build_and_deploy:
@@ -48,6 +48,7 @@ jobs:
 
       - name: "Build documentation: (tox/sphinx)"
         run: |
+          pip install --upgrade tox
           tox -e docs
 
       - name: "Publish documentation"

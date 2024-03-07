@@ -5,7 +5,7 @@ description = "OS-Climate Data Extraction Tool"
 authors = [
     {name = "David Besslich", email = "90916810+DaBeIDS@users.noreply.github.com"},
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.9, !=3.9.7"
 readme = "README.rst"
 license = {file = "LICENSE.txt"}
 classifiers = [
@@ -27,10 +27,17 @@ classifiers = [
 ]
 dependencies = [
     "pdfminer>=20191125",
-    "pydantic-settings>=2.1.0",
+    "pydantic-settings>=2.2.1",
     "pytest>=7.4.4",
     "pypdf>=4.0.0",
     "numpy>=1.26.3",
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0.post1",
+    "python-multipart>=0.0.6",
+    "streamlit>=1.12.0",
+    "altair<5",
+    "types-requests>=2.31.0.20240218",
+    "pydantic>=2.6.3"
 ]
 
 [project.urls]
@@ -64,7 +71,6 @@ test = [
 ]
 lint = [
   "pre-commit",
-  "pyproject-flake8"
 ]
 
 [tool.pdm.scripts]
@@ -81,7 +87,7 @@ test = ["pdm[pytest]", "pytest", "pytest-cov"]
 tox = ["tox", "tox-pdm>=0.5"]
 docs = ["sphinx>=7.2.6", "sphinx-copybutton>=0.5.2"]
 dev = ["tox>=4.11.3", "tox-pdm>=0.7.0"]
-lint = ["pre-commit", "pyproject-flake8"]
+lint = ["pre-commit"]
 
 [tool.pytest.ini_options]
 testpaths = [

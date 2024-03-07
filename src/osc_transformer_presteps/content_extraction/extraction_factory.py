@@ -35,6 +35,7 @@ def get_extractor(extractor_type: str, settings: Optional[dict] = None) -> BaseE
     Returns:
     - BaseExtractor: Instance of the specified extractor type
     """
+    _logger.info("The extractor type is: " + extractor_type)
     extractor_class = _extractors.get(extractor_type)
     if extractor_class:
         _logger.info(f"Retrieving {extractor_type} extractor instance")

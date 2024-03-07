@@ -54,7 +54,7 @@ def check_pdf_accessibility(pdf_file: str) -> bool:
         return True
     except Exception as e:
         _logger.warning(f"{e}: Unable to process {pdf_file}")
-        return False
+        raise e
 
 
 class PDFExtractor(BaseExtractor):
@@ -71,7 +71,7 @@ class PDFExtractor(BaseExtractor):
     def __init__(self, settings: Optional[dict] = None):
         super().__init__(settings)
 
-    def extract(
+    def _generate_extractions(
         self,
         input_file_path: Path,
     ) -> None:
@@ -86,21 +86,21 @@ class PDFExtractor(BaseExtractor):
 
         self.extract_pdf_by_page(str(input_file_path))
 
-        _logger.info(f"The number of pages extracted: {len(self._extraction_dict)}")
+        _logger.info(f"The number of pages extracted: {len(self._extraction_response.dictionary)}")
         paragraphs = (
             0
-            if len(self._extraction_dict.keys()) == 0
-            else max(self._extraction_dict[max(self._extraction_dict.keys())].keys())
+            if len(self._extraction_response.dictionary.keys()) == 0
+            else max(self._extraction_response.dictionary[max(self._extraction_response.dictionary.keys())].keys())
         )
         _logger.info(f"The number of paragraphs found: {paragraphs}.")
 
     def extract_pdf_by_page(self, pdf_file):
         """Read the content of each page in a pdf file, this method uses pdfminer and stores the output to
-        the _extraction_dict variable.
+        the _extraction_response ExtractionResult object.
         Args:
             pdf_file (str): Path to the pdf file.
         """
-        self._extraction_dict = {}
+        self._extraction_response.dictionary = {}
         if check_pdf_accessibility(pdf_file):
             idx = 0
 
@@ -158,19 +158,21 @@ class PDFExtractor(BaseExtractor):
         Returns:
             int: The updated index after adding the paragraphs to the extraction dictionary.
         """
-        self._extraction_dict.update(
-            {
-                str(page_number): {
-                    str(x): {
-                        "pdf_name": file_name,
-                        "unique_paragraph_id": x,
-                        "paragraph": y,
-                        "page": page_number,
-                        "start_index_page": idx,
-                        "last_index_page": idx + len(paragraphs_data) - 1,
+        (
+            self._extraction_response.dictionary.update(
+                {
+                    str(page_number): {
+                        str(x): {
+                            "pdf_name": file_name,
+                            "unique_paragraph_id": x,
+                            "paragraph": y,
+                            "page": page_number,
+                            "start_index_page": idx,
+                            "last_index_page": idx + len(paragraphs_data) - 1,
+                        }
+                        for (x, y) in zip(range(idx, idx + len(paragraphs_data)), paragraphs_data)
                     }
-                    for (x, y) in zip(range(idx, idx + len(paragraphs_data)), paragraphs_data)
                 }
-            }
+            )
         )
         return idx + len(paragraphs_data)

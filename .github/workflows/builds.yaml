@@ -1,5 +1,5 @@
 ---
-name: "🧪 Test builds (Matrix)"
+name: "🧱 Builds (Matrix)"
 
 # yamllint disable-line rule:truthy
 on:
@@ -8,18 +8,24 @@ on:
     types: [opened, reopened, edited, synchronize]
     branches:
       - "*"
-      - '!devops-update-**'
+      - "!update-devops-tooling"
 
 jobs:
-  pre-release:
+  parse-project-metadata:
+    name: "Determine Python versions"
+    # yamllint disable-line rule:line-length
+    uses: os-climate/devops-reusable-workflows/.github/workflows/pyproject-toml-fetch-matrix.yaml@main
+
+  test-builds:
+    name: "Build: Python"
+    needs: [parse-project-metadata]
     runs-on: "ubuntu-latest"
     continue-on-error: true
     # Don't run when pull request is merged
     if: github.event.pull_request.merged == false
     strategy:
       fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+      matrix: ${{ fromJson(needs.parse-project-metadata.outputs.matrix) }}
 
     steps:
       - name: "Populate environment variables"

@@ -1,0 +1,29 @@
+osc\_transformer\_presteps.api package
+======================================
+
+Submodules
+----------
+
+osc\_transformer\_presteps.api.api module
+-----------------------------------------
+
+.. automodule:: osc_transformer_presteps.api.api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+osc\_transformer\_presteps.api.extract module
+---------------------------------------------
+
+.. automodule:: osc_transformer_presteps.api.extract
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: osc_transformer_presteps.api
+   :members:
+   :undoc-members:
+   :show-inheritance:

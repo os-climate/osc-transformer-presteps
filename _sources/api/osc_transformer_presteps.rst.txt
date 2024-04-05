@@ -7,7 +7,20 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   osc_transformer_presteps.api
    osc_transformer_presteps.content_extraction
+   osc_transformer_presteps.streamlit
+
+Submodules
+----------
+
+osc\_transformer\_presteps.settings module
+------------------------------------------
+
+.. automodule:: osc_transformer_presteps.settings
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------

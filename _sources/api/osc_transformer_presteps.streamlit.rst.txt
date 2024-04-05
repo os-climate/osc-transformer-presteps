@@ -1,0 +1,21 @@
+osc\_transformer\_presteps.streamlit package
+============================================
+
+Submodules
+----------
+
+osc\_transformer\_presteps.streamlit.app module
+-----------------------------------------------
+
+.. automodule:: osc_transformer_presteps.streamlit.app
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: osc_transformer_presteps.streamlit
+   :members:
+   :undoc-members:
+   :show-inheritance:

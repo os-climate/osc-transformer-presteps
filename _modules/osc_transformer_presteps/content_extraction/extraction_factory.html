@@ -75,6 +75,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">    - BaseExtractor: Instance of the specified extractor type</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The extractor type is: &quot;</span> <span class="o">+</span> <span class="n">extractor_type</span><span class="p">)</span>
     <span class="n">extractor_class</span> <span class="o">=</span> <span class="n">_extractors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">extractor_type</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">extractor_class</span><span class="p">:</span>
         <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrieving </span><span class="si">{</span><span class="n">extractor_type</span><span class="si">}</span><span class="s2"> extractor instance&quot;</span><span class="p">)</span>

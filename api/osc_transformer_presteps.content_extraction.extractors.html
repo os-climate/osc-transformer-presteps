@@ -13,6 +13,7 @@
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="osc_transformer_presteps.streamlit package" href="osc_transformer_presteps.streamlit.html" />
     <link rel="prev" title="osc_transformer_presteps.content_extraction package" href="osc_transformer_presteps.content_extraction.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -59,10 +60,22 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.BaseExtractor.extract">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/base_extractor.html#BaseExtractor.extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.BaseExtractor.extract" title="Link to this definition">¶</a></dt>
-<dd><p>Function, which defines how text is extracted from a give file in path.
-:param input_file_path: Should contain the path to a file as a pathlib.Path object.
-:type input_file_path: Path</p>
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse" title="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse"><span class="pre">ExtractionResponse</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/base_extractor.html#BaseExtractor.extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.BaseExtractor.extract" title="Link to this definition">¶</a></dt>
+<dd><p>Perform the extraction of text from the given input file path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_file_path</strong> (<em>Path</em>) – The path to the input file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of the <cite>ExtractionResponse</cite> class containing the extraction results.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse" title="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse">ExtractionResponse</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError" title="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError"><strong>ExtractionError</strong></a> – If an error occurs during the extraction process.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -93,6 +106,53 @@
 
 </dd></dl>
 
+<dl class="py exception">
+<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.content_extraction.extractors.base_extractor.</span></span><span class="sig-name descname"><span class="pre">ExtractionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/base_extractor.html#ExtractionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/exceptions.html#Exception" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError.error">
+<span class="sig-name descname"><span class="pre">error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError.error" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.content_extraction.extractors.base_extractor.</span></span><span class="sig-name descname"><span class="pre">ExtractionResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/base_extractor.html#ExtractionResponse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.dictionary">
+<span class="sig-name descname"><span class="pre">dictionary</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.dictionary" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'dictionary':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">Any],</span> <span class="pre">required=False,</span> <span class="pre">default={}),</span> <span class="pre">'success':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=True)}</span></em><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.model_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.success">
+<span class="sig-name descname"><span class="pre">success</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse.success" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor">
 <span id="osc-transformer-presteps-content-extraction-extractors-pdf-text-extractor-module"></span><h2>osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor module<a class="headerlink" href="#module-osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor" title="Link to this heading">¶</a></h2>
@@ -112,23 +172,10 @@ the list of paragraphs in that page.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract">
-<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/pdf_text_extractor.html#PDFExtractor.extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract" title="Link to this definition">¶</a></dt>
-<dd><p>Extract text from a single pdf file and stores it to the &lt;filename&gt;.json.
-The dictionary output will be returned. If the file was already processed
-or it was not possible to extract the content it will return an empty dict.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>input_file_path</strong> (<em>Path</em>) – full path to the pdf file</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract_pdf_by_page">
 <span class="sig-name descname"><span class="pre">extract_pdf_by_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdf_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/pdf_text_extractor.html#PDFExtractor.extract_pdf_by_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract_pdf_by_page" title="Link to this definition">¶</a></dt>
 <dd><p>Read the content of each page in a pdf file, this method uses pdfminer and stores the output to
-the _extraction_dict variable.
+the _extraction_response ExtractionResult object.
 :param pdf_file: Path to the pdf file.
 :type pdf_file: str</p>
 </dd></dl>
@@ -299,6 +346,7 @@ data = {“name”: “John Doe”, “age”: 30, “city”: “New York”}</
   <li><a href="osc_transformer_presteps.html">osc_transformer_presteps package</a><ul>
   <li><a href="osc_transformer_presteps.content_extraction.html">osc_transformer_presteps.content_extraction package</a><ul>
       <li>Previous: <a href="osc_transformer_presteps.content_extraction.html" title="previous chapter">osc_transformer_presteps.content_extraction package</a></li>
+      <li>Next: <a href="osc_transformer_presteps.streamlit.html" title="next chapter">osc_transformer_presteps.streamlit package</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

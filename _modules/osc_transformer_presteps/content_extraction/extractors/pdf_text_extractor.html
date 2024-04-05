@@ -91,7 +91,7 @@
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">: Unable to process </span><span class="si">{</span><span class="n">pdf_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
+        <span class="k">raise</span> <span class="n">e</span></div>
 
 
 
@@ -111,9 +111,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PDFExtractor.extract">
-<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract">[docs]</a>
-    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_generate_extractions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -128,24 +126,23 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">extract_pdf_by_page</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">))</span>
 
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The number of pages extracted: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_dict</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The number of pages extracted: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">paragraphs</span> <span class="o">=</span> <span class="p">(</span>
             <span class="mi">0</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
-            <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_dict</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="p">)</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The number of paragraphs found: </span><span class="si">{</span><span class="n">paragraphs</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
-
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The number of paragraphs found: </span><span class="si">{</span><span class="n">paragraphs</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PDFExtractor.extract_pdf_by_page">
 <a class="viewcode-back" href="../../../../api/osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract_pdf_by_page">[docs]</a>
     <span class="k">def</span> <span class="nf">extract_pdf_by_page</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdf_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the content of each page in a pdf file, this method uses pdfminer and stores the output to</span>
-<span class="sd">        the _extraction_dict variable.</span>
+<span class="sd">        the _extraction_response ExtractionResult object.</span>
 <span class="sd">        Args:</span>
 <span class="sd">            pdf_file (str): Path to the pdf file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">check_pdf_accessibility</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">):</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -209,20 +206,22 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            int: The updated index after adding the paragraphs to the extraction dictionary.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">page_number</span><span class="p">):</span> <span class="p">{</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="p">{</span>
-                        <span class="s2">&quot;pdf_name&quot;</span><span class="p">:</span> <span class="n">file_name</span><span class="p">,</span>
-                        <span class="s2">&quot;unique_paragraph_id&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
-                        <span class="s2">&quot;paragraph&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
-                        <span class="s2">&quot;page&quot;</span><span class="p">:</span> <span class="n">page_number</span><span class="p">,</span>
-                        <span class="s2">&quot;start_index_page&quot;</span><span class="p">:</span> <span class="n">idx</span><span class="p">,</span>
-                        <span class="s2">&quot;last_index_page&quot;</span><span class="p">:</span> <span class="n">idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">paragraphs_data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">page_number</span><span class="p">):</span> <span class="p">{</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="p">{</span>
+                            <span class="s2">&quot;pdf_name&quot;</span><span class="p">:</span> <span class="n">file_name</span><span class="p">,</span>
+                            <span class="s2">&quot;unique_paragraph_id&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+                            <span class="s2">&quot;paragraph&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
+                            <span class="s2">&quot;page&quot;</span><span class="p">:</span> <span class="n">page_number</span><span class="p">,</span>
+                            <span class="s2">&quot;start_index_page&quot;</span><span class="p">:</span> <span class="n">idx</span><span class="p">,</span>
+                            <span class="s2">&quot;last_index_page&quot;</span><span class="p">:</span> <span class="n">idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">paragraphs_data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="p">}</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">paragraphs_data</span><span class="p">)),</span> <span class="n">paragraphs_data</span><span class="p">)</span>
                     <span class="p">}</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">paragraphs_data</span><span class="p">)),</span> <span class="n">paragraphs_data</span><span class="p">)</span>
                 <span class="p">}</span>
-            <span class="p">}</span>
+            <span class="p">)</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">paragraphs_data</span><span class="p">)</span></div>
 </div>

@@ -173,10 +173,10 @@ jobs:
               "41898282+github-actions[bot]@users.noreply.github.com"
           fi
 
-
-          # Only if we're NOT running in GitHub
-          if [ -n "$GH_TOKEN" ]; then
-            # Remove any stale copy of the upstream repository
+          # Only if NOT running in GitHub
+          # (checkout is otherwise performed by earlier steps)
+          if [ -z ${GITHUB_RUN_ID+x} ]; then
+            # Remove any stale local copy of the upstream repository
             if [ -d "$DEVOPS_DIR" ]; then
               rm -Rf "$DEVOPS_DIR"
             fi

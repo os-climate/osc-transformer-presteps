@@ -21,7 +21,7 @@ jobs:
       - name: "Checkout primary repository"
         uses: actions/checkout@v4
 
-      - name: "Pull workflows from central repository"
+      - name: "Pull devops content from repository"
         uses: actions/checkout@v4
         with:
           repository: "os-climate/devops-toolkit"
@@ -173,16 +173,20 @@ jobs:
               "41898282+github-actions[bot]@users.noreply.github.com"
           fi
 
-          # Remove any stale copy of the upstream repository
-          if [ -d "$DEVOPS_DIR" ]; then
-            rm -Rf "$DEVOPS_DIR"
-          fi
 
-          printf "Cloning DevOps repository into: %s" "$DEVOPS_DIR"
-          if (git clone "$DEVOPS_REPO" "$DEVOPS_DIR" > /dev/null 2>&1); then
-              echo " [success]"
-          else
-              echo " [failed]"; exit 1
+          # Only if we're NOT running in GitHub
+          if [ -n "$GH_TOKEN" ]; then
+            # Remove any stale copy of the upstream repository
+            if [ -d "$DEVOPS_DIR" ]; then
+              rm -Rf "$DEVOPS_DIR"
+            fi
+
+            printf "Cloning DevOps repository into: %s" "$DEVOPS_DIR"
+            if (git clone "$DEVOPS_REPO" "$DEVOPS_DIR" > /dev/null 2>&1); then
+                echo " [success]"
+            else
+                echo " [failed]"; exit 1
+            fi
           fi
 
           # Process upstream DevOps repository content and update

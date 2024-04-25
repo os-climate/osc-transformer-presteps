@@ -27,8 +27,6 @@ classifiers = [
 ]
 dependencies = [
     "pdfminer>=20191125",
-    "pydantic-settings>=2.2.1",
-    "pytest>=7.4.4",
     "pypdf>=4.0.0",
     "numpy>=1.26.3",
     "fastapi>=0.109.0",
@@ -37,7 +35,7 @@ dependencies = [
     "streamlit>=1.12.0",
     "altair<5",
     "types-requests>=2.31.0.20240218",
-    "pydantic>=2.6.3"
+    "pydantic>=2.6.3",
 ]
 
 [project.urls]
@@ -56,7 +54,7 @@ build-backend = "pdm.backend"
 license-files = ["LICENSES.txt"]
 
 [project.scripts]
-osc-transformer-presteps = "osc_data_extractor.skeleton:run"
+osc-transformer-presteps = "osc_transformer_presteps.cli:run"
 
 [project.optional-dependencies]
   dev = [
@@ -66,11 +64,11 @@ osc-transformer-presteps = "osc_data_extractor.skeleton:run"
   "pdm"
 ]
 test = [
-  "pytest",
-#  "pytest-cov",
+    "pytest>=8.1.1",
+    "pytest-cov>=5.0.0",
 ]
 lint = [
-  "pre-commit",
+    "pre-commit>=3.7.0",
 ]
 
 [tool.pdm.scripts]
@@ -93,7 +91,7 @@ lint = ["pre-commit"]
 testpaths = [
     "tests/",
 ]
-# addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
+addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 50"
 
 [tool.coverage.run]
 source = ["src"]

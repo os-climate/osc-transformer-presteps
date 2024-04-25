@@ -1,17 +1,16 @@
 ---
 ci:
   autofix_commit_msg: "Chore: pre-commit autoupdate"
-
-  # skip:
+  skip:
+    # pre-commit.ci cannot install WGET, so tomlint must be disabled
+    - tomllint
     # - pre-commit-update
-
 
 exclude: |
   (?x)^(
       docs\/conf.py|
       dco-signoffs/$
   )$
-
 
 repos:
 
@@ -21,16 +20,15 @@ repos:
   #     - id: pre-commit-update
   #       args: [--dry-run]
 
-  # WINDOWS ISSUE: On Windows machine this has to be commented out
   # - repo: local
-  #  hooks:
-  #    - id: tomllint
-  #      name: "Script: scripts/tomllint.sh"
-  #      language: script
-  #      # pass_filenames: false
-  #      files: \^*.toml
-  #      types: [file]
-  #      entry: scripts/tomllint.sh .
+  #   hooks:
+  #     - id: tomllint
+  #       name: "Script: scripts/tomllint.sh"
+  #       language: script
+  #       # pass_filenames: false
+  #       files: \^*.toml
+  #       types: [file]
+  #       entry: scripts/tomllint.sh .
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -60,22 +58,20 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
 
-  # Currently facing proxy issue with that. Is not a general issue.
-  # # Autoformat: YAML, JSON, Markdown, etc.
-  # - repo: https://github.com/prettier/pre-commit
-  #   rev: v2.2.0
-  #   hooks:
-  #     - id: prettier
-  #       args:
-  #         ['--ignore-unknown']
+  # Autoformat: YAML, JSON, Markdown, etc.
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        args:
+          ['--no-error-on-unmatched-pattern', '--ignore-unknown']
 
-  # Currently facing proxy issue with that. Is not a general issue.
-  # # Lint: Markdown
-  # - repo: https://github.com/igorshubovych/markdownlint-cli
-  #   rev: v0.38.0
-  #   hooks:
-  #     - id: markdownlint
-  #       args: ["--fix --proxy={env:HTTP_PROXY}'"]
+  # Lint: Markdown
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.39.0
+    hooks:
+      - id: markdownlint
+        args: ["--fix"]
 
   # - repo: https://github.com/asottile/pyupgrade
   #   rev: v3.15.0
@@ -124,12 +120,11 @@ repos:
       - id: isort
         args: ["--profile", "black"]
 
-  # Currently facing proxy issue with that. Is not a general issue.
-  # - repo: https://github.com/adrienverge/yamllint.git
-  #   rev: v1.33.0
-  #   hooks:
-  #    - id: yamllint
-  #      args: ['--strict --proxy={{env:HTTP_PROXY}}']
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: [--strict]
 
   - repo: https://github.com/Mateusz-Grzelinski/actionlint-py
     rev: v1.6.27.13
@@ -137,17 +132,16 @@ repos:
       - id: actionlint
 
   # If like to embrace black styles even in the docs:
-  - repo: https://github.com/asottile/blacken-docs
-    rev: 1.16.0
-    hooks:
-    - id: blacken-docs
-      additional_dependencies: [black]
+  # - repo: https://github.com/asottile/blacken-docs
+  #   rev: v1.13.0
+  #   hooks:
+  #   - id: blacken-docs
+  #     additional_dependencies: [black]
 
   - repo: https://github.com/pycqa/flake8
     rev: "7.0.0"
     hooks:
       - id: flake8
-        args: ["--extend-ignore=E501,W503"]
 
   # Check for misspells in documentation files:
   # - repo: https://github.com/codespell-project/codespell

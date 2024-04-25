@@ -88,7 +88,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "osc-data-extractor"
+project = "osc-transformer-presteps"
 copyright = "2023, Matthew Watkins"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -100,7 +100,7 @@ copyright = "2023, Matthew Watkins"
 # If you don’t need the separation provided between version and release,
 # just set them both to the same value.
 try:
-    from osc_data_extractor import __version__ as version
+    from osc_transformer_presteps import __version__ as version
 except ImportError:
     version = ""
 
@@ -227,7 +227,7 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "osc-data-extractor-doc"
+htmlhelp_basename = "osc-transformer-presteps-doc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -243,7 +243,7 @@ latex_elements: Dict[str, str] = {
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [("index", "user_guide.tex", "osc-data-extractor Documentation", "Matthew Watkins", "manual")]
+latex_documents = [("index", "user_guide.tex", "osc-transformer-presteps Documentation", "Matthew Watkins", "manual")]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.

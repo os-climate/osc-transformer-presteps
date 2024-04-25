@@ -1,7 +1,8 @@
 ---
 ci:
   autofix_commit_msg: "Chore: pre-commit autoupdate"
-  skip:
+    
+  # skip:
     # pre-commit.ci cannot install WGET, so tomlint must be disabled
     # - tomllint
     # - pre-commit-update

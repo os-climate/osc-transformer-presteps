@@ -30,6 +30,10 @@ Afterwards you can use the tooling as a CLI tool by simply typing::
 
     $ osc-transformer-presteps
 
+We are using typer to have a nice CLI tool here. All details and help will be shown in the CLI
+tool itself and are not described here in more detail.
+
+
 Install via Github Repository
 -----------------------------
 
@@ -50,7 +54,9 @@ via pdm update) and start a local api server via::
     }
 
 Finally, run the following code to start a streamlit app which opens up the possibility
-to "upload" a file and extract data from pdf to json::
+to "upload" a file and extract data from pdf to json via this UI. Note that the UI needs
+the running server so you have to open the streamlit and the server in two different
+terminals.::
 
     $ streamlit run ./src/osc_transformer_presteps/streamlit/app.py
 

@@ -11,11 +11,10 @@ from osc_transformer_presteps.content_extraction.extractors.base_extractor impor
     ExtractionError,
     ExtractionResponse,
 )
-from osc_transformer_presteps.settings import get_settings
+from osc_transformer_presteps.settings import ExtractionSettings
 
 router = APIRouter(tags=["extract"])
 _logger = logging.getLogger(__name__)
-settings = get_settings()
 
 
 @router.get("/liveness")
@@ -57,11 +56,10 @@ def extract(
     """
     assert file.filename
     _logger.info(f"Received file {file.filename} of type {Path(file.filename).suffix}.")
-    file_path_temp = Path(settings.local_storage) / file.filename
+    file_path_temp = Path(__file__).parent / "temp_storage" / file.filename
     try:
         save_upload_file(file, file_path_temp)
-
-        extraction_settings = {"skip_extracted_files": False, "store_to_file": True}
+        extraction_settings = ExtractionSettings().model_dump()
         extractor = get_extractor(file_path_temp.suffix, extraction_settings)
         extraction_response = extractor.extract(input_file_path=file_path_temp)
 

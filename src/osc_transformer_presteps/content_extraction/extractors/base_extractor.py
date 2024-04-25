@@ -52,7 +52,7 @@ class BaseExtractor(ABC):
         Initializes a BaseExtractor instance.
         """
         settings_base: dict = {} if settings is None else settings
-        settings_base = _BaseSettings(**settings_base).dict()
+        settings_base = _BaseSettings(**settings_base).model_dump()
         self._settings: dict = settings_base
 
     def __init_subclass__(cls, **kwargs):

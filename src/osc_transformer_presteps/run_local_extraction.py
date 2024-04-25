@@ -1,5 +1,6 @@
 import json
 import logging
+import traceback
 from pathlib import Path
 
 # External modules
@@ -11,7 +12,6 @@ from osc_transformer_presteps.content_extraction.extraction_factory import get_e
 from osc_transformer_presteps.settings import (
     ExtractionServerSettings,
     ExtractionSettings,
-    LogType,
 )
 
 _logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ _logger = logging.getLogger(__name__)
 app = typer.Typer(no_args_is_help=True)
 
 
-def _specify_root_logger(log_level: LogType):
+def _specify_root_logger(log_level: int):
     """
     Configures the root logger with a specific formatting and log level.
 
@@ -28,7 +28,7 @@ def _specify_root_logger(log_level: LogType):
     messages, and applies a specific formatter to format the log messages.
 
     Args:
-        log_level (str): The log_level to use for the logging.
+        log_level (int): The log_level to use for the logging given as int.
 
     Usage:
     Call this function at the beginning of your code to configure the root logger
@@ -68,14 +68,16 @@ def run_local_server(
 ) -> None:
     """This subcommand will start a local server."""
     settings = ExtractionServerSettings(log_level=log_level, port=port, host=host)
-    _specify_root_logger(settings.log_level)
+    _specify_root_logger(settings.log_type)
     run_api(host, port)
 
 
 @app.command()
 def run_local_extraction(
-    file_name: str = typer.Argument(
-        help="This is the name of the file you want to extract" " data from. This should be in the current folder.",
+    file_or_folder_name: str = typer.Argument(
+        help="This is the name of the file you want to extract"
+        " data from or the folder in which you want to "
+        "extract data from every file. This should be in the current folder.",
     ),
     skip_extracted_files: bool = typer.Option(
         False,
@@ -93,12 +95,39 @@ def run_local_extraction(
 ) -> None:
     """This command will start the extraction of text to json on your local machine. Check help for details."""
     cwd = Path.cwd()
-    file_path_temp = cwd / file_name
+    file_or_folder_path_temp = cwd / file_or_folder_name
     extraction_settings = ExtractionSettings(store_to_file=store_to_file, skip_extracted_files=skip_extracted_files)
-    extractor = get_extractor(file_path_temp.suffix, extraction_settings.model_dump())
-    extraction_response = extractor.extract(input_file_path=file_path_temp)
-    output_file_name = file_name + "_output.json"
-    output_file_path = cwd / output_file_name
+    if file_or_folder_path_temp.is_file():
+        _logger.info(f"Start extracting file {file_or_folder_path_temp.stem}.")
+        extract_one_file(
+            output_folder=cwd, file_path=file_or_folder_path_temp, extraction_settings=extraction_settings.model_dump()
+        )
+        _logger.info(f"Done with extracting file {file_or_folder_path_temp.stem}.")
+    elif file_or_folder_path_temp.is_dir():
+        files = [f for f in file_or_folder_path_temp.iterdir() if f.is_file()]
+        for file in files:
+            _logger.info(f"Start extracting file {file.stem}.")
+            try:
+                extract_one_file(
+                    output_folder=cwd, file_path=file, extraction_settings=extraction_settings.model_dump()
+                )
+                _logger.info(f"Done with extracting file {file.stem}.")
+            except Exception as e:
+                _logger.error(f"The was an error for file {file.stem}.")
+                _logger.error(repr(e))
+                _logger.error(traceback.format_exc())
+    else:
+        _logger.error("Given file or folder name is neither a file nor a folder.")
+
+
+def extract_one_file(output_folder: Path, file_path: Path, extraction_settings: dict) -> None:
+    """
+    This function is intended to extract data for a given file to a given folder for a specific setting.
+    """
+    extractor = get_extractor(file_path.suffix, extraction_settings)
+    extraction_response = extractor.extract(input_file_path=file_path)
+    output_file_name = file_path.stem + "_output.json"
+    output_file_path = output_folder / output_file_name
     with open(str(output_file_path), "w") as file:
         json.dump(extraction_response.dictionary, file, indent=4)
 

@@ -23,11 +23,14 @@ _log_dict = {
 }
 
 
-class ExtractionServerSettings(BaseModel):
-    log_level: LogLevel = LogLevel("info")
+class ExtractionServerSettingsBase(BaseModel):
     port: int = 8000
     host: str = "localhost"
+    log_type: int = 20
+    log_level: LogLevel = LogLevel("info")
 
+
+class ExtractionServerSettings(ExtractionServerSettingsBase):
     def __init__(self, **data) -> None:
         if "log_level" in data:
             data["log_level"] = LogLevel(data["log_level"])

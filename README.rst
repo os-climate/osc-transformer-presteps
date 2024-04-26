@@ -48,10 +48,8 @@ via pdm update) and start a local api server via::
 
 **Note**:
     * We assume that you are located in the cloned repository.
-    * To check if it is running open "http://localhost:8000/liveness" and you should see
-    {
-    "message": "OSC Transformer Pre-Steps Server is running."
-    }
+    * To check if it is running open "http://localhost:8000/liveness" and you should see the
+      message {"message": "OSC Transformer Pre-Steps Server is running."}.
 
 Finally, run the following code to start a streamlit app which opens up the possibility
 to "upload" a file and extract data from pdf to json via this UI. Note that the UI needs

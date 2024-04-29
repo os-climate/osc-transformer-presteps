@@ -1,6 +1,5 @@
 from pathlib import Path
-from pprint import pprint
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional, Union
 
 from src.osc_transformer_presteps.content_extraction.extraction_factory import (
     get_extractor,
@@ -11,7 +10,7 @@ def extract_main(
     input_file_path: Path,
     output_file_path: Optional[Path] = None,
     settings: Optional[Dict[str, Union[str, bool]]] = None,
-) -> Dict[str, Any]:
+) -> None:
     """
     Extract information from an input file using a specified extractor and save the extraction results to a file.
 
@@ -27,12 +26,10 @@ def extract_main(
         output_folder_path = None
 
     if not extractor.check_for_skip_files(input_file_path=input_file_path, output_folder_path=output_folder_path):
-        extraction_response = extractor.extract(input_file_path=input_file_path)
+        extractor.extract(input_file_path=input_file_path)
 
     if extractor.get_settings()["store_to_file"] and output_file_path is not None:
         extractor.save_extraction_to_file(output_file_path=output_file_path)
-
-    return extraction_response.dict()
 
 
 if __name__ == "__main__":
@@ -45,10 +42,4 @@ if __name__ == "__main__":
     output_file_path_main = output_folder / input_file_path_main.with_suffix(".json").name
     settings_main: Optional[Dict[str, Union[str, bool]]] = {"skip_extracted_files": True, "store_to_file": True}
 
-    print(f"Input file path is :\n {input_file_path_main}.")
-
-    extraction_dict = extract_main(
-        input_file_path=input_file_path_main, output_file_path=output_file_path_main, settings=settings_main
-    )
-
-    pprint(extraction_dict)
+    extract_main(input_file_path=input_file_path_main, output_file_path=output_file_path_main, settings=settings_main)

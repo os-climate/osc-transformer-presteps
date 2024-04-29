@@ -1,0 +1,67 @@
+question,context,company,source_file,source_page,kpi_id,year,answer,data_type,relevant_paragraphs,annotator,Index,label
+In which year was the annual report or the sustainability report published?,Sustainability Report 2019,Royal Dutch Shell plc,Test.pdf,['0'],1,2019,2019,TEXT,"[""Sustainability Report 2019""]",test_annotations.xlsx,0,1
+In which year was the annual report or the sustainability report published?,CONTRIBUTION TO SOCIETY The third area of sustainability for us – and it is a critical one – is to make a positive contribution to society.,Royal Dutch Shell plc,Test.pdf,['0'],1,2019,2019,TEXT,"[""Sustainability Report 2019""]",test_annotations.xlsx,0,0
+What is the total amount of direct greenhouse gases emissions referred to as scope 1 emissions?,"Greenhouse gas emissions performance Our direct GHG emissions decreased from 71 million tonnes of CO2 equivalent in 2018 to 70 million tonnes of CO2 equivalent in 2019. The main reasons for the decrease were divestments (for example, in Argentina, Canada, Iraq, Malaysia, Norway and the UK). These decreases were partly offset by the start-up of the Prelude floating liquefied natural gas facility in Australia.",Royal Dutch Shell plc,Test.pdf,['2'],6,2019,70 million tonnes of CO2 equivalent,TEXT,"[""Our direct GHG emissions decreased from 71 million tonnes of CO2
+equivalent in 2018 to 70 million tonnes of CO2 equivalent in 2019.
+The main reasons for the decrease were divestments (for example, in
+Argentina, Canada, Iraq, Malaysia, Norway and the UK).""]",test_annotations.xlsx,1,1
+What is the total amount of direct greenhouse gases emissions referred to as scope 1 emissions?,"Contributing to society also means gaining and maintaining people’s trust. We do this by being as open as we can about what we do and why we do it. For example, we are being increasingly transparent about the industry groups we are part of. In 2019, we published the Industry Associations Climate Review, which assessed for the first time Shell’s alignment with 19 industry associations on climate-related policy. We also published our first Tax Contribution Report in 2019, which presents Shell’s approach to tax and explains how our business activities are taxed globally.",Royal Dutch Shell plc,Test.pdf,['2'],6,2019,70 million tonnes of CO2 equivalent,TEXT,"[""Our direct GHG emissions decreased from 71 million tonnes of CO2
+equivalent in 2018 to 70 million tonnes of CO2 equivalent in 2019.
+The main reasons for the decrease were divestments (for example, in
+Argentina, Canada, Iraq, Malaysia, Norway and the UK).""]",test_annotations.xlsx,1,0
+What is the total amount of energy indirect greenhouse gases emissions referred to as scope 2 emissions?,"Greenhouse gas emissions performance Our direct GHG emissions decreased from 71 million tonnes of CO2 equivalent in 2018 to 70 million tonnes of CO2 equivalent in 2019. The main reasons for the decrease were divestments (for example, in Argentina, Canada, Iraq, Malaysia, Norway and the UK). These decreases were partly offset by the start-up of the Prelude floating liquefied natural gas facility in Australia.",Royal Dutch Shell plc,Test.pdf,['2'],7,2018,"71 million tonnes of CO2
+equivalent",TEXT,"[""Our direct GHG emissions decreased from 71 million tonnes of CO2
+equivalent in 2018 to 70 million tonnes of CO2 equivalent in 2019.
+The main reasons for the decrease were divestments (for example, in
+Argentina, Canada, Iraq, Malaysia, Norway and the UK).""]",test_annotations.xlsx,2,1
+What is the total amount of energy indirect greenhouse gases emissions referred to as scope 2 emissions?,SUSTAINABLE ENERGY FUTURE The second area we focus on is to help shape a more sustainable energy future.,Royal Dutch Shell plc,Test.pdf,['2'],7,2018,"71 million tonnes of CO2
+equivalent",TEXT,"[""Our direct GHG emissions decreased from 71 million tonnes of CO2
+equivalent in 2018 to 70 million tonnes of CO2 equivalent in 2019.
+The main reasons for the decrease were divestments (for example, in
+Argentina, Canada, Iraq, Malaysia, Norway and the UK).""]",test_annotations.xlsx,2,0
+What is the base year for carbon reduction commitment?,"We continue to work towards delivering on our Net Carbon Footprint ambition to cut the intensity of the greenhouse gas emissions of the energy products we sell by about 50% by 2050, and 20% by 2035 compared to our 2016 levels, in step with society as it moves towards meeting the goals of the Paris Agreement. In 2019, we set shorter-term targets for 2021 of 2-3% lower than our 2016 baseline Net Carbon Footprint. In early 2020, we set a Net Carbon Footprint target for 2022 of 3-4% lower than our 2016 baseline. We will continue to evolve our approach over time.",Royal Dutch Shell plc,Test.pdf,['1'],9,2019,2016,TEXT,"[""We continue to work towards delivering on our Net Carbon Footprint
+ambition to cut the intensity of the greenhouse gas emissions of the
+energy products we sell by about 50% by 2050, and 20% by 2035
+compared to our 2016 levels, in step with society as it moves towards
+meeting the goals of the Paris Agreement. In 2019, we set shorter-term
+targets for 2021 of 2-3% lower than our 2016 baseline Net Carbon
+Footprint. In early 2020, we set a Net Carbon Footprint target for
+2022 of 3-4% lower than our 2016 baseline. We will continue to
+evolve our approach over time.""]",test_annotations.xlsx,3,1
+What is the base year for carbon reduction commitment?,0.168 0.168 0.158 0.166 0.166 1.18 1.061.06 1.041.04 0.99,Royal Dutch Shell plc,Test.pdf,['1'],9,2019,2016,TEXT,"[""We continue to work towards delivering on our Net Carbon Footprint
+ambition to cut the intensity of the greenhouse gas emissions of the
+energy products we sell by about 50% by 2050, and 20% by 2035
+compared to our 2016 levels, in step with society as it moves towards
+meeting the goals of the Paris Agreement. In 2019, we set shorter-term
+targets for 2021 of 2-3% lower than our 2016 baseline Net Carbon
+Footprint. In early 2020, we set a Net Carbon Footprint target for
+2022 of 3-4% lower than our 2016 baseline. We will continue to
+evolve our approach over time.""]",test_annotations.xlsx,3,0
+What is the target year for climate commitment?,"We continue to work towards delivering on our Net Carbon Footprint ambition to cut the intensity of the greenhouse gas emissions of the energy products we sell by about 50% by 2050, and 20% by 2035 compared to our 2016 levels, in step with society as it moves towards meeting the goals of the Paris Agreement. In 2019, we set shorter-term targets for 2021 of 2-3% lower than our 2016 baseline Net Carbon Footprint. In early 2020, we set a Net Carbon Footprint target for 2022 of 3-4% lower than our 2016 baseline. We will continue to evolve our approach over time.",Royal Dutch Shell plc,Test.pdf,['1'],11,2019,2050,TEXT,"[""We continue to work towards delivering on our Net Carbon Footprint
+ambition to cut the intensity of the greenhouse gas emissions of the
+energy products we sell by about 50% by 2050, and 20% by 2035
+compared to our 2016 levels, in step with society as it moves towards
+meeting the goals of the Paris Agreement. In 2019, we set shorter-term
+targets for 2021 of 2-3% lower than our 2016 baseline Net Carbon
+Footprint. In early 2020, we set a Net Carbon Footprint target for
+2022 of 3-4% lower than our 2016 baseline. We will continue to
+evolve our approach over time.""]",test_annotations.xlsx,4,1
+What is the target year for climate commitment?,"This Sustainability Report details our activities during 2019. The report builds on our actions on sustainability and transparency. We are a founding member of the UN Global Compact and we also continue to support its corporate governance principles on human rights, environmental protection, anti-corruption and better labour practices.",Royal Dutch Shell plc,Test.pdf,['1'],11,2019,2050,TEXT,"[""We continue to work towards delivering on our Net Carbon Footprint
+ambition to cut the intensity of the greenhouse gas emissions of the
+energy products we sell by about 50% by 2050, and 20% by 2035
+compared to our 2016 levels, in step with society as it moves towards
+meeting the goals of the Paris Agreement. In 2019, we set shorter-term
+targets for 2021 of 2-3% lower than our 2016 baseline Net Carbon
+Footprint. In early 2020, we set a Net Carbon Footprint target for
+2022 of 3-4% lower than our 2016 baseline. We will continue to
+evolve our approach over time.""]",test_annotations.xlsx,4,0
+What is the target carbon reduction in percentage?,"We continue to work towards delivering on our Net Carbon Footprint ambition to cut the intensity of the greenhouse gas emissions of the energy products we sell by about 50% by 2050, and 20% by 2035 compared to our 2016 levels, in step with society as it moves towards meeting the goals of the Paris Agreement. In 2019, we set shorter-term targets for 2021 of 2-3% lower than our 2016 baseline Net Carbon Footprint. In early 2020, we set a Net Carbon Footprint target for 2022 of 3-4% lower than our 2016 baseline. We will continue to evolve our approach over time.",Royal Dutch Shell plc,Test.pdf,['1'],12,2019,0.5,TEXT,"[""We continue to work towards delivering on our Net Carbon Footprint
+ambition to cut the intensity of the greenhouse gas emissions of the
+energy products we sell by about 50% by 2050, and 20% by 2035
+compared to our 2016 levels, in step with society as it moves towards
+meeting the goals of the Paris Agreement.""]",test_annotations.xlsx,5,1
+What is the target carbon reduction in percentage?,"We require projects and facilities that produce more than 50,000 tonnes of GHG emissions a year to have a GHG and energy management plan in place.",Royal Dutch Shell plc,Test.pdf,['1'],12,2019,0.5,TEXT,"[""We continue to work towards delivering on our Net Carbon Footprint
+ambition to cut the intensity of the greenhouse gas emissions of the
+energy products we sell by about 50% by 2050, and 20% by 2035
+compared to our 2016 levels, in step with society as it moves towards
+meeting the goals of the Paris Agreement.""]",test_annotations.xlsx,5,0

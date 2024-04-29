@@ -80,6 +80,9 @@ jobs:
             echo "Attempting build with: python -m build"
             python -m build
           fi
-          echo "Checking build artefacts with twine: dist/*"
+
+      - name: "Validating Artefacts with Twine"
+        run: |
+          echo "Validating artefacts with: twine check dist/*"
           pip install --upgrade twine
           twine check dist/*

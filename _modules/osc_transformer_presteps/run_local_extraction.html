@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>osc_transformer_presteps.run_local_extraction &#8212; osc-transformer-presteps unknown documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=89af775e" />
+    <script src="../../_static/documentation_options.js?v=3f1b9271"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for osc_transformer_presteps.run_local_extraction</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># External modules</span>
+<span class="kn">import</span> <span class="nn">typer</span>
+
+<span class="c1"># Internal modules</span>
+<span class="kn">from</span> <span class="nn">osc_transformer_presteps.api.api</span> <span class="kn">import</span> <span class="n">run_api</span>
+<span class="kn">from</span> <span class="nn">osc_transformer_presteps.content_extraction.extraction_factory</span> <span class="kn">import</span> <span class="n">get_extractor</span>
+<span class="kn">from</span> <span class="nn">osc_transformer_presteps.settings</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ExtractionServerSettings</span><span class="p">,</span>
+    <span class="n">ExtractionSettings</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">typer</span><span class="o">.</span><span class="n">Typer</span><span class="p">(</span><span class="n">no_args_is_help</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_specify_root_logger</span><span class="p">(</span><span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configures the root logger with a specific formatting and log level.</span>
+
+<span class="sd">    This function sets up the root logger, which is the top-level logger in the logging hierarchy, with a specific</span>
+<span class="sd">    configuration. It creates a StreamHandler that logs messages to stdout, sets the log level to DEBUG for all</span>
+<span class="sd">    messages, and applies a specific formatter to format the log messages.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        log_level (int): The log_level to use for the logging given as int.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">    Call this function at the beginning of your code to configure the root logger</span>
+<span class="sd">    with the desired formatting and log level.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    <span class="n">handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[</span><span class="n">handler</span><span class="p">]</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="run_local_server">
+<a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.run_local_extraction.run_local_server">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">run_local_server</span><span class="p">(</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">typer</span><span class="o">.</span><span class="n">Option</span><span class="p">(</span>
+        <span class="mi">8000</span><span class="p">,</span>
+        <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The port which will be use as the default.&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">typer</span><span class="o">.</span><span class="n">Option</span><span class="p">(</span>
+        <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--host&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The host name which will be use as the default.&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">typer</span><span class="o">.</span><span class="n">Option</span><span class="p">(</span>
+        <span class="s2">&quot;info&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--log_level&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The log level to be used, see the different log levels from the logging package documentation.&quot;</span>
+        <span class="s2">&quot; Examples are info, debug and warning.&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This subcommand will start a local server.&quot;&quot;&quot;</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">ExtractionServerSettings</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">)</span>
+    <span class="n">_specify_root_logger</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">log_type</span><span class="p">)</span>
+    <span class="n">run_api</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_local_extraction">
+<a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.run_local_extraction.run_local_extraction">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">run_local_extraction</span><span class="p">(</span>
+    <span class="n">file_or_folder_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">typer</span><span class="o">.</span><span class="n">Argument</span><span class="p">(</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;This is the name of the file you want to extract&quot;</span>
+        <span class="s2">&quot; data from or the folder in which you want to &quot;</span>
+        <span class="s2">&quot;extract data from every file. This should be in the current folder.&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">skip_extracted_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">typer</span><span class="o">.</span><span class="n">Option</span><span class="p">(</span>
+        <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;--skip_extracted_files&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Declares if you want to skip files which have already been extracted in the past.&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">store_to_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">typer</span><span class="o">.</span><span class="n">Option</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;--store_to_file&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Boolean to declare if you want to have the output as a file or not. Note that the output will&quot;</span>
+        <span class="s2">&quot; be stored next to your input file with the name &lt;input_file_name&gt;_output.json.&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This command will start the extraction of text to json on your local machine. Check help for details.&quot;&quot;&quot;</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+    <span class="n">file_or_folder_path_temp</span> <span class="o">=</span> <span class="n">cwd</span> <span class="o">/</span> <span class="n">file_or_folder_name</span>
+    <span class="n">extraction_settings</span> <span class="o">=</span> <span class="n">ExtractionSettings</span><span class="p">(</span><span class="n">store_to_file</span><span class="o">=</span><span class="n">store_to_file</span><span class="p">,</span> <span class="n">skip_extracted_files</span><span class="o">=</span><span class="n">skip_extracted_files</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Start extracting file </span><span class="si">{</span><span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">extract_one_file</span><span class="p">(</span>
+            <span class="n">output_folder</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="n">file_or_folder_path_temp</span><span class="p">,</span> <span class="n">extraction_settings</span><span class="o">=</span><span class="n">extraction_settings</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done with extracting file </span><span class="si">{</span><span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()]</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Start extracting file </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">extract_one_file</span><span class="p">(</span>
+                    <span class="n">output_folder</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">extraction_settings</span><span class="o">=</span><span class="n">extraction_settings</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done with extracting file </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The was an error for file </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Given file or folder name is neither a file nor a folder.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_one_file">
+<a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.run_local_extraction.extract_one_file">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_one_file</span><span class="p">(</span><span class="n">output_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">extraction_settings</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is intended to extract data for a given file to a given folder for a specific setting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">extractor</span> <span class="o">=</span> <span class="n">get_extractor</span><span class="p">(</span><span class="n">file_path</span><span class="o">.</span><span class="n">suffix</span><span class="p">,</span> <span class="n">extraction_settings</span><span class="p">)</span>
+    <span class="n">extraction_response</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">input_file_path</span><span class="o">=</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">output_file_name</span> <span class="o">=</span> <span class="n">file_path</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;_output.json&quot;</span>
+    <span class="n">output_file_path</span> <span class="o">=</span> <span class="n">output_folder</span> <span class="o">/</span> <span class="n">output_file_name</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">osc-transformer-presteps</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023, Matthew Watkins.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

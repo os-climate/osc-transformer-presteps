@@ -14,6 +14,22 @@ Subpackages
 Submodules
 ----------
 
+osc\_transformer\_presteps.cli module
+-------------------------------------
+
+.. automodule:: osc_transformer_presteps.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+osc\_transformer\_presteps.run\_local\_extraction module
+--------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.run_local_extraction
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 osc\_transformer\_presteps.settings module
 ------------------------------------------
 

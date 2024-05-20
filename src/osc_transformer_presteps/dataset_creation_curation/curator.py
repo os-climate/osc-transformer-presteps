@@ -76,6 +76,7 @@ class Curator:
     ) -> None:
         self.annotation_folder = Path(annotation_folder)
         self.extract_json = Path(extract_json)
+        self.json_file_name = os.path.basename(extract_json).replace("_output", "")
         self.kpi_mapping_path = Path(kpi_mapping_path)
         self.output_path = Path(output_path)
         self.retrieve_paragraph = retrieve_paragraph
@@ -95,6 +96,9 @@ class Curator:
 
     def clean_text(self, text: str) -> str:
         """Clean text."""
+        if text is None or (isinstance(text, float) and math.isnan(text)):
+            return ""
+        
         text = re.sub(r"(?<=\[)“", '"', text)
         text = re.sub(r"”(?=])", '"', text)
         text = re.sub(r"[“”]", "", text)
@@ -104,16 +108,36 @@ class Curator:
         return text
 
     def create_pos_examples(self, row: pd.Series) -> List[Union[str, List[str]]]:
-        value: str = row["relevant_paragraphs"]
+        value: str = str(row["relevant_paragraphs"])
         sentences: List[str] = ast.literal_eval(self.clean_text(value))
 
-        paragraphs: List[str] = [
-            self.pdf_content[row["source_page"][0]][key_inner]["paragraph"]
-            for key_inner in self.pdf_content[row["source_page"][0]]
-        ]
-        matching_sentences: List[str] = [para for para in paragraphs if sentences[0] in para]
+        if self.json_file_name.replace(".json", "") == row['source_file'].replace(".pdf", ""):
+            
+            source_page = str(row['source_page'])
+            # Extract the page number from the 'source_page'
+            page_number = re.search(r'\d+', source_page).group()
 
-        return matching_sentences if matching_sentences else sentences
+            paragraphs = []
+            # Check if the page number exists in pdf_content
+            if page_number in self.pdf_content:
+                # Extract paragraphs if the page number exists
+                
+                '''paragraphs: List[str] = [
+                self.pdf_content[row["source_page"][0]][key_inner]["paragraph"]
+                for key_inner in self.pdf_content[row["source_page"][0]]
+                ]'''
+
+                paragraphs = [
+                    self.pdf_content[page_number][key_inner]["paragraph"]
+                    for key_inner in self.pdf_content[page_number]
+                ]
+
+            matching_sentences: List[str] = [para for para in paragraphs if sentences[0] in para]
+            return matching_sentences if matching_sentences else sentences
+        else:
+            return []
+
+        
 
     def create_neg_examples(self, row: pd.Series) -> List[str]:
         paragraphs: List[str] = [

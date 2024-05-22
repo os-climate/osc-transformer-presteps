@@ -148,6 +148,10 @@ class Curator:
         return text
 
     def create_pos_examples(self, row: pd.Series) -> List[Union[str, List[str]]]:
+               
+        if not self.pdf_content:  # Added check for empty pdf_content
+            return []
+        
         value: str = row["relevant_paragraphs"]
         cleaned_value: str = self.clean_text(value)
 
@@ -163,7 +167,6 @@ class Curator:
             return []
 
         # cleaned_value: List[str] = ast.literal_eval(self.clean_text(value))
-
         if not sentences:
             return []
 
@@ -187,6 +190,9 @@ class Curator:
 
     def create_neg_examples(self, row: pd.Series) -> List[str]:
 
+        if not self.pdf_content:  # Added check for empty pdf_content
+            return []
+        
         paragraphs: List[str] = [
             self.pdf_content[key_outer][key_inner]["paragraph"]
             for key_outer in self.pdf_content
@@ -198,6 +204,16 @@ class Curator:
         return context
 
     def create_examples_annotate(self, filepath: Path) -> list[DataFrame]:
+        """
+        Create examples for annotation.
+
+        Args:
+            filepath (Path): Path to the file to be annotated.
+
+        Returns:
+            list[DataFrame]: List of DataFrames containing the examples to be annotated.
+
+        """
         df = pd.read_excel(filepath, sheet_name="data_ex_in_xls")[self.columns_to_read]
         df["annotator"] = os.path.basename(filepath)
 
@@ -225,6 +241,11 @@ class Curator:
         return new_dfs
 
     def create_curator_df(self, output_path) -> None:
+        """
+        Create a DataFrame containing the examples to be annotated by the curator.
+        The DataFrame is saved as a CSV file in the output directory.
+        """
+        
         new_dfs = self.create_examples_annotate(self.annotation_folder)
         new_df = pd.concat(new_dfs, ignore_index=True)
 

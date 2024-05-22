@@ -5,7 +5,7 @@ import random
 import re
 from pathlib import Path
 from typing import List, Union
-
+import math
 import pandas as pd
 from pandas import DataFrame
 from pydantic import BaseModel, FilePath, validator
@@ -94,7 +94,7 @@ class Curator:
         with self.extract_json.open() as f:
             return json.load(f)
 
-    def clean_text(self, text: str) -> str:
+    '''def clean_text(self, text: str) -> str:
         """Clean text."""
         if text is None or (isinstance(text, float) and math.isnan(text)):
             return ""
@@ -105,28 +105,76 @@ class Curator:
         text = re.sub(r"[\n\t]", " ", text)
         text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]", "", text)
         text = re.sub(r"\s{2,}", " ", text)
+        return text'''
+
+    def clean_text(self, text: str) -> str:
+        """
+        Clean a sentence by removing unwanted characters and control characters.
+
+        Args:
+            text (str): The text to be cleaned.
+            
+        Returns:
+            str: The cleaned text.
+        """
+        if text is None or isinstance(text, float) and math.isnan(text) or text == "":
+            return ""
+
+        # Replace fancy quotes
+        text = re.sub(r'[“”]', '"', text)
+
+        # Replace specific fancy quotes within square brackets
+        text = re.sub(r'(?<=\[)“', '"', text)
+        text = re.sub(r'”(?=])', '"', text)
+
+        # Replace newline and tab characters with spaces
+        text = re.sub(r'[\n\t]', ' ', text)
+
+        # Remove control characters (except line feed, carriage return, and horizontal tab)
+        text = re.sub(r'[^\x20-\x7E\x0A\x0D\x09]', '', text)
+
+        # Replace multiple spaces with a single space
+        text = re.sub(r'\s{2,}', ' ', text)
+
+        # Remove the term "BOE"
+        text = text.replace("BOE", "")
+
+        # Remove invalid escape sequence
+        text = text.replace("\x9d", '')
+
+        # Remove extra backslashes
+        text = text.replace("\\", "")
+
         return text
 
     def create_pos_examples(self, row: pd.Series) -> List[Union[str, List[str]]]:
-        value: str = str(row["relevant_paragraphs"])
-        sentences: List[str] = ast.literal_eval(self.clean_text(value))
+        value: str = row["relevant_paragraphs"]
+        cleaned_value: str = self.clean_text(value)
+
+        # Attempt to convert the cleaned string back to a list
+        try:
+            cleaned_value_list = ast.literal_eval(cleaned_value)
+            if isinstance(cleaned_value_list, list):
+                sentences = cleaned_value_list
+            else:
+                sentences = [cleaned_value]
+        except (ValueError, SyntaxError):
+            # cleaned_value = []
+            return []
+
+        # cleaned_value: List[str] = ast.literal_eval(self.clean_text(value))
+
+        if not sentences:
+            return []
 
         if self.json_file_name.replace(".json", "") == row['source_file'].replace(".pdf", ""):
-            
             source_page = str(row['source_page'])
             # Extract the page number from the 'source_page'
             page_number = re.search(r'\d+', source_page).group()
-
             paragraphs = []
             # Check if the page number exists in pdf_content
             if page_number in self.pdf_content:
                 # Extract paragraphs if the page number exists
-                
-                '''paragraphs: List[str] = [
-                self.pdf_content[row["source_page"][0]][key_inner]["paragraph"]
-                for key_inner in self.pdf_content[row["source_page"][0]]
-                ]'''
-
                 paragraphs = [
                     self.pdf_content[page_number][key_inner]["paragraph"]
                     for key_inner in self.pdf_content[page_number]
@@ -137,9 +185,8 @@ class Curator:
         else:
             return []
 
-        
-
     def create_neg_examples(self, row: pd.Series) -> List[str]:
+
         paragraphs: List[str] = [
             self.pdf_content[key_outer][key_inner]["paragraph"]
             for key_outer in self.pdf_content

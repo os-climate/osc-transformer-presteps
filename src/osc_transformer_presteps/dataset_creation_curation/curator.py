@@ -113,7 +113,7 @@ class Curator:
 
         Args:
             text (str): The text to be cleaned.
-            
+ 
         Returns:
             str: The cleaned text.
         """
@@ -148,7 +148,7 @@ class Curator:
         return text
 
     def create_pos_examples(self, row: pd.Series) -> List[Union[str, List[str]]]:
-               
+             
         if not self.pdf_content:  # Added check for empty pdf_content
             return []
         
@@ -245,13 +245,6 @@ class Curator:
         Create a DataFrame containing the examples to be annotated by the curator.
         The DataFrame is saved as a CSV file in the output directory.
         """
-        
-        new_dfs = self.create_examples_annotate(self.annotation_folder)
-        new_df = pd.concat(new_dfs, ignore_index=True)
-
-        kpi_df = pd.read_csv(self.kpi_mapping_path, header=0)
-        merged_df = pd.merge(new_df, kpi_df[["kpi_id", "question"]], on="kpi_id", how="left")
-
         columns_order = [
             "question",
             "context",
@@ -267,6 +260,15 @@ class Curator:
             "Index",
             "label",
         ]
+        
+        if not self.pdf_content:  # Added check for empty pdf_content
+            result_df = pd.DataFrame(columns=columns_order)
+        else:
+            new_dfs = self.create_examples_annotate(self.annotation_folder)
+            new_df = pd.concat(new_dfs, ignore_index=True)
 
-        result_df = merged_df[columns_order]
+            kpi_df = pd.read_csv(self.kpi_mapping_path, header=0)
+            merged_df = pd.merge(new_df, kpi_df[["kpi_id", "question"]], on="kpi_id", how="left")
+            result_df = merged_df[columns_order]
+
         result_df.to_csv(output_path, index=False)

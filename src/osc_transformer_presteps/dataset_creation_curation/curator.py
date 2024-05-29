@@ -113,7 +113,7 @@ class Curator:
 
         Args:
             text (str): The text to be cleaned.
- 
+
         Returns:
             str: The cleaned text.
         """
@@ -148,10 +148,10 @@ class Curator:
         return text
 
     def create_pos_examples(self, row: pd.Series) -> List[Union[str, List[str]]]:
-             
+            
         if not self.pdf_content:  # Added check for empty pdf_content
             return []
-        
+     
         value: str = row["relevant_paragraphs"]
         cleaned_value: str = self.clean_text(value)
 
@@ -170,7 +170,7 @@ class Curator:
         if not sentences:
             return []
 
-        if self.json_file_name.replace(".json", "") == row['source_file'].replace(".pdf", ""):
+        if self.json_file_name.replace(".json", "") == row['source_file'].replace(".pdf", "") and row['data_type'] == "TEXT":
             source_page = str(row['source_page'])
             # Extract the page number from the 'source_page'
             page_number = re.search(r'\d+', source_page).group()
@@ -182,13 +182,14 @@ class Curator:
                     self.pdf_content[page_number][key_inner]["paragraph"]
                     for key_inner in self.pdf_content[page_number]
                 ]
-
+            else:
+                return []
             matching_sentences: List[str] = [para for para in paragraphs if sentences[0] in para]
             return matching_sentences if matching_sentences else sentences
         else:
             return []
 
-    def create_neg_examples(self, row: pd.Series) -> List[str]:
+    '''def create_neg_examples(self, row: pd.Series) -> List[str]:
 
         if not self.pdf_content:  # Added check for empty pdf_content
             return []
@@ -201,7 +202,24 @@ class Curator:
 
         context: List[str] = random.choices(paragraphs, k=self.neg_pos_ratio)
 
-        return context
+        return context'''
+
+    def create_neg_examples(self, row: pd.Series) -> List[str]:
+
+        if not self.pdf_content:  # Added check for empty pdf_content
+            return []
+        
+        if self.json_file_name.replace(".json", "") == row['source_file'].replace(".pdf", "") and row['data_type'] == "TEXT":
+            paragraphs: List[str] = [
+                self.pdf_content[key_outer][key_inner]["paragraph"]
+                for key_outer in self.pdf_content
+                for key_inner in self.pdf_content[key_outer]
+            ]
+
+            context: List[str] = random.choices(paragraphs, k=self.neg_pos_ratio)
+            return context
+        else:
+            return []
 
     def create_examples_annotate(self, filepath: Path) -> list[DataFrame]:
         """
@@ -225,19 +243,22 @@ class Curator:
 
         for i, row in df.iterrows():
             row["Index"] = i
-            positive_context = self.create_pos_examples(row.copy())
+            positive_context: List[str] = self.create_pos_examples(row.copy())
 
             negative_context: List[str] = self.create_neg_examples(row.copy()) if self.create_neg_samples else []
 
             # Create DataFrames for positive contexts
-            pos_df = pd.DataFrame({"context": positive_context, "label": 1})
-            pos_df = pd.concat([row.to_frame().T.reset_index(drop=True), pos_df], axis=1)
-            new_dfs.append(pos_df)
+            if positive_context:
+                pos_df = pd.DataFrame({"context": positive_context, "label": 1})
+                pos_df = pd.concat([row.to_frame().T.reset_index(drop=True), pos_df], axis=1)
+                new_dfs.append(pos_df)
 
             # Create DataFrames for negative contexts
-            neg_df = pd.DataFrame({"context": negative_context, "label": 0})
-            neg_df = pd.concat([row.to_frame().T.reset_index(drop=True), neg_df], axis=1)
-            new_dfs.append(neg_df)
+            if negative_context:
+                neg_df = pd.DataFrame({"context": negative_context, "label": 0})
+                neg_df = pd.concat([row.to_frame().T.reset_index(drop=True), neg_df], axis=1)
+                new_dfs.append(neg_df)
+
         return new_dfs
 
     def create_curator_df(self, output_path) -> None:
@@ -260,12 +281,19 @@ class Curator:
             "Index",
             "label",
         ]
-        
+                           
         if not self.pdf_content:  # Added check for empty pdf_content
             result_df = pd.DataFrame(columns=columns_order)
         else:
             new_dfs = self.create_examples_annotate(self.annotation_folder)
-            new_df = pd.concat(new_dfs, ignore_index=True)
+
+            if new_dfs:
+                # If not empty, concatenate the dataframes in new_dfs
+                new_df = pd.concat(new_dfs, ignore_index=True)
+            else:
+                # If empty, create an empty dataframe with the specified columns
+                new_df = pd.DataFrame(columns=columns_order)
+                new_df = new_df.drop(['question'], axis=1)
 
             kpi_df = pd.read_csv(self.kpi_mapping_path, header=0)
             merged_df = pd.merge(new_df, kpi_df[["kpi_id", "question"]], on="kpi_id", how="left")

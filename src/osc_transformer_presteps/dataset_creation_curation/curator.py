@@ -94,18 +94,6 @@ class Curator:
         with self.extract_json.open() as f:
             return json.load(f)
 
-    '''def clean_text(self, text: str) -> str:
-        """Clean text."""
-        if text is None or (isinstance(text, float) and math.isnan(text)):
-            return ""
-        
-        text = re.sub(r"(?<=\[)“", '"', text)
-        text = re.sub(r"”(?=])", '"', text)
-        text = re.sub(r"[“”]", "", text)
-        text = re.sub(r"[\n\t]", " ", text)
-        text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]", "", text)
-        text = re.sub(r"\s{2,}", " ", text)
-        return text'''
 
     def clean_text(self, text: str) -> str:
         """
@@ -147,8 +135,9 @@ class Curator:
 
         return text
 
+
     def create_pos_examples(self, row: pd.Series) -> List[Union[str, List[str]]]:
-            
+
         if not self.pdf_content:  # Added check for empty pdf_content
             return []
      
@@ -189,20 +178,7 @@ class Curator:
         else:
             return []
 
-    '''def create_neg_examples(self, row: pd.Series) -> List[str]:
 
-        if not self.pdf_content:  # Added check for empty pdf_content
-            return []
-        
-        paragraphs: List[str] = [
-            self.pdf_content[key_outer][key_inner]["paragraph"]
-            for key_outer in self.pdf_content
-            for key_inner in self.pdf_content[key_outer]
-        ]
-
-        context: List[str] = random.choices(paragraphs, k=self.neg_pos_ratio)
-
-        return context'''
 
     def create_neg_examples(self, row: pd.Series) -> List[str]:
 

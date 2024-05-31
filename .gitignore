@@ -184,5 +184,5 @@ test/.DS_Store
 # Cython debug symbols
 cython_debug/
 
-.\docs\demo\curation\output\
+./docs/demo/curation/output/
 .\docs\demo\curation\data_for_curator\

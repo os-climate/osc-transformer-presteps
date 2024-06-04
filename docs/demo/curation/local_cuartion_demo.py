@@ -1,9 +1,11 @@
 from pathlib import Path
-import sys
+
 from pydantic import BaseModel, FilePath, ValidationError
-from pathlib import Path
-sys.path.append(r'C:\Users\Tanishq\Desktop\IDS_WORK\curator\osc-transformer-presteps')
+
 from src.osc_transformer_presteps.dataset_creation_curation.curator import Curator
+
+# sys.path.append(r"C:\Users\Tanishq\Desktop\IDS_WORK\curator\osc-transformer-presteps")
+# from src.osc_transformer_presteps.dataset_creation_curation.curator import Curator
 
 
 class AnnotationData(BaseModel):
@@ -48,5 +50,5 @@ if __name__ == "__main__":
             annotation_folder=annotation_data.annotation_folder,
             extract_json=annotation_data.extract_json,
             kpi_mapping_path=annotation_data.kpi_mapping_path,
-            output_path=annotation_data.output_path,
+            output_path=str(annotation_data.output_path),
         )

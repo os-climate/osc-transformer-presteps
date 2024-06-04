@@ -235,13 +235,13 @@ class Curator:
             negative_context: List[str] = self.create_neg_examples(row.copy()) if self.create_neg_samples else []
 
             # Create DataFrames for positive contexts
-            if positive_context[0]:
+            if positive_context != [""]:
                 pos_df = pd.DataFrame({"context": positive_context, "label": 1})
                 pos_df = pd.concat([row.to_frame().T.reset_index(drop=True), pos_df], axis=1)
                 new_dfs.append(pos_df)
 
             # Create DataFrames for negative contexts
-            if negative_context[0]:
+            if negative_context != [""]:
                 neg_df = pd.DataFrame({"context": negative_context, "label": 0})
                 neg_df = pd.concat([row.to_frame().T.reset_index(drop=True), neg_df], axis=1)
                 new_dfs.append(neg_df)

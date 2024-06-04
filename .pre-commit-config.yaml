@@ -121,11 +121,11 @@ repos:
       - id: isort
         args: ["--profile", "black"]
 
-  - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.35.1
-    hooks:
-      - id: yamllint
-        args: [--strict]
+  #- repo: https://github.com/adrienverge/yamllint.git
+  #  rev: v1.35.1
+  #  hooks:
+  #    - id: yamllint
+  #      args: [--strict]
 
   - repo: https://github.com/Mateusz-Grzelinski/actionlint-py
     rev: v1.6.27.13

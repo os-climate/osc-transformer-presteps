@@ -33,7 +33,10 @@ class TestBaseExtractor:
         """This function tests if we get a ValueError in case a subclass has not changed extractor_name to
         something different then base.
         """
-        with pytest.raises(ValueError, match="Subclass must define an extractor_name not equal to 'base'."):
+        with pytest.raises(
+            ValueError,
+            match="Subclass must define an extractor_name not equal to 'base'.",
+        ):
             concrete_base_extractor("base")
 
     def test_get_settings(self, base_extractor):
@@ -44,14 +47,18 @@ class TestBaseExtractor:
         assert settings["store_to_file"] is True
 
     def test_get_extractions(self, base_extractor):
-        base_extractor._extraction_response = ExtractionResponse(**{"dictionary": {"a": "b"}, "success": True})
+        base_extractor._extraction_response = ExtractionResponse(
+            **{"dictionary": {"a": "b"}, "success": True}
+        )
         assert base_extractor.get_extractions().dictionary == {"a": "b"}
         assert base_extractor.get_extractions().success is True
 
     def test_check_for_skip_files(self, base_extractor):
         input_file_path = Path(__file__).resolve().parent / "test.pdf"
         output_folder_path = Path(__file__).resolve().parent
-        assert not base_extractor.check_for_skip_files(input_file_path, output_folder_path)
+        assert not base_extractor.check_for_skip_files(
+            input_file_path, output_folder_path
+        )
 
         # Create a JSON file in the output folder
         json_file_path = output_folder_path / "test.json"
@@ -63,7 +70,9 @@ class TestBaseExtractor:
 
         # Set skip_extracted_files to False
         base_extractor._settings["skip_extracted_files"] = False
-        assert not base_extractor.check_for_skip_files(input_file_path, output_folder_path)
+        assert not base_extractor.check_for_skip_files(
+            input_file_path, output_folder_path
+        )
 
         json_file_path.unlink(missing_ok=True)
 

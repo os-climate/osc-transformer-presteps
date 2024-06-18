@@ -4,6 +4,9 @@ from pydantic import BaseModel, FilePath, ValidationError
 
 from src.osc_transformer_presteps.dataset_creation_curation.curator import Curator
 
+# sys.path.append(r"C:\Users\Tanishq\Desktop\IDS_WORK\curator\osc-transformer-presteps")
+# from src.osc_transformer_presteps.dataset_creation_curation.curator import Curator
+
 
 class AnnotationData(BaseModel):
     """
@@ -24,7 +27,7 @@ if __name__ == "__main__":
 
     # Define file paths
     annotation_folder = input_folder / "test_annotations.xlsx"
-    extract_json_path = json_folder / "output" / "test.json"
+    extract_json_path = json_folder / "output" / "191047_MOTOR_OIL_OIKONOMIKOS_ENG_2018_V5_output.json"
     kpi_mapping_path = input_folder / "kpi_mapping.csv"
     output_file_path_main = output_folder / extract_json_path.with_suffix(".csv").name
 
@@ -47,5 +50,5 @@ if __name__ == "__main__":
             annotation_folder=annotation_data.annotation_folder,
             extract_json=annotation_data.extract_json,
             kpi_mapping_path=annotation_data.kpi_mapping_path,
-            output_path=annotation_data.output_path,
+            output_path=str(annotation_data.output_path),
         )

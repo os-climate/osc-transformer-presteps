@@ -1,5 +1,6 @@
 import ast
 import json
+import math
 import os
 import random
 import re
@@ -76,6 +77,7 @@ class Curator:
     ) -> None:
         self.annotation_folder = Path(annotation_folder)
         self.extract_json = Path(extract_json)
+        self.json_file_name = os.path.basename(extract_json).replace("_output", "")
         self.kpi_mapping_path = Path(kpi_mapping_path)
         self.output_path = Path(output_path)
         self.retrieve_paragraph = retrieve_paragraph
@@ -94,39 +96,129 @@ class Curator:
             return json.load(f)
 
     def clean_text(self, text: str) -> str:
-        """Clean text."""
+        """
+        Clean a sentence by removing unwanted characters and control characters.
+
+        Args:
+            text (str): The text to be cleaned.
+
+        Returns:
+            str: The cleaned text.
+        """
+        if text is None or isinstance(text, float) and math.isnan(text) or text == "":
+            return ""
+
+        # Replace fancy quotes
+        text = re.sub(r"[“”]", '"', text)
+
+        # Replace specific fancy quotes within square brackets
         text = re.sub(r"(?<=\[)“", '"', text)
         text = re.sub(r"”(?=])", '"', text)
-        text = re.sub(r"[“”]", "", text)
+
+        # Replace newline and tab characters with spaces
         text = re.sub(r"[\n\t]", " ", text)
-        text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]", "", text)
+
+        # Remove control characters (except line feed, carriage return, and horizontal tab)
+        text = re.sub(r"[^\x20-\x7E\x0A\x0D\x09]", "", text)
+
+        # Replace multiple spaces with a single space
         text = re.sub(r"\s{2,}", " ", text)
+
+        # Remove the term "BOE"
+        text = text.replace("BOE", "")
+
+        # Remove invalid escape sequence
+        text = text.replace("\x9d", "")
+
+        # Remove extra backslashes
+        text = text.replace("\\", "")
+
         return text
 
     def create_pos_examples(self, row: pd.Series) -> List[Union[str, List[str]]]:
+
+        if not self.pdf_content:  # Added check for empty pdf_content
+            return [""]
+
         value: str = row["relevant_paragraphs"]
-        sentences: List[str] = ast.literal_eval(self.clean_text(value))
+        cleaned_value: str = self.clean_text(value)
 
-        paragraphs: List[str] = [
-            self.pdf_content[row["source_page"][0]][key_inner]["paragraph"]
-            for key_inner in self.pdf_content[row["source_page"][0]]
-        ]
-        matching_sentences: List[str] = [para for para in paragraphs if sentences[0] in para]
+        # Attempt to convert the cleaned string back to a list
+        try:
+            cleaned_value_list = ast.literal_eval(cleaned_value)
+            if isinstance(cleaned_value_list, list):
+                sentences = cleaned_value_list
+            else:
+                sentences = [cleaned_value]
+        except (ValueError, SyntaxError):
+            # cleaned_value = []
+            return [""]
 
-        return matching_sentences if matching_sentences else sentences
+        # cleaned_value: List[str] = ast.literal_eval(self.clean_text(value))
+        if not sentences:
+            return [""]
+
+        if (
+            self.json_file_name.replace(".json", "") == row["source_file"].replace(".pdf", "")
+            and row["data_type"] == "TEXT"
+        ):
+            source_page = str(row["source_page"])
+            # Extract the page number from the 'source_page'
+            match = re.search(r"\d+", source_page)
+            if match:
+                page_number = match.group()
+            else:
+                # Handle the case where no match is found, maybe set a default or raise an error
+                page_number = None
+
+            paragraphs = [""]
+            # Check if the page number exists in pdf_content
+            if page_number and page_number in self.pdf_content:
+                # Extract paragraphs if the page number exists
+                paragraphs = [
+                    self.pdf_content[page_number][key_inner]["paragraph"] for key_inner in self.pdf_content[page_number]
+                ]
+            else:
+                return [""]
+            matching_sentences: List[str] = [
+                para for para in paragraphs if any(sentence in para for sentence in sentences)
+            ]
+            return matching_sentences if matching_sentences else sentences
+
+        else:
+            return [""]
 
     def create_neg_examples(self, row: pd.Series) -> List[str]:
-        paragraphs: List[str] = [
-            self.pdf_content[key_outer][key_inner]["paragraph"]
-            for key_outer in self.pdf_content
-            for key_inner in self.pdf_content[key_outer]
-        ]
 
-        context: List[str] = random.choices(paragraphs, k=self.neg_pos_ratio)
+        if not self.pdf_content:  # Added check for empty pdf_content
+            return [""]
 
-        return context
+        if (
+            self.json_file_name.replace(".json", "") == row["source_file"].replace(".pdf", "")
+            and row["data_type"] == "TEXT"
+        ):
+            paragraphs: List[str] = [
+                self.pdf_content[key_outer][key_inner]["paragraph"]
+                for key_outer in self.pdf_content
+                for key_inner in self.pdf_content[key_outer]
+            ]
+
+            context: List[str] = random.choices(paragraphs, k=self.neg_pos_ratio)
+            return context
+        else:
+            return [""]
 
     def create_examples_annotate(self, filepath: Path) -> list[DataFrame]:
+        """
+        Create examples for annotation.
+
+        Args:
+            filepath (Path): Path to the file to be annotated.
+
+        Returns:
+            list[DataFrame]: List of DataFrames containing the examples to be annotated.
+
+        """
         df = pd.read_excel(filepath, sheet_name="data_ex_in_xls")[self.columns_to_read]
         df["annotator"] = os.path.basename(filepath)
 
@@ -138,28 +230,29 @@ class Curator:
 
         for i, row in df.iterrows():
             row["Index"] = i
-            positive_context = self.create_pos_examples(row.copy())
+            positive_context: List[str] = self.create_pos_examples(row.copy())
 
             negative_context: List[str] = self.create_neg_examples(row.copy()) if self.create_neg_samples else []
 
             # Create DataFrames for positive contexts
-            pos_df = pd.DataFrame({"context": positive_context, "label": 1})
-            pos_df = pd.concat([row.to_frame().T.reset_index(drop=True), pos_df], axis=1)
-            new_dfs.append(pos_df)
+            if positive_context != [""]:
+                pos_df = pd.DataFrame({"context": positive_context, "label": 1})
+                pos_df = pd.concat([row.to_frame().T.reset_index(drop=True), pos_df], axis=1)
+                new_dfs.append(pos_df)
 
             # Create DataFrames for negative contexts
-            neg_df = pd.DataFrame({"context": negative_context, "label": 0})
-            neg_df = pd.concat([row.to_frame().T.reset_index(drop=True), neg_df], axis=1)
-            new_dfs.append(neg_df)
+            if negative_context != [""]:
+                neg_df = pd.DataFrame({"context": negative_context, "label": 0})
+                neg_df = pd.concat([row.to_frame().T.reset_index(drop=True), neg_df], axis=1)
+                new_dfs.append(neg_df)
+
         return new_dfs
 
     def create_curator_df(self, output_path) -> None:
-        new_dfs = self.create_examples_annotate(self.annotation_folder)
-        new_df = pd.concat(new_dfs, ignore_index=True)
-
-        kpi_df = pd.read_csv(self.kpi_mapping_path, header=0)
-        merged_df = pd.merge(new_df, kpi_df[["kpi_id", "question"]], on="kpi_id", how="left")
-
+        """
+        Create a DataFrame containing the examples to be annotated by the curator.
+        The DataFrame is saved as a CSV file in the output directory.
+        """
         columns_order = [
             "question",
             "context",
@@ -176,5 +269,21 @@ class Curator:
             "label",
         ]
 
-        result_df = merged_df[columns_order]
+        if not self.pdf_content:  # Added check for empty pdf_content
+            result_df = pd.DataFrame(columns=columns_order)
+        else:
+            new_dfs = self.create_examples_annotate(self.annotation_folder)
+
+            if new_dfs:
+                # If not empty, concatenate the dataframes in new_dfs
+                new_df = pd.concat(new_dfs, ignore_index=True)
+            else:
+                # If empty, create an empty dataframe with the specified columns
+                new_df = pd.DataFrame(columns=columns_order)
+                new_df = new_df.drop(["question"], axis=1)
+
+            kpi_df = pd.read_csv(self.kpi_mapping_path, header=0)
+            merged_df = pd.merge(new_df, kpi_df[["kpi_id", "question"]], on="kpi_id", how="left")
+            result_df = merged_df[columns_order]
+
         result_df.to_csv(output_path, index=False)

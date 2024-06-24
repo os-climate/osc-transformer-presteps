@@ -34,7 +34,9 @@ jobs:
           pip install pre-commit mypy
 
       - name: "Run mypy using pre-commit"
-        run: pre-commit run mypy -a
+        run: |
+          if [ ! -d .mypy_cache ]; then /bin/mkdir .mypy_cache; fi
+          pre-commit run mypy -a
 
         # yamllint disable rule:line-length
         # yamllint disable rule:comments-indentation

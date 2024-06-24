@@ -1,3 +1,4 @@
+"""Python script for using local curation as cli."""
 import logging
 import traceback
 from pathlib import Path
@@ -16,7 +17,7 @@ app = typer.Typer(no_args_is_help=True)
 
 def _specify_root_logger(log_level: int):
     """
-    Configures the root logger with a specific formatting and log level.
+    Configure the root logger with a specific formatting and log level.
 
     This function sets up the root logger, which is the top-level logger in the logging hierarchy, with a specific
     configuration. It creates a StreamHandler that logs messages to stdout, sets the log level to DEBUG for all
@@ -65,8 +66,7 @@ def run_local_curation(
             help="Ratio of number of negative samples you want per positive samples.",
         ),
 ) -> None:
-    """This command will start the creation of the dataset based on the extracted text on your local machine. Check
-    help for details."""
+    """Start the creation of the dataset based on the extracted text on your local machine."""
     cwd = Path.cwd()
     extracted_json_temp = cwd / file_or_folder_name
     annotation_temp = cwd / annotation_dir
@@ -102,13 +102,12 @@ def run_local_curation(
 
 
 def curate_one_file(dir_extracted_json_name: Path, annotation_dir: Path, kpi_mapping_dir: Path,
-                    create_neg_samples: bool, neg_pos_ratio: int) -> None:
+                    create_neg_samples: bool, neg_pos_ratio: int):
     """
-    This function is intended to curate data for a given file to a given folder for a specific setting.
+    Curate data for a given file to a given folder for a specific setting.
 
     Return: Curated Dataframe
     """
-
     return Curator(
         annotation_folder=annotation_dir,
         extract_json=dir_extracted_json_name,

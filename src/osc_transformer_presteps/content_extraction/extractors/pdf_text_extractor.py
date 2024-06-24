@@ -1,3 +1,4 @@
+"""Python script for extracting content from large pdf in desired format."""
 import io
 import logging
 import re
@@ -18,7 +19,7 @@ _logger = logging.getLogger(__name__)
 
 def clean_text(text):
     """
-    Clean text
+    Clean text.
 
     Args:
         text (str): The input text to clean
@@ -42,7 +43,9 @@ def clean_text(text):
 
 
 def check_pdf_accessibility(pdf_file: str) -> bool:
-    """Checks if it can access the content of the pdf at all.
+    """
+    Check if it can access the content of the pdf at all.
+
     Args:
         pdf_file (str): Path to the pdf file.
     Returns:
@@ -58,10 +61,11 @@ def check_pdf_accessibility(pdf_file: str) -> bool:
 
 
 class PDFExtractor(BaseExtractor):
-    """This Class is responsible for extracting text data from PDFs and saving
-        the result in a json format file.
-        Each name/value pair in the json file refers to page_number and
-        the list of paragraphs in that page.
+    """
+    Class responsible for extracting text data from PDFs and saving the result in a json format file.
+
+    Each name/value pair in the json file refers to page_number and
+    the list of paragraphs in that page.
     Args:
         settings (dict)(optional): See specification under _Settings class.
     """
@@ -69,6 +73,7 @@ class PDFExtractor(BaseExtractor):
     extractor_name = "pdf_text_extractor"
 
     def __init__(self, settings: Optional[dict] = None):
+        """Initialize the settings for pdf_text_extractor."""
         super().__init__(settings)
 
     def _generate_extractions(
@@ -76,6 +81,7 @@ class PDFExtractor(BaseExtractor):
         input_file_path: Path,
     ) -> None:
         """Extract text from a single pdf file and stores it to the <filename>.json.
+
         The dictionary output will be returned. If the file was already processed
         or it was not possible to extract the content it will return an empty dict.
 
@@ -95,8 +101,9 @@ class PDFExtractor(BaseExtractor):
         _logger.info(f"The number of paragraphs found: {paragraphs}.")
 
     def extract_pdf_by_page(self, pdf_file):
-        """Read the content of each page in a pdf file, this method uses pdfminer and stores the output to
-        the _extraction_response ExtractionResult object.
+        """
+        Read the content of each page in a pdf file.
+
         Args:
             pdf_file (str): Path to the pdf file.
         """
@@ -125,7 +132,10 @@ class PDFExtractor(BaseExtractor):
                     retstr.seek(0)
 
     def process_page(self, input_text):
-        """This function receives a text following:
+        r"""
+        Process the input text from a PDF page.
+
+        Function receives a text following:
         1. Divide it into  paragraphs, using \n\n
         2. Remove table data: To achieve this, if number of alphabet characters of paragraph
             is less min_paragraph_length, it is considered as table cell and it will be removed.

@@ -1,6 +1,6 @@
+"""Python Script for locally running extraction on FastAPI."""
 import json
 from pathlib import Path
-from pprint import pprint
 
 import requests
 
@@ -32,7 +32,6 @@ if __name__ == "__main__":
             if response.status_code == 200:
                 response_dict = json.loads(response.content)
                 extraction_dict = response_dict["dictionary"]
-                print(f"We store output to {output_file_path_main}.")
-                pprint(extraction_dict)
+
                 with open(str(output_file_path_main), "w") as f:
                     json.dump(extraction_dict, f)

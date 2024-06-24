@@ -1,3 +1,4 @@
+"""Python Script for Base Extractor."""
 import logging
 import traceback
 from abc import ABC, abstractmethod
@@ -14,6 +15,8 @@ _logger = logging.getLogger(__name__)
 
 class _BaseSettings(BaseModel):
     """
+    Get settings from the user.
+
     Args possible in the settings:
     min_paragraph_length (int)(Optional): Minimum alphabetic characters for paragraph,
                         any paragraph shorter than that will be disregarded.
@@ -30,40 +33,43 @@ class _BaseSettings(BaseModel):
 
 
 class ExtractionResponse(BaseModel):
+    """Get Extraction Responses."""
+
     success: bool = True
     dictionary: Dict[str, Any] = {}
 
 
 @dataclass
 class ExtractionError(Exception):
+    """Get Extraction error."""
+
     error: str
 
 
 class BaseExtractor(ABC):
-    """
-    An abstract base class for extracting text from files.
-    """
+    """An abstract base class for extracting text from files."""
 
     extractor_name = "base"
     _extraction_response = ExtractionResponse()
 
     def __init__(self, settings: Optional[dict] = None):
-        """
-        Initializes a BaseExtractor instance.
-        """
+        """Initialize a BaseExtractor instance."""
         settings_base: dict = {} if settings is None else settings
         settings_base = _BaseSettings(**settings_base).model_dump()
         self._settings: dict = settings_base
 
     def __init_subclass__(cls, **kwargs):
+        """Intialize the subclass."""
         super().__init_subclass__(**kwargs)
         if cls.extractor_name == "base":
             raise ValueError("Subclass must define an extractor_name not equal to 'base'.")
 
     def get_settings(self):
+        """Get settings for extraction."""
         return self._settings
 
     def get_extractions(self):
+        """Get extraction response."""
         return self._extraction_response
 
     def check_for_skip_files(self, input_file_path: Path, output_folder_path: Optional[Path]) -> bool:
@@ -133,7 +139,8 @@ class BaseExtractor(ABC):
         input_file_path: Path,
     ) -> Optional[dict]:
         """
-        Function, which defines how text is extracted from a give file in path.
+        Define how text is extracted from a give file in path.
+
         Args:
             input_file_path (Path): Should contain the path to a file as a pathlib.Path object.
         """

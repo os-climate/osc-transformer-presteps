@@ -1,13 +1,14 @@
-import json
 import os
 from pathlib import Path
-from unittest.mock import mock_open, patch
 
 import pandas as pd
 import pytest
 from pydantic import ValidationError
 
-from osc_transformer_presteps.dataset_creation_curation.curator import AnnotationData, Curator
+from osc_transformer_presteps.dataset_creation_curation.curator import (
+    AnnotationData,
+    Curator,
+)
 import ast
 
 
@@ -39,7 +40,9 @@ def annotation_to_df(filepath: Path) -> pd.Series:
     df["annotation_file"] = os.path.basename(filepath)
 
     # Update the "source_page" column
-    df["source_page"] = df["source_page"].apply(lambda x: [str(p - 1) for p in ast.literal_eval(x)])
+    df["source_page"] = df["source_page"].apply(
+        lambda x: [str(p - 1) for p in ast.literal_eval(x)]
+    )
 
     return df.iloc[0]
 
@@ -58,18 +61,20 @@ class TestAnnotationData:
 
     def test_annotation_data_invalid_paths(self):
         with pytest.raises(ValidationError):
-            AnnotationData(annotation_folder="/invalid/path", extract_json="/path/to/file.json",
-                           kpi_mapping_path="/path/to/kpi_mapping_sliced.csv")
+            AnnotationData(
+                annotation_folder="/invalid/path",
+                extract_json="/path/to/file.json",
+                kpi_mapping_path="/path/to/kpi_mapping_sliced.csv",
+            )
 
 
 class TestCurator:
-
     def test_clean_text_basic(self, curator_instance):
         cleaned_text = curator_instance.clean_text("This is a test sentence.")
         assert cleaned_text == "This is a test sentence."
 
     def test_clean_text_with_fancy_quotes(self, curator_instance):
-        text_with_fancy_quotes = '“This is a test sentence.”'
+        text_with_fancy_quotes = "“This is a test sentence.”"
         cleaned_text = curator_instance.clean_text(text_with_fancy_quotes)
         assert cleaned_text == '"This is a test sentence."'
 
@@ -84,7 +89,9 @@ class TestCurator:
         assert cleaned_text == "This sentence contains the term ."
 
     def test_clean_text_removing_invalid_escape_sequence(self, curator_instance):
-        text_with_invalid_escape_sequence = "This sentence has an invalid escape sequence: \x9d"
+        text_with_invalid_escape_sequence = (
+            "This sentence has an invalid escape sequence: \x9d"
+        )
         cleaned_text = curator_instance.clean_text(text_with_invalid_escape_sequence)
         assert cleaned_text == "This sentence has an invalid escape sequence: "
 
@@ -97,13 +104,13 @@ class TestCurator:
         row = annotation_to_df(curator_instance.annotation_folder)
         pos_example = curator_instance.create_pos_examples(row)
         expected_pos_example = [
-            'We continue to work towards delivering on our Net Carbon Footprint ambition to '
-            'cut the intensity of the greenhouse gas emissions of the energy products we sell'
-            ' by about 50% by 2050, and 20% by 2035 compared to our 2016 levels, in step with '
-            'society as it moves towards meeting the goals of the Paris Agreement. In 2019, '
-            'we set shorter-term targets for 2021 of 2-3% lower than our 2016 baseline Net Carbon '
-            'Footprint. In early 2020, we set a Net Carbon Footprint target for 2022 of 3-4% lower '
-            'than our 2016 baseline. We will continue to evolve our approach over time.'
+            "We continue to work towards delivering on our Net Carbon Footprint ambition to "
+            "cut the intensity of the greenhouse gas emissions of the energy products we sell"
+            " by about 50% by 2050, and 20% by 2035 compared to our 2016 levels, in step with "
+            "society as it moves towards meeting the goals of the Paris Agreement. In 2019, "
+            "we set shorter-term targets for 2021 of 2-3% lower than our 2016 baseline Net Carbon "
+            "Footprint. In early 2020, we set a Net Carbon Footprint target for 2022 of 3-4% lower "
+            "than our 2016 baseline. We will continue to evolve our approach over time."
         ]
         assert pos_example == expected_pos_example
 

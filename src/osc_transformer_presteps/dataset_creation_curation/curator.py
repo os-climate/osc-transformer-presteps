@@ -5,10 +5,10 @@ import math
 import os
 import random
 import re
-from pathlib import Path
 from typing import List, Union
 
 import pandas as pd
+from pathlib import Path
 from pydantic import BaseModel, FilePath
 
 
@@ -169,18 +169,15 @@ class Curator:
         context = random.choices(paragraphs[1:], k=self.neg_pos_ratio)
         return context
 
-    def create_examples_annotate(self, filepath: str) -> List[pd.DataFrame]:
+    def create_examples_annotate(self) -> List[pd.DataFrame]:
         """
         Create examples for annotation.
-
-        Args:
-            filepath (Path): Path to the file to be annotated.
 
         Returns:
             List[pd.DataFrame]: List of DataFrames containing the examples to be annotated.
         """
-        df = pd.read_excel(filepath, sheet_name="data_ex_in_xls")
-        df["annotation_file"] = os.path.basename(filepath)
+        df = pd.read_excel(self.annotation_folder, sheet_name="data_ex_in_xls")
+        df["annotation_file"] = os.path.basename(self.annotation_folder)
 
         # Update the "source_page" column
         df["source_page"] = df["source_page"].apply(lambda x: [str(p - 1) for p in ast.literal_eval(x)])
@@ -228,7 +225,7 @@ class Curator:
         result_df = pd.DataFrame(columns=columns_order)
 
         if self.pdf_content:  # Check if pdf_content is not empty
-            new_dfs = self.create_examples_annotate(self.annotation_folder)
+            new_dfs = self.create_examples_annotate()
             if new_dfs:
                 # Concatenate the dataframes in new_dfs
                 new_df = pd.concat(new_dfs, ignore_index=True)

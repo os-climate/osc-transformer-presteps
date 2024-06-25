@@ -11,13 +11,16 @@ from osc_transformer_presteps.dataset_creation_curation.curator import (
 )
 import ast
 
+# Define the common current working directory
+cwd = Path.cwd()
+
 
 @pytest.fixture
 def mock_curator_data():
     return {
-        "annotation_folder": "test_annotations_sliced.xlsx",
-        "extract_json": "Test.json",
-        "kpi_mapping_path": "kpi_mapping_sliced.csv",
+        "annotation_folder": cwd / "test_annotations_sliced.xlsx",
+        "extract_json": cwd / "Test.json",
+        "kpi_mapping_path": cwd / "kpi_mapping_sliced.csv",
         "neg_pos_ratio": 1,
         "create_neg_samples": True,
     }
@@ -27,9 +30,9 @@ def mock_curator_data():
 def curator_instance(mock_curator_data):
     cwd = Path.cwd()
     return Curator(
-        annotation_folder=cwd / mock_curator_data["annotation_folder"],
-        extract_json=cwd / mock_curator_data["extract_json"],
-        kpi_mapping_path=cwd / mock_curator_data["kpi_mapping_path"],
+        annotation_folder= mock_curator_data["annotation_folder"],
+        extract_json= mock_curator_data["extract_json"],
+        kpi_mapping_path= mock_curator_data["kpi_mapping_path"],
         neg_pos_ratio=1,
         create_neg_samples=True,
     )
@@ -49,7 +52,6 @@ def annotation_to_df(filepath: Path) -> pd.Series:
 
 class TestAnnotationData:
     def test_annotation_data_valid_paths(self, mock_curator_data):
-        cwd = Path.cwd()
         data = AnnotationData(
             annotation_folder=cwd / mock_curator_data["annotation_folder"],
             extract_json=cwd / mock_curator_data["extract_json"],
@@ -115,7 +117,6 @@ class TestCurator:
         assert pos_example == expected_pos_example
 
     def test_create_pos_examples_json_filename_mismatch(self, mock_curator_data):
-        cwd = Path.cwd()
         curator = Curator(
             annotation_folder=cwd / mock_curator_data["annotation_folder"],
             extract_json=cwd / "Test_another.json",
@@ -133,7 +134,6 @@ class TestCurator:
         assert neg_example == ["Shell 2019 Sustainability Report"]
 
     def test_create_neg_examples_json_filename_mismatch(self, mock_curator_data):
-        cwd = Path.cwd()
         curator = Curator(
             annotation_folder=cwd / mock_curator_data["annotation_folder"],
             extract_json=cwd / "Test_another.json",

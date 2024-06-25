@@ -8,7 +8,7 @@ import typer
 import pandas as pd
 
 # Internal modules
-from osc_transformer_presteps.dataset_creation_curation.curator import Curator
+from dataset_creation_curation.curator import Curator
 
 _logger = logging.getLogger(__name__)
 

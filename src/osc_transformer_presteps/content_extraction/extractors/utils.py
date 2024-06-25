@@ -1,3 +1,4 @@
+"""Python Script for public utility functions."""
 import json
 from pathlib import Path
 

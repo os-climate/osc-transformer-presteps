@@ -1,3 +1,4 @@
+"""Python Script to handle logging and Extraction Settings."""
 import logging
 from enum import Enum
 
@@ -5,6 +6,8 @@ from pydantic import BaseModel
 
 
 class LogLevel(str, Enum):
+    """Class for different log levels."""
+
     critical = "critical"
     error = "error"
     warning = "warning"
@@ -24,6 +27,8 @@ _log_dict = {
 
 
 class ExtractionServerSettingsBase(BaseModel):
+    """Class for Extraction server settings."""
+
     port: int = 8000
     host: str = "localhost"
     log_type: int = 20
@@ -31,7 +36,15 @@ class ExtractionServerSettingsBase(BaseModel):
 
 
 class ExtractionServerSettings(ExtractionServerSettingsBase):
+    """
+    Settings for configuring the extraction server.
+
+    This class extends `ExtractionServerSettingsBase` and adds additional
+    logging configuration.
+    """
+
     def __init__(self, **data) -> None:
+        """Initialize the ExtractionServerSettings."""
         if "log_level" in data:
             data["log_level"] = LogLevel(data["log_level"])
         super().__init__(**data)
@@ -39,5 +52,18 @@ class ExtractionServerSettings(ExtractionServerSettingsBase):
 
 
 class ExtractionSettings(BaseModel):
+    """
+    Settings for controlling extraction behavior.
+
+    Attributes:
+    ----------
+    skip_extracted_files : bool, optional
+        Flag indicating whether to skip files that have already been extracted.
+        Defaults to False.
+    store_to_file : bool, optional
+        Flag indicating whether to store the extracted data to a file.
+        Defaults to True.
+    """
+
     skip_extracted_files: bool = False
     store_to_file: bool = True

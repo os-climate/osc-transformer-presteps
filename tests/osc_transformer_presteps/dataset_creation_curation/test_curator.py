@@ -30,9 +30,9 @@ def mock_curator_data():
 def curator_instance(mock_curator_data):
     cwd = Path.cwd()
     return Curator(
-        annotation_folder= mock_curator_data["annotation_folder"],
-        extract_json= mock_curator_data["extract_json"],
-        kpi_mapping_path= mock_curator_data["kpi_mapping_path"],
+        annotation_folder=mock_curator_data["annotation_folder"],
+        extract_json=mock_curator_data["extract_json"],
+        kpi_mapping_path=mock_curator_data["kpi_mapping_path"],
         neg_pos_ratio=1,
         create_neg_samples=True,
     )

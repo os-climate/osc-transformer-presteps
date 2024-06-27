@@ -39,23 +39,44 @@
 </section>
 <section id="module-osc_transformer_presteps.api.api">
 <span id="osc-transformer-presteps-api-api-module"></span><h2>osc_transformer_presteps.api.api module<a class="headerlink" href="#module-osc_transformer_presteps.api.api" title="Link to this heading">¶</a></h2>
+<p>Python Script for FastAPI.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="osc_transformer_presteps.api.api.get_root">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.api.api.</span></span><span class="sig-name descname"><span class="pre">get_root</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RedirectResponse</span></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/api/api.html#get_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.api.api.get_root" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Handle requests to the root URL and redirect to the API documentation.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="osc_transformer_presteps.api.api.run_api">
 <span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.api.api.</span></span><span class="sig-name descname"><span class="pre">run_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bind_hosts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/api/api.html#run_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.api.api.run_api" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run the API server using Uvicorn.</p>
+<p>This function starts the Uvicorn server to run the FastAPI application.</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>bind_hosts<span class="classifier">str</span></dt><dd><p>The host address to bind the server to.</p>
+</dd>
+<dt>port<span class="classifier">int</span></dt><dd><p>The port number to bind the server to.</p>
+</dd>
+<dt>log_level<span class="classifier">str, optional</span></dt><dd><p>The log level for the server. Defaults to “info”.
+Acceptable values are “critical”, “error”, “warning”, “info”, “debug”, “trace”.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
+<p>None</p>
+</section>
+</dd></dl>
 
 </section>
 <section id="module-osc_transformer_presteps.api.extract">
 <span id="osc-transformer-presteps-api-extract-module"></span><h2>osc_transformer_presteps.api.extract module<a class="headerlink" href="#module-osc_transformer_presteps.api.extract" title="Link to this heading">¶</a></h2>
+<p>Python script for setting up FastApi router for extract.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="osc_transformer_presteps.api.extract.extract">
 <span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.api.extract.</span></span><span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UploadFile</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse" title="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse"><span class="pre">ExtractionResponse</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/api/extract.html#extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.api.extract.extract" title="Link to this definition">¶</a></dt>
-<dd><p>Extracts information from a file. For that the file is stored temporarily and deleted at the end.</p>
+<dd><p>Extract information from a file. For that the file is stored temporarily and deleted at the end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>file</strong> (<em>UploadFile</em>) – The file from which information will be extracted.</p>
@@ -81,7 +102,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="osc_transformer_presteps.api.extract.save_upload_file">
 <span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.api.extract.</span></span><span class="sig-name descname"><span class="pre">save_upload_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upload_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UploadFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/api/extract.html#save_upload_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.api.extract.save_upload_file" title="Link to this definition">¶</a></dt>
-<dd><p>Saves an uploaded file to a specified destination.</p>
+<dd><p>Save an uploaded file to a specified destination.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -95,6 +116,7 @@
 </section>
 <section id="module-osc_transformer_presteps.api">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-osc_transformer_presteps.api" title="Link to this heading">¶</a></h2>
+<p>Module for FASTAPI for extraction and curation.</p>
 </section>
 </section>
 

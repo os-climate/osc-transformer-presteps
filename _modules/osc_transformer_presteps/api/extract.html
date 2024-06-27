@@ -30,7 +30,8 @@
           <div class="body" role="main">
             
   <h1>Source code for osc_transformer_presteps.api.extract</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span></span><span class="sd">&quot;&quot;&quot;Python script for setting up FastApi router for extract.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
@@ -53,9 +54,7 @@
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.api.html#osc_transformer_presteps.api.extract.liveness">[docs]</a>
 <span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/liveness&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">liveness</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Endpoint to check the liveness of the FastAPI application.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Endpoint to check the liveness of the FastAPI application.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;OSC Transformer Pre-Steps Server is running.&quot;</span><span class="p">}</span></div>
 
 
@@ -80,7 +79,8 @@
 <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">UploadFile</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExtractionResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extracts information from a file. For that the file is stored temporarily and deleted at the end.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract information from a file. For that the file is stored temporarily and deleted at the end.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file (UploadFile): The file from which information will be extracted.</span>
@@ -114,7 +114,8 @@
 <div class="viewcode-block" id="save_upload_file">
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.api.html#osc_transformer_presteps.api.extract.save_upload_file">[docs]</a>
 <span class="k">def</span> <span class="nf">save_upload_file</span><span class="p">(</span><span class="n">upload_file</span><span class="p">:</span> <span class="n">UploadFile</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves an uploaded file to a specified destination.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save an uploaded file to a specified destination.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        upload_file (UploadFile): The file to be saved.</span>

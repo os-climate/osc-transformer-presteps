@@ -30,7 +30,8 @@
           <div class="body" role="main">
             
   <h1>Source code for osc_transformer_presteps.settings</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span></span><span class="sd">&quot;&quot;&quot;Python Script to handle logging and Extraction Settings.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
@@ -39,6 +40,8 @@
 <div class="viewcode-block" id="LogLevel">
 <a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.settings.LogLevel">[docs]</a>
 <span class="k">class</span> <span class="nc">LogLevel</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for different log levels.&quot;&quot;&quot;</span>
+
     <span class="n">critical</span> <span class="o">=</span> <span class="s2">&quot;critical&quot;</span>
     <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
     <span class="n">warning</span> <span class="o">=</span> <span class="s2">&quot;warning&quot;</span>
@@ -61,6 +64,8 @@
 <div class="viewcode-block" id="ExtractionServerSettingsBase">
 <a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.settings.ExtractionServerSettingsBase">[docs]</a>
 <span class="k">class</span> <span class="nc">ExtractionServerSettingsBase</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for Extraction server settings.&quot;&quot;&quot;</span>
+
     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span>
     <span class="n">log_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
@@ -71,7 +76,15 @@
 <div class="viewcode-block" id="ExtractionServerSettings">
 <a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.settings.ExtractionServerSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">ExtractionServerSettings</span><span class="p">(</span><span class="n">ExtractionServerSettingsBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Settings for configuring the extraction server.</span>
+
+<span class="sd">    This class extends `ExtractionServerSettingsBase` and adds additional</span>
+<span class="sd">    logging configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the ExtractionServerSettings.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;log_level&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;log_level&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">LogLevel</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;log_level&quot;</span><span class="p">])</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
@@ -82,6 +95,19 @@
 <div class="viewcode-block" id="ExtractionSettings">
 <a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.settings.ExtractionSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">ExtractionSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Settings for controlling extraction behavior.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    skip_extracted_files : bool, optional</span>
+<span class="sd">        Flag indicating whether to skip files that have already been extracted.</span>
+<span class="sd">        Defaults to False.</span>
+<span class="sd">    store_to_file : bool, optional</span>
+<span class="sd">        Flag indicating whether to store the extracted data to a file.</span>
+<span class="sd">        Defaults to True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">skip_extracted_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">store_to_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
 

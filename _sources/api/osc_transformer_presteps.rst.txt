@@ -9,6 +9,7 @@ Subpackages
 
    osc_transformer_presteps.api
    osc_transformer_presteps.content_extraction
+   osc_transformer_presteps.dataset_creation_curation
    osc_transformer_presteps.streamlit
 
 Submodules
@@ -18,6 +19,14 @@ osc\_transformer\_presteps.cli module
 -------------------------------------
 
 .. automodule:: osc_transformer_presteps.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+osc\_transformer\_presteps.run\_local\_curation module
+------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.run_local_curation
    :members:
    :undoc-members:
    :show-inheritance:

@@ -31,7 +31,7 @@ class TestBaseExtractor:
 
     def test_extractor_name_is_base(self):
         """This function tests if we get a ValueError in case a subclass has not changed extractor_name to
-        something different then base.
+        something different base.
         """
         with pytest.raises(
             ValueError,

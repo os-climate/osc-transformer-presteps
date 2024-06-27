@@ -1,3 +1,4 @@
+"""Python Script for running extraction on cli."""
 import json
 import logging
 import traceback
@@ -21,7 +22,7 @@ app = typer.Typer(no_args_is_help=True)
 
 def _specify_root_logger(log_level: int):
     """
-    Configures the root logger with a specific formatting and log level.
+    Configure the root logger with a specific formatting and log level.
 
     This function sets up the root logger, which is the top-level logger in the logging hierarchy, with a specific
     configuration. It creates a StreamHandler that logs messages to stdout, sets the log level to DEBUG for all
@@ -66,7 +67,7 @@ def run_local_server(
         " Examples are info, debug and warning.",
     ),
 ) -> None:
-    """This subcommand will start a local server."""
+    """Subcommand to start a local server."""
     settings = ExtractionServerSettings(log_level=log_level, port=port, host=host)
     _specify_root_logger(settings.log_type)
     run_api(host, port)
@@ -93,7 +94,7 @@ def run_local_extraction(
         " be stored next to your input file with the name <input_file_name>_output.json.",
     ),
 ) -> None:
-    """This command will start the extraction of text to json on your local machine. Check help for details."""
+    """Command to start the extraction of text to json on your local machine. Check help for details."""
     cwd = Path.cwd()
     file_or_folder_path_temp = cwd / file_or_folder_name
     extraction_settings = ExtractionSettings(store_to_file=store_to_file, skip_extracted_files=skip_extracted_files)
@@ -121,9 +122,7 @@ def run_local_extraction(
 
 
 def extract_one_file(output_folder: Path, file_path: Path, extraction_settings: dict) -> None:
-    """
-    This function is intended to extract data for a given file to a given folder for a specific setting.
-    """
+    """Extract data for a given file to a given folder for a specific setting."""
     extractor = get_extractor(file_path.suffix, extraction_settings)
     extraction_response = extractor.extract(input_file_path=file_path)
     output_file_name = file_path.stem + "_output.json"

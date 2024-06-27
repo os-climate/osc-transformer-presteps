@@ -1,3 +1,4 @@
+"""Python script for setting up FastApi router for extract."""
 import logging
 import shutil
 from pathlib import Path
@@ -19,9 +20,7 @@ _logger = logging.getLogger(__name__)
 
 @router.get("/liveness")
 def liveness():
-    """
-    Endpoint to check the liveness of the FastAPI application.
-    """
+    """Endpoint to check the liveness of the FastAPI application."""
     return {"message": "OSC Transformer Pre-Steps Server is running."}
 
 
@@ -43,7 +42,8 @@ def liveness():
 def extract(
     file: UploadFile,
 ) -> ExtractionResponse:
-    """Extracts information from a file. For that the file is stored temporarily and deleted at the end.
+    """
+    Extract information from a file. For that the file is stored temporarily and deleted at the end.
 
     Args:
         file (UploadFile): The file from which information will be extracted.
@@ -74,7 +74,8 @@ def extract(
 
 
 def save_upload_file(upload_file: UploadFile, destination: Path) -> None:
-    """Saves an uploaded file to a specified destination.
+    """
+    Save an uploaded file to a specified destination.
 
     Args:
         upload_file (UploadFile): The file to be saved.

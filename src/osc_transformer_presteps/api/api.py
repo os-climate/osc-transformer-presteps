@@ -1,3 +1,4 @@
+"""Python Script for FastAPI."""
 import logging
 
 import uvicorn
@@ -17,10 +18,30 @@ app.include_router(api_router)
 
 @app.get("/", tags=["info"], include_in_schema=False)
 async def get_root() -> RedirectResponse:
+    """Handle requests to the root URL and redirect to the API documentation."""
     return RedirectResponse("docs")
 
 
 def run_api(bind_hosts: str, port: int, log_level: str = "info") -> None:
+    """
+    Run the API server using Uvicorn.
+
+    This function starts the Uvicorn server to run the FastAPI application.
+
+    Parameters:
+    ----------
+    bind_hosts : str
+        The host address to bind the server to.
+    port : int
+        The port number to bind the server to.
+    log_level : str, optional
+        The log level for the server. Defaults to "info".
+        Acceptable values are "critical", "error", "warning", "info", "debug", "trace".
+
+    Returns:
+    -------
+    None
+    """
     uvicorn.run(app, host=bind_hosts, port=port, log_config=None, log_level=log_level)
 
 

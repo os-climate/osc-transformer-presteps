@@ -1,3 +1,4 @@
+"""Streamlit code for extraction."""
 import json
 
 import requests

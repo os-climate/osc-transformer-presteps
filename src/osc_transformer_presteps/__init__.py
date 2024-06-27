@@ -1,3 +1,4 @@
+"""Module for extraction and curation."""
 import sys
 
 if sys.version_info[:2] >= (3, 8):

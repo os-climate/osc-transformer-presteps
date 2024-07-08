@@ -1,4 +1,5 @@
 """Python script for setting up FastApi router for extract."""
+
 import logging
 import shutil
 from pathlib import Path
@@ -42,17 +43,20 @@ def liveness():
 def extract(
     file: UploadFile,
 ) -> ExtractionResponse:
-    """
-    Extract information from a file. For that the file is stored temporarily and deleted at the end.
+    """Extract information from a file. For that the file is stored temporarily and deleted at the end.
 
     Args:
+    ----
         file (UploadFile): The file from which information will be extracted.
 
     Returns:
+    -------
         ExtractionResponse: The response containing the extracted information.
 
     Raises:
+    ------
         HTTPException: If an error occurs during extraction process.
+
     """
     assert file.filename
     _logger.info(f"Received file {file.filename} of type {Path(file.filename).suffix}.")
@@ -70,16 +74,19 @@ def extract(
             file_path_temp.unlink()
         except Exception:
             pass
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=jsonable_encoder(v))
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_ENTITY, detail=jsonable_encoder(v)
+        )
 
 
 def save_upload_file(upload_file: UploadFile, destination: Path) -> None:
-    """
-    Save an uploaded file to a specified destination.
+    """Save an uploaded file to a specified destination.
 
     Args:
+    ----
         upload_file (UploadFile): The file to be saved.
         destination (Path): The path where the file will be saved.
+
     """
     try:
         with destination.open("wb") as buffer:

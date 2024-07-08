@@ -1,4 +1,5 @@
 """Python script for extracting content from large pdf in desired format."""
+
 import io
 import logging
 import re
@@ -18,13 +19,14 @@ _logger = logging.getLogger(__name__)
 
 
 def clean_text(text):
-    """
-    Clean text.
+    """Clean text.
 
     Args:
+    ----
         text (str): The input text to clean
     Returns:
         str: The cleaned text
+
     """
     # Substitute unusual quotes at the start of the string with usual quotes
     text = re.sub(r"(?<=\[)“", '"', text)
@@ -43,13 +45,16 @@ def clean_text(text):
 
 
 def check_pdf_accessibility(pdf_file: str) -> bool:
-    """
-    Check if it can access the content of the pdf at all.
+    """Check if it can access the content of the pdf at all.
 
     Args:
+    ----
         pdf_file (str): Path to the pdf file.
+
     Returns:
+    -------
         boolean: If an error occurs while loading the pdf it returns false, otherwise true.
+
     """
     try:
         pdf_instance = PdfReader(pdf_file)
@@ -61,13 +66,15 @@ def check_pdf_accessibility(pdf_file: str) -> bool:
 
 
 class PDFExtractor(BaseExtractor):
-    """
-    Class responsible for extracting text data from PDFs and saving the result in a json format file.
+    """Class responsible for extracting text data from PDFs and saving the result in a json format file.
 
     Each name/value pair in the json file refers to page_number and
     the list of paragraphs in that page.
+
     Args:
+    ----
         settings (dict)(optional): See specification under _Settings class.
+
     """
 
     extractor_name = "pdf_text_extractor"
@@ -86,26 +93,35 @@ class PDFExtractor(BaseExtractor):
         or it was not possible to extract the content it will return an empty dict.
 
         Args:
+        ----
             input_file_path (Path): full path to the pdf file
+
         """
         _logger.info(f"Extracting {input_file_path.name} ...")
 
         self.extract_pdf_by_page(str(input_file_path))
 
-        _logger.info(f"The number of pages extracted: {len(self._extraction_response.dictionary)}")
+        _logger.info(
+            f"The number of pages extracted: {len(self._extraction_response.dictionary)}"
+        )
         paragraphs = (
             0
             if len(self._extraction_response.dictionary.keys()) == 0
-            else max(self._extraction_response.dictionary[max(self._extraction_response.dictionary.keys())].keys())
+            else max(
+                self._extraction_response.dictionary[
+                    max(self._extraction_response.dictionary.keys())
+                ].keys()
+            )
         )
         _logger.info(f"The number of paragraphs found: {paragraphs}.")
 
     def extract_pdf_by_page(self, pdf_file):
-        """
-        Read the content of each page in a pdf file.
+        """Read the content of each page in a pdf file.
 
         Args:
+        ----
             pdf_file (str): Path to the pdf file.
+
         """
         self._extraction_response.dictionary = {}
         if check_pdf_accessibility(pdf_file):
@@ -127,13 +143,14 @@ class PDFExtractor(BaseExtractor):
                     paragraphs_data = self.process_page(data)
                     if len(paragraphs_data) == 0:
                         continue
-                    idx = self.update_extraction_dict(idx, page_number, paragraphs_data, str(Path(pdf_file).name))
+                    idx = self.update_extraction_dict(
+                        idx, page_number, paragraphs_data, str(Path(pdf_file).name)
+                    )
                     retstr.truncate(0)
                     retstr.seek(0)
 
     def process_page(self, input_text):
-        r"""
-        Process the input text from a PDF page.
+        r"""Process the input text from a PDF page.
 
         Function receives a text following:
         1. Divide it into  paragraphs, using \n\n
@@ -141,32 +158,41 @@ class PDFExtractor(BaseExtractor):
             is less min_paragraph_length, it is considered as table cell and it will be removed.
 
         Args:
+        ----
             input_text (str): Content of each pdf.
 
         Returns:
+        -------
             paragraphs (list of str): List of paragraphs.
+
         """
         paragraphs = input_text.split("\n\n")
 
         # Get ride of table data if the number of alphabets in a paragraph is less than `min_paragraph_length`
         mpl = self._settings["min_paragraph_length"]
         paragraphs_cleaned = [
-            clean_text(p) for p in paragraphs if np.sum([c.isalpha() + c.isnumeric() for c in clean_text(p)]) > mpl
+            clean_text(p)
+            for p in paragraphs
+            if np.sum([c.isalpha() + c.isnumeric() for c in clean_text(p)]) > mpl
         ]
         return paragraphs_cleaned
 
-    def update_extraction_dict(self, idx: int, page_number: int, paragraphs_data: List[str], file_name: str) -> int:
-        """
-        Update the extraction dictionary with the provided data and return the updated index.
+    def update_extraction_dict(
+        self, idx: int, page_number: int, paragraphs_data: List[str], file_name: str
+    ) -> int:
+        """Update the extraction dictionary with the provided data and return the updated index.
 
         Args:
+        ----
             idx (int): The starting index for the paragraphs in the extraction dictionary.
             page_number (int): The page number of the paragraphs.
             paragraphs_data (List[str]): The list of paragraphs data.
             file_name (str): The name of the PDF file.
 
         Returns:
+        -------
             int: The updated index after adding the paragraphs to the extraction dictionary.
+
         """
         (
             self._extraction_response.dictionary.update(
@@ -180,7 +206,9 @@ class PDFExtractor(BaseExtractor):
                             "start_index_page": idx,
                             "last_index_page": idx + len(paragraphs_data) - 1,
                         }
-                        for (x, y) in zip(range(idx, idx + len(paragraphs_data)), paragraphs_data)
+                        for (x, y) in zip(
+                            range(idx, idx + len(paragraphs_data)), paragraphs_data
+                        )
                     }
                 }
             )

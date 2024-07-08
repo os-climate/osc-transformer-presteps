@@ -1,4 +1,5 @@
 """Python Script for running extraction on cli."""
+
 import json
 import logging
 import traceback
@@ -21,19 +22,20 @@ app = typer.Typer(no_args_is_help=True)
 
 
 def _specify_root_logger(log_level: int):
-    """
-    Configure the root logger with a specific formatting and log level.
+    """Configure the root logger with a specific formatting and log level.
 
     This function sets up the root logger, which is the top-level logger in the logging hierarchy, with a specific
     configuration. It creates a StreamHandler that logs messages to stdout, sets the log level to DEBUG for all
     messages, and applies a specific formatter to format the log messages.
 
     Args:
+    ----
         log_level (int): The log_level to use for the logging given as int.
 
     Usage:
     Call this function at the beginning of your code to configure the root logger
     with the desired formatting and log level.
+
     """
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
@@ -97,11 +99,15 @@ def run_local_extraction(
     """Command to start the extraction of text to json on your local machine. Check help for details."""
     cwd = Path.cwd()
     file_or_folder_path_temp = cwd / file_or_folder_name
-    extraction_settings = ExtractionSettings(store_to_file=store_to_file, skip_extracted_files=skip_extracted_files)
+    extraction_settings = ExtractionSettings(
+        store_to_file=store_to_file, skip_extracted_files=skip_extracted_files
+    )
     if file_or_folder_path_temp.is_file():
         _logger.info(f"Start extracting file {file_or_folder_path_temp.stem}.")
         extract_one_file(
-            output_folder=cwd, file_path=file_or_folder_path_temp, extraction_settings=extraction_settings.model_dump()
+            output_folder=cwd,
+            file_path=file_or_folder_path_temp,
+            extraction_settings=extraction_settings.model_dump(),
         )
         _logger.info(f"Done with extracting file {file_or_folder_path_temp.stem}.")
     elif file_or_folder_path_temp.is_dir():
@@ -110,7 +116,9 @@ def run_local_extraction(
             _logger.info(f"Start extracting file {file.stem}.")
             try:
                 extract_one_file(
-                    output_folder=cwd, file_path=file, extraction_settings=extraction_settings.model_dump()
+                    output_folder=cwd,
+                    file_path=file,
+                    extraction_settings=extraction_settings.model_dump(),
                 )
                 _logger.info(f"Done with extracting file {file.stem}.")
             except Exception as e:
@@ -121,7 +129,9 @@ def run_local_extraction(
         _logger.error("Given file or folder name is neither a file nor a folder.")
 
 
-def extract_one_file(output_folder: Path, file_path: Path, extraction_settings: dict) -> None:
+def extract_one_file(
+    output_folder: Path, file_path: Path, extraction_settings: dict
+) -> None:
     """Extract data for a given file to a given folder for a specific setting."""
     extractor = get_extractor(file_path.suffix, extraction_settings)
     extraction_response = extractor.extract(input_file_path=file_path)

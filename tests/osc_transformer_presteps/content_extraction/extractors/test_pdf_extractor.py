@@ -8,8 +8,7 @@ from osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor i
 
 class TestPdfExtractor:
     def test_pdf_with_extraction_issues(self):
-        """
-        In this test we try to extract the data from a pdf, where one can not extract text as it was produced via
+        """In this test we try to extract the data from a pdf, where one can not extract text as it was produced via
         a "print". Check the file test_issue.pdf.
         """
         extractor = PDFExtractor()
@@ -18,8 +17,7 @@ class TestPdfExtractor:
         assert extraction_response.dictionary == {}
 
     def test_pdf_with_no_extraction_issues(self):
-        """
-        In this test we try to extract the data from a pdf, where one can not extract text as it was produced via
+        """In this test we try to extract the data from a pdf, where one can not extract text as it was produced via
         a "print". Check the file test_issue.pdf.
         """
         extractor = PDFExtractor()

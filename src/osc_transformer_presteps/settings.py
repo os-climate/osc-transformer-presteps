@@ -1,4 +1,5 @@
 """Python Script to handle logging and Extraction Settings."""
+
 import logging
 from enum import Enum
 
@@ -36,8 +37,7 @@ class ExtractionServerSettingsBase(BaseModel):
 
 
 class ExtractionServerSettings(ExtractionServerSettingsBase):
-    """
-    Settings for configuring the extraction server.
+    """Settings for configuring the extraction server.
 
     This class extends `ExtractionServerSettingsBase` and adds additional
     logging configuration.
@@ -52,10 +52,9 @@ class ExtractionServerSettings(ExtractionServerSettingsBase):
 
 
 class ExtractionSettings(BaseModel):
-    """
-    Settings for controlling extraction behavior.
+    """Settings for controlling extraction behavior.
 
-    Attributes:
+    Attributes
     ----------
     skip_extracted_files : bool, optional
         Flag indicating whether to skip files that have already been extracted.
@@ -63,6 +62,7 @@ class ExtractionSettings(BaseModel):
     store_to_file : bool, optional
         Flag indicating whether to store the extracted data to a file.
         Defaults to True.
+
     """
 
     skip_extracted_files: bool = False

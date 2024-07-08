@@ -31,6 +31,7 @@
             
   <h1>Source code for osc_transformer_presteps.settings</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Python Script to handle logging and Extraction Settings.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 
@@ -76,8 +77,7 @@
 <div class="viewcode-block" id="ExtractionServerSettings">
 <a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.settings.ExtractionServerSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">ExtractionServerSettings</span><span class="p">(</span><span class="n">ExtractionServerSettingsBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Settings for configuring the extraction server.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Settings for configuring the extraction server.</span>
 
 <span class="sd">    This class extends `ExtractionServerSettingsBase` and adds additional</span>
 <span class="sd">    logging configuration.</span>
@@ -95,10 +95,9 @@
 <div class="viewcode-block" id="ExtractionSettings">
 <a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.settings.ExtractionSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">ExtractionSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Settings for controlling extraction behavior.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Settings for controlling extraction behavior.</span>
 
-<span class="sd">    Attributes:</span>
+<span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    skip_extracted_files : bool, optional</span>
 <span class="sd">        Flag indicating whether to skip files that have already been extracted.</span>
@@ -106,6 +105,7 @@
 <span class="sd">    store_to_file : bool, optional</span>
 <span class="sd">        Flag indicating whether to store the extracted data to a file.</span>
 <span class="sd">        Defaults to True.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">skip_extracted_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>

@@ -31,6 +31,7 @@
             
   <h1>Source code for osc_transformer_presteps.run_local_extraction</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Python Script for running extraction on cli.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
@@ -53,19 +54,20 @@
 
 
 <span class="k">def</span> <span class="nf">_specify_root_logger</span><span class="p">(</span><span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Configure the root logger with a specific formatting and log level.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure the root logger with a specific formatting and log level.</span>
 
 <span class="sd">    This function sets up the root logger, which is the top-level logger in the logging hierarchy, with a specific</span>
 <span class="sd">    configuration. It creates a StreamHandler that logs messages to stdout, sets the log level to DEBUG for all</span>
 <span class="sd">    messages, and applies a specific formatter to format the log messages.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">    ----</span>
 <span class="sd">        log_level (int): The log_level to use for the logging given as int.</span>
 
 <span class="sd">    Usage:</span>
 <span class="sd">    Call this function at the beginning of your code to configure the root logger</span>
 <span class="sd">    with the desired formatting and log level.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -134,11 +136,15 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Command to start the extraction of text to json on your local machine. Check help for details.&quot;&quot;&quot;</span>
     <span class="n">cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
     <span class="n">file_or_folder_path_temp</span> <span class="o">=</span> <span class="n">cwd</span> <span class="o">/</span> <span class="n">file_or_folder_name</span>
-    <span class="n">extraction_settings</span> <span class="o">=</span> <span class="n">ExtractionSettings</span><span class="p">(</span><span class="n">store_to_file</span><span class="o">=</span><span class="n">store_to_file</span><span class="p">,</span> <span class="n">skip_extracted_files</span><span class="o">=</span><span class="n">skip_extracted_files</span><span class="p">)</span>
+    <span class="n">extraction_settings</span> <span class="o">=</span> <span class="n">ExtractionSettings</span><span class="p">(</span>
+        <span class="n">store_to_file</span><span class="o">=</span><span class="n">store_to_file</span><span class="p">,</span> <span class="n">skip_extracted_files</span><span class="o">=</span><span class="n">skip_extracted_files</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
         <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Start extracting file </span><span class="si">{</span><span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="n">extract_one_file</span><span class="p">(</span>
-            <span class="n">output_folder</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="n">file_or_folder_path_temp</span><span class="p">,</span> <span class="n">extraction_settings</span><span class="o">=</span><span class="n">extraction_settings</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+            <span class="n">output_folder</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span>
+            <span class="n">file_path</span><span class="o">=</span><span class="n">file_or_folder_path_temp</span><span class="p">,</span>
+            <span class="n">extraction_settings</span><span class="o">=</span><span class="n">extraction_settings</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
         <span class="p">)</span>
         <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done with extracting file </span><span class="si">{</span><span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
@@ -147,7 +153,9 @@
             <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Start extracting file </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">extract_one_file</span><span class="p">(</span>
-                    <span class="n">output_folder</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">extraction_settings</span><span class="o">=</span><span class="n">extraction_settings</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+                    <span class="n">output_folder</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span>
+                    <span class="n">file_path</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+                    <span class="n">extraction_settings</span><span class="o">=</span><span class="n">extraction_settings</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
                 <span class="p">)</span>
                 <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done with extracting file </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -161,7 +169,9 @@
 
 <div class="viewcode-block" id="extract_one_file">
 <a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.run_local_extraction.extract_one_file">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_one_file</span><span class="p">(</span><span class="n">output_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">extraction_settings</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">extract_one_file</span><span class="p">(</span>
+    <span class="n">output_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">extraction_settings</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract data for a given file to a given folder for a specific setting.&quot;&quot;&quot;</span>
     <span class="n">extractor</span> <span class="o">=</span> <span class="n">get_extractor</span><span class="p">(</span><span class="n">file_path</span><span class="o">.</span><span class="n">suffix</span><span class="p">,</span> <span class="n">extraction_settings</span><span class="p">)</span>
     <span class="n">extraction_response</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">input_file_path</span><span class="o">=</span><span class="n">file_path</span><span class="p">)</span>

@@ -87,32 +87,31 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.dataset_creation_curation.curator.</span></span><span class="sig-name descname"><span class="pre">Curator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kpi_mapping_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_pos_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_neg_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/dataset_creation_curation/curator.html#Curator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.dataset_creation_curation.curator.Curator" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A data curator component responsible for creating table and text training data based on annotated data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>annotation_folder</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – path to the folder containing annotation files</p></li>
-<li><p><strong>extract_json</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – path to the JSON file containing extracted content</p></li>
-<li><p><strong>kpi_mapping_path</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – path to KPI Mapping csv</p></li>
-<li><p><strong>neg_pos_ratio</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – ratio of negative to positive examples</p></li>
-<li><p><strong>create_neg_samples</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – whether to create negative samples</p></li>
-</ul>
-</dd>
-</dl>
+<section id="args">
+<h3>Args:<a class="headerlink" href="#args" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>annotation_folder (str): path to the folder containing annotation files
+extract_json (str): path to the JSON file containing extracted content
+kpi_mapping_path (str): path to KPI Mapping csv
+neg_pos_ratio (int): ratio of negative to positive examples
+create_neg_samples (bool): whether to create negative samples</p>
+</div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="osc_transformer_presteps.dataset_creation_curation.curator.Curator.clean_text">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clean_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/dataset_creation_curation/curator.html#Curator.clean_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.dataset_creation_curation.curator.Curator.clean_text" title="Link to this definition">¶</a></dt>
 <dd><p>Clean a sentence by removing unwanted characters and control characters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The text to be cleaned.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The cleaned text.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
-</dd>
-</dl>
+<section id="id1">
+<h4>Args:<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><p>text (str): The text to be cleaned.</p>
+</div></blockquote>
+</section>
+<section id="returns">
+<h4>Returns:<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><p>str: The cleaned text.</p>
+</div></blockquote>
+</section>
 </dd></dl>
 
 <dl class="py method">
@@ -128,10 +127,10 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dd><p>Create examples for annotation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of DataFrames containing the examples to be annotated.</p>
+<dd class="field-odd"><p><strong>List[pd.DataFrame]</strong></p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>List[pd.DataFrame]</p>
+<dd class="field-even"><p>List of DataFrames containing the examples to be annotated.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -155,26 +154,28 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <span class="sig-name descname"><span class="pre">load_pdf_content</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/dataset_creation_curation/curator.html#Curator.load_pdf_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.dataset_creation_curation.curator.Curator.load_pdf_content" title="Link to this definition">¶</a></dt>
 <dd><p>Load PDF content from the JSON file specified by <cite>extract_json</cite>.</p>
 <p>Reads the content of the JSON file and returns it as a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary containing the loaded JSON data.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)">dict</a></p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3.12/library/exceptions.html#FileNotFoundError" title="(in Python v3.12)"><strong>FileNotFoundError</strong></a> – If the JSON file specified by <cite>extract_json</cite> does not exist.</p></li>
-<li><p><strong>JSONDecodeError</strong> – If the content of the JSON file cannot be decoded.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This method assumes <cite>extract_json</cite> is a <cite>Path</cite> object pointing to a valid JSON file.</p>
-</div>
+<section id="id2">
+<h4>Returns:<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><p>dict: A dictionary containing the loaded JSON data.</p>
+</div></blockquote>
+</section>
+<section id="raises">
+<h4>Raises:<a class="headerlink" href="#raises" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><p>FileNotFoundError: If the JSON file specified by <cite>extract_json</cite> does not exist.
+JSONDecodeError: If the content of the JSON file cannot be decoded.</p>
+</div></blockquote>
+</section>
+<section id="note">
+<h4>Note:<a class="headerlink" href="#note" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><p>This method assumes <cite>extract_json</cite> is a <cite>Path</cite> object pointing to a valid JSON file.</p>
+</div></blockquote>
+</section>
 </dd></dl>
 
+</section>
 </dd></dl>
 
 </section>

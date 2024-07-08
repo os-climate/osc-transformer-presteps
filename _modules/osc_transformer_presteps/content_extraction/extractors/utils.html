@@ -31,6 +31,7 @@
             
   <h1>Source code for osc_transformer_presteps.content_extraction.extractors.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Python Script for public utility functions.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
@@ -38,25 +39,29 @@
 <div class="viewcode-block" id="dict_to_json">
 <a class="viewcode-back" href="../../../../api/osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.utils.dict_to_json">[docs]</a>
 <span class="k">def</span> <span class="nf">dict_to_json</span><span class="p">(</span><span class="n">json_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert a dictionary to JSON and write it to a file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a dictionary to JSON and write it to a file.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">    ----</span>
 <span class="sd">        json_path (Path): The path to the JSON file to be written.</span>
 <span class="sd">        dictionary (dict): The dictionary to be converted to JSON.</span>
 
 <span class="sd">    Returns:</span>
+<span class="sd">    -------</span>
 <span class="sd">        None: This function does not return anything.</span>
 
 <span class="sd">    Raises:</span>
+<span class="sd">    ------</span>
 <span class="sd">        OSError: If there is an error writing the JSON file.</span>
 
 <span class="sd">    Note:</span>
+<span class="sd">    ----</span>
 <span class="sd">        This function uses the `json.dump()` method from the built-in `json` module to convert the dictionary to JSON</span>
 <span class="sd">        and write it to the specified file. The function opens the file in write mode and overwrites any existing</span>
 <span class="sd">        content.</span>
 
 <span class="sd">    Example:</span>
+<span class="sd">    -------</span>
 <span class="sd">        json_path = Path(&quot;output.json&quot;)</span>
 <span class="sd">        data = {&quot;name&quot;: &quot;John Doe&quot;, &quot;age&quot;: 30, &quot;city&quot;: &quot;New York&quot;}</span>
 

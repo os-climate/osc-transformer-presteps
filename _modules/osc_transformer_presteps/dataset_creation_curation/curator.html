@@ -31,6 +31,7 @@
             
   <h1>Source code for osc_transformer_presteps.dataset_creation_curation.curator</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Python Script for Curation.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">ast</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">math</span>
@@ -58,24 +59,25 @@
 <div class="viewcode-block" id="Curator">
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.dataset_creation_curation.html#osc_transformer_presteps.dataset_creation_curation.curator.Curator">[docs]</a>
 <span class="k">class</span> <span class="nc">Curator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A data curator component responsible for creating table and text training data based on annotated data.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A data curator component responsible for creating table and text training data based on annotated data.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">    ----</span>
 <span class="sd">        annotation_folder (str): path to the folder containing annotation files</span>
 <span class="sd">        extract_json (str): path to the JSON file containing extracted content</span>
 <span class="sd">        kpi_mapping_path (str): path to KPI Mapping csv</span>
 <span class="sd">        neg_pos_ratio (int): ratio of negative to positive examples</span>
 <span class="sd">        create_neg_samples (bool): whether to create negative samples</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">annotation_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">extract_json</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-            <span class="n">kpi_mapping_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">neg_pos_ratio</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">create_neg_samples</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">annotation_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">extract_json</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">kpi_mapping_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">neg_pos_ratio</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">create_neg_samples</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the constructor for Curator object.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">annotation_folder</span> <span class="o">=</span> <span class="n">annotation_folder</span>
@@ -90,20 +92,23 @@
 <div class="viewcode-block" id="Curator.load_pdf_content">
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.dataset_creation_curation.html#osc_transformer_presteps.dataset_creation_curation.curator.Curator.load_pdf_content">[docs]</a>
     <span class="k">def</span> <span class="nf">load_pdf_content</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Load PDF content from the JSON file specified by `extract_json`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load PDF content from the JSON file specified by `extract_json`.</span>
 
 <span class="sd">        Reads the content of the JSON file and returns it as a dictionary.</span>
 
 <span class="sd">        Returns:</span>
+<span class="sd">        -------</span>
 <span class="sd">            dict: A dictionary containing the loaded JSON data.</span>
 
 <span class="sd">        Raises:</span>
+<span class="sd">        ------</span>
 <span class="sd">            FileNotFoundError: If the JSON file specified by `extract_json` does not exist.</span>
 <span class="sd">            JSONDecodeError: If the content of the JSON file cannot be decoded.</span>
 
 <span class="sd">        Note:</span>
+<span class="sd">        ----</span>
 <span class="sd">            This method assumes `extract_json` is a `Path` object pointing to a valid JSON file.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_json</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
@@ -113,14 +118,16 @@
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.dataset_creation_curation.html#osc_transformer_presteps.dataset_creation_curation.curator.Curator.clean_text">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Clean a sentence by removing unwanted characters and control characters.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean a sentence by removing unwanted characters and control characters.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">        ----</span>
 <span class="sd">            text (str): The text to be cleaned.</span>
 
 <span class="sd">        Returns:</span>
+<span class="sd">        -------</span>
 <span class="sd">            str: The cleaned text.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">or</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -156,8 +163,7 @@
 <div class="viewcode-block" id="Curator.create_pos_examples">
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.dataset_creation_curation.html#osc_transformer_presteps.dataset_creation_curation.curator.Curator.create_pos_examples">[docs]</a>
     <span class="k">def</span> <span class="nf">create_pos_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create positive examples based on the provided row from a DataFrame.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create positive examples based on the provided row from a DataFrame.</span>
 
 <span class="sd">        Returns a list of matching sentences or an empty list.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -173,9 +179,12 @@
         <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">SyntaxError</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">sentences</span> <span class="ow">or</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">json_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;source_file&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> \
-                <span class="n">row</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;TEXT&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">sentences</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="o">!=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;source_file&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;TEXT&quot;</span>
+        <span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
 
         <span class="n">source_page</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">])</span>
@@ -185,10 +194,13 @@
 
         <span class="k">if</span> <span class="n">page_number</span> <span class="ow">and</span> <span class="n">page_number</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">:</span>
             <span class="n">paragraphs</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">[</span><span class="n">page_number</span><span class="p">][</span><span class="n">key_inner</span><span class="p">][</span><span class="s2">&quot;paragraph&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key_inner</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">[</span><span class="n">page_number</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">[</span><span class="n">page_number</span><span class="p">][</span><span class="n">key_inner</span><span class="p">][</span><span class="s2">&quot;paragraph&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">key_inner</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">[</span><span class="n">page_number</span><span class="p">]</span>
             <span class="p">]</span>
             <span class="n">matching_sentences</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">para</span> <span class="k">for</span> <span class="n">para</span> <span class="ow">in</span> <span class="n">paragraphs</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">sentence</span> <span class="ow">in</span> <span class="n">para</span> <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">)</span>
+                <span class="n">para</span>
+                <span class="k">for</span> <span class="n">para</span> <span class="ow">in</span> <span class="n">paragraphs</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">sentence</span> <span class="ow">in</span> <span class="n">para</span> <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">)</span>
             <span class="p">]</span>
             <span class="k">return</span> <span class="n">matching_sentences</span> <span class="k">if</span> <span class="n">matching_sentences</span> <span class="k">else</span> <span class="n">sentences</span>
 
@@ -198,14 +210,16 @@
 <div class="viewcode-block" id="Curator.create_neg_examples">
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.dataset_creation_curation.html#osc_transformer_presteps.dataset_creation_curation.curator.Curator.create_neg_examples">[docs]</a>
     <span class="k">def</span> <span class="nf">create_neg_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create negative examples based on the provided row from a DataFrame.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create negative examples based on the provided row from a DataFrame.</span>
 
 <span class="sd">        Returns a list of context paragraphs or an empty list.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span> <span class="ow">or</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">json_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;source_file&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> \
-                <span class="n">row</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;TEXT&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="o">!=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;source_file&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;TEXT&quot;</span>
+        <span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
 
         <span class="n">paragraphs</span> <span class="o">=</span> <span class="p">[</span>
@@ -221,17 +235,20 @@
 <div class="viewcode-block" id="Curator.create_examples_annotate">
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.dataset_creation_curation.html#osc_transformer_presteps.dataset_creation_curation.curator.Curator.create_examples_annotate">[docs]</a>
     <span class="k">def</span> <span class="nf">create_examples_annotate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create examples for annotation.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create examples for annotation.</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
 <span class="sd">            List[pd.DataFrame]: List of DataFrames containing the examples to be annotated.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_folder</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;data_ex_in_xls&quot;</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;annotation_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_folder</span><span class="p">)</span>
 
         <span class="c1"># Update the &quot;source_page&quot; column</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">x</span><span class="p">)])</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+        <span class="p">)</span>
 
         <span class="c1"># List to store new DataFrames</span>
         <span class="n">new_dfs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -240,13 +257,20 @@
             <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
             <span class="n">contexts</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">create_pos_examples</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">copy</span><span class="p">()),</span> <span class="mi">1</span><span class="p">),</span>
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">create_neg_examples</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_neg_samples</span> <span class="k">else</span> <span class="p">[],</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">create_neg_examples</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_neg_samples</span>
+                    <span class="k">else</span> <span class="p">[],</span>
+                    <span class="mi">0</span><span class="p">,</span>
+                <span class="p">),</span>
             <span class="p">]</span>
 
             <span class="k">for</span> <span class="n">context</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">contexts</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">context</span><span class="p">:</span>
                     <span class="n">context_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">context</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">})</span>
-                    <span class="n">combined_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">row</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">context_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">combined_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                        <span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">context_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+                    <span class="p">)</span>
                     <span class="n">new_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">combined_df</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_dfs</span></div>
@@ -255,8 +279,7 @@
 <div class="viewcode-block" id="Curator.create_curator_df">
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.dataset_creation_curation.html#osc_transformer_presteps.dataset_creation_curation.curator.Curator.create_curator_df">[docs]</a>
     <span class="k">def</span> <span class="nf">create_curator_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a DataFrame containing the examples to be annotated by the curator.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a DataFrame containing the examples to be annotated by the curator.</span>
 
 <span class="sd">        The DataFrame is saved as a CSV file in the output directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -272,7 +295,7 @@
             <span class="s2">&quot;source_page&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Index&quot;</span><span class="p">,</span>
             <span class="s2">&quot;data_type&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;kpi_id&quot;</span>
+            <span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span>
         <span class="p">]</span>
 
         <span class="c1"># Initialize an empty DataFrame with specified columns</span>
@@ -283,9 +306,13 @@
             <span class="k">if</span> <span class="n">new_dfs</span><span class="p">:</span>
                 <span class="c1"># Concatenate the dataframes in new_dfs</span>
                 <span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">new_dfs</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">new_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>  <span class="c1"># Drop &#39;question&#39; if it exists</span>
+                <span class="n">new_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span>
+                <span class="p">)</span>  <span class="c1"># Drop &#39;question&#39; if it exists</span>
 
-                <span class="n">kpi_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kpi_mapping_path</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span> <span class="s2">&quot;question&quot;</span><span class="p">])</span>
+                <span class="n">kpi_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">kpi_mapping_path</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span> <span class="s2">&quot;question&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
                 <span class="n">merged_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">new_df</span><span class="p">,</span> <span class="n">kpi_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
 
                 <span class="n">result_df</span> <span class="o">=</span> <span class="n">merged_df</span><span class="p">[</span><span class="n">columns_order</span><span class="p">]</span>

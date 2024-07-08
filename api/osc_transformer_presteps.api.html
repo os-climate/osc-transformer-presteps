@@ -51,22 +51,19 @@
 <span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.api.api.</span></span><span class="sig-name descname"><span class="pre">run_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bind_hosts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/api/api.html#run_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.api.api.run_api" title="Link to this definition">¶</a></dt>
 <dd><p>Run the API server using Uvicorn.</p>
 <p>This function starts the Uvicorn server to run the FastAPI application.</p>
-<section id="parameters">
-<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h3>
-<dl class="simple">
-<dt>bind_hosts<span class="classifier">str</span></dt><dd><p>The host address to bind the server to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bind_hosts</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The host address to bind the server to.</p></li>
+<li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The port number to bind the server to.</p></li>
+<li><p><strong>log_level</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) – The log level for the server. Defaults to “info”.
+Acceptable values are “critical”, “error”, “warning”, “info”, “debug”, “trace”.</p></li>
+</ul>
 </dd>
-<dt>port<span class="classifier">int</span></dt><dd><p>The port number to bind the server to.</p>
-</dd>
-<dt>log_level<span class="classifier">str, optional</span></dt><dd><p>The log level for the server. Defaults to “info”.
-Acceptable values are “critical”, “error”, “warning”, “info”, “debug”, “trace”.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
-</section>
-<section id="returns">
-<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
-<p>None</p>
-</section>
 </dd></dl>
 
 </section>
@@ -77,20 +74,24 @@ Acceptable values are “critical”, “error”, “warning”, “info”, �
 <dt class="sig sig-object py" id="osc_transformer_presteps.api.extract.extract">
 <span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.api.extract.</span></span><span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UploadFile</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse" title="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse"><span class="pre">ExtractionResponse</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/api/extract.html#extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.api.extract.extract" title="Link to this definition">¶</a></dt>
 <dd><p>Extract information from a file. For that the file is stored temporarily and deleted at the end.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file</strong> (<em>UploadFile</em>) – The file from which information will be extracted.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response containing the extracted information.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse" title="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse">ExtractionResponse</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – If an error occurs during extraction process.</p>
-</dd>
-</dl>
+<section id="args">
+<h3>Args:<a class="headerlink" href="#args" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>file (UploadFile): The file from which information will be extracted.</p>
+</div></blockquote>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>ExtractionResponse: The response containing the extracted information.</p>
+</div></blockquote>
+</section>
+<section id="raises">
+<h3>Raises:<a class="headerlink" href="#raises" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>HTTPException: If an error occurs during extraction process.</p>
+</div></blockquote>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -103,14 +104,13 @@ Acceptable values are “critical”, “error”, “warning”, “info”, �
 <dt class="sig sig-object py" id="osc_transformer_presteps.api.extract.save_upload_file">
 <span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.api.extract.</span></span><span class="sig-name descname"><span class="pre">save_upload_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upload_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UploadFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/api/extract.html#save_upload_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.api.extract.save_upload_file" title="Link to this definition">¶</a></dt>
 <dd><p>Save an uploaded file to a specified destination.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>upload_file</strong> (<em>UploadFile</em>) – The file to be saved.</p></li>
-<li><p><strong>destination</strong> (<em>Path</em>) – The path where the file will be saved.</p></li>
-</ul>
-</dd>
-</dl>
+<section id="id1">
+<h3>Args:<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>upload_file (UploadFile): The file to be saved.
+destination (Path): The path where the file will be saved.</p>
+</div></blockquote>
+</section>
 </dd></dl>
 
 </section>

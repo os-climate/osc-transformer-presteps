@@ -226,16 +226,30 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.settings.</span></span><span class="sig-name descname"><span class="pre">ExtractionSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_extracted_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_to_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/settings.html#ExtractionSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>Settings for controlling extraction behavior.</p>
-<section id="attributes">
-<h3>Attributes:<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h3>
-<dl class="simple">
-<dt>skip_extracted_files<span class="classifier">bool, optional</span></dt><dd><p>Flag indicating whether to skip files that have already been extracted.
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.settings.ExtractionSettings.skip_extracted_files">
+<span class="sig-name descname"><span class="pre">skip_extracted_files</span></span><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings.skip_extracted_files" title="Link to this definition">¶</a></dt>
+<dd><p>Flag indicating whether to skip files that have already been extracted.
 Defaults to False.</p>
-</dd>
-<dt>store_to_file<span class="classifier">bool, optional</span></dt><dd><p>Flag indicating whether to store the extracted data to a file.
-Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)">bool</a>, optional</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.settings.ExtractionSettings.store_to_file">
+<span class="sig-name descname"><span class="pre">store_to_file</span></span><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings.store_to_file" title="Link to this definition">¶</a></dt>
+<dd><p>Flag indicating whether to store the extracted data to a file.
+Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)">bool</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="osc_transformer_presteps.settings.ExtractionSettings.model_computed_fields">
 <span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings.model_computed_fields" title="Link to this definition">¶</a></dt>
@@ -257,16 +271,15 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.ExtractionSettings.skip_extracted_files">
-<span class="sig-name descname"><span class="pre">skip_extracted_files</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings.skip_extracted_files" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">skip_extracted_files</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.ExtractionSettings.store_to_file">
-<span class="sig-name descname"><span class="pre">store_to_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings.store_to_file" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">store_to_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
 </dd></dl>
 
 <dl class="py class">

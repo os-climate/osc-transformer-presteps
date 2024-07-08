@@ -31,6 +31,7 @@
             
   <h1>Source code for osc_transformer_presteps.content_extraction.extractors.base_extractor</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Python Script for Base Extractor.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -46,8 +47,7 @@
 
 
 <span class="k">class</span> <span class="nc">_BaseSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get settings from the user.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get settings from the user.</span>
 
 <span class="sd">    Args possible in the settings:</span>
 <span class="sd">    min_paragraph_length (int)(Optional): Minimum alphabetic characters for paragraph,</span>
@@ -102,7 +102,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Intialize the subclass.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">extractor_name</span> <span class="o">==</span> <span class="s2">&quot;base&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Subclass must define an extractor_name not equal to &#39;base&#39;.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Subclass must define an extractor_name not equal to &#39;base&#39;.&quot;</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="BaseExtractor.get_settings">
 <a class="viewcode-back" href="../../../../api/osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.base_extractor.BaseExtractor.get_settings">[docs]</a>
@@ -120,13 +122,16 @@
 
 <div class="viewcode-block" id="BaseExtractor.check_for_skip_files">
 <a class="viewcode-back" href="../../../../api/osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.base_extractor.BaseExtractor.check_for_skip_files">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_for_skip_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_folder_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if a JSON file already exists in the output folder and determine whether to skip processing.</span>
+    <span class="k">def</span> <span class="nf">check_for_skip_files</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">input_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_folder_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a JSON file already exists in the output folder and determine whether to skip processing.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">        ----</span>
 <span class="sd">            input_file_path (Path): The path of the input file.</span>
 <span class="sd">            output_folder_path (Path): The path of the output folder.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="s2">&quot;skip_extracted_files&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -134,7 +139,9 @@
             <span class="ow">and</span> <span class="n">output_folder_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="n">input_file_path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">output_folder_path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span>
         <span class="p">):</span>
-            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The extracted JSON for `</span><span class="si">{</span><span class="n">input_file_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">` already exists. Skipping...&quot;</span><span class="p">)</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The extracted JSON for `</span><span class="si">{</span><span class="n">input_file_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">` already exists. Skipping...&quot;</span>
+            <span class="p">)</span>
             <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">&quot;If you would like to re-extract the already processed files, &quot;</span>
                 <span class="s2">&quot;set `skip_extracted_files` to False in the config file.&quot;</span>
@@ -149,11 +156,12 @@
 <div class="viewcode-block" id="BaseExtractor.save_extraction_to_file">
 <a class="viewcode-back" href="../../../../api/osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.base_extractor.BaseExtractor.save_extraction_to_file">[docs]</a>
     <span class="k">def</span> <span class="nf">save_extraction_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Save the extraction dictionary to a JSON file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the extraction dictionary to a JSON file.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">        ----</span>
 <span class="sd">            output_file_path (Path): The path to the output JSON file.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dict_to_json</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="p">)</span></div>
 
@@ -164,17 +172,20 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExtractionResponse</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Perform the extraction of text from the given input file path.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the extraction of text from the given input file path.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">        ----</span>
 <span class="sd">            input_file_path (Path): The path to the input file.</span>
 
 <span class="sd">        Returns:</span>
+<span class="sd">        -------</span>
 <span class="sd">            ExtractionResponse: An instance of the `ExtractionResponse` class containing the extraction results.</span>
 
 <span class="sd">        Raises:</span>
+<span class="sd">        ------</span>
 <span class="sd">            ExtractionError: If an error occurs during the extraction process.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_generate_extractions</span><span class="p">(</span><span class="n">input_file_path</span><span class="o">=</span><span class="n">input_file_path</span><span class="p">)</span>
@@ -193,11 +204,12 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Define how text is extracted from a give file in path.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define how text is extracted from a give file in path.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">        ----</span>
 <span class="sd">            input_file_path (Path): Should contain the path to a file as a pathlib.Path object.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
 </pre></div>

@@ -1,4 +1,5 @@
 """Python Script for FastAPI."""
+
 import logging
 
 import uvicorn
@@ -23,12 +24,11 @@ async def get_root() -> RedirectResponse:
 
 
 def run_api(bind_hosts: str, port: int, log_level: str = "info") -> None:
-    """
-    Run the API server using Uvicorn.
+    """Run the API server using Uvicorn.
 
     This function starts the Uvicorn server to run the FastAPI application.
 
-    Parameters:
+    Parameters
     ----------
     bind_hosts : str
         The host address to bind the server to.
@@ -38,9 +38,10 @@ def run_api(bind_hosts: str, port: int, log_level: str = "info") -> None:
         The log level for the server. Defaults to "info".
         Acceptable values are "critical", "error", "warning", "info", "debug", "trace".
 
-    Returns:
+    Returns
     -------
     None
+
     """
     uvicorn.run(app, host=bind_hosts, port=port, log_config=None, log_level=log_level)
 

@@ -1,4 +1,5 @@
 """Python Script for Base Extractor."""
+
 import logging
 import traceback
 from abc import ABC, abstractmethod
@@ -14,8 +15,7 @@ _logger = logging.getLogger(__name__)
 
 
 class _BaseSettings(BaseModel):
-    """
-    Get settings from the user.
+    """Get settings from the user.
 
     Args possible in the settings:
     min_paragraph_length (int)(Optional): Minimum alphabetic characters for paragraph,
@@ -62,7 +62,9 @@ class BaseExtractor(ABC):
         """Intialize the subclass."""
         super().__init_subclass__(**kwargs)
         if cls.extractor_name == "base":
-            raise ValueError("Subclass must define an extractor_name not equal to 'base'.")
+            raise ValueError(
+                "Subclass must define an extractor_name not equal to 'base'."
+            )
 
     def get_settings(self):
         """Get settings for extraction."""
@@ -72,13 +74,16 @@ class BaseExtractor(ABC):
         """Get extraction response."""
         return self._extraction_response
 
-    def check_for_skip_files(self, input_file_path: Path, output_folder_path: Optional[Path]) -> bool:
-        """
-        Check if a JSON file already exists in the output folder and determine whether to skip processing.
+    def check_for_skip_files(
+        self, input_file_path: Path, output_folder_path: Optional[Path]
+    ) -> bool:
+        """Check if a JSON file already exists in the output folder and determine whether to skip processing.
 
         Args:
+        ----
             input_file_path (Path): The path of the input file.
             output_folder_path (Path): The path of the output folder.
+
         """
         if (
             "skip_extracted_files" in self._settings.keys()
@@ -86,7 +91,9 @@ class BaseExtractor(ABC):
             and output_folder_path is not None
             and input_file_path.with_suffix(".json") in output_folder_path.iterdir()
         ):
-            _logger.info(f"The extracted JSON for `{input_file_path.name}` already exists. Skipping...")
+            _logger.info(
+                f"The extracted JSON for `{input_file_path.name}` already exists. Skipping..."
+            )
             _logger.info(
                 "If you would like to re-extract the already processed files, "
                 "set `skip_extracted_files` to False in the config file."
@@ -98,11 +105,12 @@ class BaseExtractor(ABC):
             return False
 
     def save_extraction_to_file(self, output_file_path: Path) -> None:
-        """
-        Save the extraction dictionary to a JSON file.
+        """Save the extraction dictionary to a JSON file.
 
         Args:
+        ----
             output_file_path (Path): The path to the output JSON file.
+
         """
         dict_to_json(output_file_path, self._extraction_response.dictionary)
 
@@ -110,17 +118,20 @@ class BaseExtractor(ABC):
         self,
         input_file_path: Path,
     ) -> ExtractionResponse:
-        """
-        Perform the extraction of text from the given input file path.
+        """Perform the extraction of text from the given input file path.
 
         Args:
+        ----
             input_file_path (Path): The path to the input file.
 
         Returns:
+        -------
             ExtractionResponse: An instance of the `ExtractionResponse` class containing the extraction results.
 
         Raises:
+        ------
             ExtractionError: If an error occurs during the extraction process.
+
         """
         try:
             self._generate_extractions(input_file_path=input_file_path)
@@ -138,9 +149,10 @@ class BaseExtractor(ABC):
         self,
         input_file_path: Path,
     ) -> Optional[dict]:
-        """
-        Define how text is extracted from a give file in path.
+        """Define how text is extracted from a give file in path.
 
         Args:
+        ----
             input_file_path (Path): Should contain the path to a file as a pathlib.Path object.
+
         """

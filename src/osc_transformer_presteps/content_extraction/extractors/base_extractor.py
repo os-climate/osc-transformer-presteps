@@ -1,4 +1,5 @@
 """Python Script for Base Extractor."""
+
 import logging
 import traceback
 from abc import ABC, abstractmethod
@@ -62,7 +63,9 @@ class BaseExtractor(ABC):
         """Intialize the subclass."""
         super().__init_subclass__(**kwargs)
         if cls.extractor_name == "base":
-            raise ValueError("Subclass must define an extractor_name not equal to 'base'.")
+            raise ValueError(
+                "Subclass must define an extractor_name not equal to 'base'."
+            )
 
     def get_settings(self):
         """Get settings for extraction."""
@@ -72,7 +75,9 @@ class BaseExtractor(ABC):
         """Get extraction response."""
         return self._extraction_response
 
-    def check_for_skip_files(self, input_file_path: Path, output_folder_path: Optional[Path]) -> bool:
+    def check_for_skip_files(
+        self, input_file_path: Path, output_folder_path: Optional[Path]
+    ) -> bool:
         """
         Check if a JSON file already exists in the output folder and determine whether to skip processing.
 
@@ -86,7 +91,9 @@ class BaseExtractor(ABC):
             and output_folder_path is not None
             and input_file_path.with_suffix(".json") in output_folder_path.iterdir()
         ):
-            _logger.info(f"The extracted JSON for `{input_file_path.name}` already exists. Skipping...")
+            _logger.info(
+                f"The extracted JSON for `{input_file_path.name}` already exists. Skipping..."
+            )
             _logger.info(
                 "If you would like to re-extract the already processed files, "
                 "set `skip_extracted_files` to False in the config file."

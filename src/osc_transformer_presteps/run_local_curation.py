@@ -1,4 +1,5 @@
 """Python script for using local curation as cli."""
+
 import logging
 import traceback
 from pathlib import Path
@@ -42,29 +43,29 @@ def _specify_root_logger(log_level: int):
 
 @app.command()
 def run_local_curation(
-        file_or_folder_name: str = typer.Argument(
-            help="This is the directory of list of files you want to curate"
-                 " data from. All the files in the directory should be "
-                 "of json format generated from Extraction module.",
-        ),
-        annotation_dir: str = typer.Argument(
-            help="This is the directory of annotation_xlsx file"
-        ),
-        kpi_mapping_dir: str = typer.Argument(
-            help="This is the directory of kpi_mapping_csv file"
-        ),
-        create_neg_samples: bool = typer.Option(
-            False,
-            "--create_neg_samples",
-            show_default=True,
-            help="Boolean to declare if you want to include negative samples in your dataset.",
-        ),
-        neg_pos_ratio: int = typer.Option(
-            1,
-            "--neg_pos_ratio",
-            show_default=True,
-            help="Ratio of number of negative samples you want per positive samples.",
-        ),
+    file_or_folder_name: str = typer.Argument(
+        help="This is the directory of list of files you want to curate"
+        " data from. All the files in the directory should be "
+        "of json format generated from Extraction module.",
+    ),
+    annotation_dir: str = typer.Argument(
+        help="This is the directory of annotation_xlsx file"
+    ),
+    kpi_mapping_dir: str = typer.Argument(
+        help="This is the directory of kpi_mapping_csv file"
+    ),
+    create_neg_samples: bool = typer.Option(
+        False,
+        "--create_neg_samples",
+        show_default=True,
+        help="Boolean to declare if you want to include negative samples in your dataset.",
+    ),
+    neg_pos_ratio: int = typer.Option(
+        1,
+        "--neg_pos_ratio",
+        show_default=True,
+        help="Ratio of number of negative samples you want per positive samples.",
+    ),
 ) -> None:
     """Start the creation of the dataset based on the extracted text on your local machine."""
     cwd = Path.cwd()
@@ -74,8 +75,11 @@ def run_local_curation(
     if extracted_json_temp.is_file():
         _logger.info(f"Start curating file {extracted_json_temp.stem}.")
         curate_one_file(
-            dir_extracted_json_name=extracted_json_temp, annotation_dir=annotation_temp,
-            kpi_mapping_dir=kpi_mapping_temp, create_neg_samples=create_neg_samples, neg_pos_ratio=neg_pos_ratio
+            dir_extracted_json_name=extracted_json_temp,
+            annotation_dir=annotation_temp,
+            kpi_mapping_dir=kpi_mapping_temp,
+            create_neg_samples=create_neg_samples,
+            neg_pos_ratio=neg_pos_ratio,
         ).to_csv("Curated_dataset.csv", index=False)
         _logger.info(f"Done with creating dataset {extracted_json_temp.stem}.")
     elif extracted_json_temp.is_dir():
@@ -86,9 +90,11 @@ def run_local_curation(
             _logger.info(f"Start curating file {file.stem}.")
             try:
                 temp_df = curate_one_file(
-                    dir_extracted_json_name=file, annotation_dir=annotation_temp,
-                    kpi_mapping_dir=kpi_mapping_temp, create_neg_samples=create_neg_samples,
-                    neg_pos_ratio=neg_pos_ratio
+                    dir_extracted_json_name=file,
+                    annotation_dir=annotation_temp,
+                    kpi_mapping_dir=kpi_mapping_temp,
+                    create_neg_samples=create_neg_samples,
+                    neg_pos_ratio=neg_pos_ratio,
                 )
                 curator_df = pd.concat([curator_df, temp_df], ignore_index=True)
                 curator_df.to_csv("Curated_dataset.csv", index=False)
@@ -101,8 +107,13 @@ def run_local_curation(
         _logger.error("Given file or folder name is neither a file nor a folder.")
 
 
-def curate_one_file(dir_extracted_json_name: Path, annotation_dir: Path, kpi_mapping_dir: Path,
-                    create_neg_samples: bool, neg_pos_ratio: int):
+def curate_one_file(
+    dir_extracted_json_name: Path,
+    annotation_dir: Path,
+    kpi_mapping_dir: Path,
+    create_neg_samples: bool,
+    neg_pos_ratio: int,
+):
     """
     Curate data for a given file to a given folder for a specific setting.
 
@@ -113,7 +124,7 @@ def curate_one_file(dir_extracted_json_name: Path, annotation_dir: Path, kpi_map
         extract_json=dir_extracted_json_name,
         kpi_mapping_path=kpi_mapping_dir,
         create_neg_samples=create_neg_samples,
-        neg_pos_ratio=neg_pos_ratio
+        neg_pos_ratio=neg_pos_ratio,
     ).create_curator_df()
 
 

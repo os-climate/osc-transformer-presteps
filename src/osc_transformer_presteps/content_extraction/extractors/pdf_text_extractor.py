@@ -1,4 +1,5 @@
 """Python script for extracting content from large pdf in desired format."""
+
 import io
 import logging
 import re
@@ -92,11 +93,17 @@ class PDFExtractor(BaseExtractor):
 
         self.extract_pdf_by_page(str(input_file_path))
 
-        _logger.info(f"The number of pages extracted: {len(self._extraction_response.dictionary)}")
+        _logger.info(
+            f"The number of pages extracted: {len(self._extraction_response.dictionary)}"
+        )
         paragraphs = (
             0
             if len(self._extraction_response.dictionary.keys()) == 0
-            else max(self._extraction_response.dictionary[max(self._extraction_response.dictionary.keys())].keys())
+            else max(
+                self._extraction_response.dictionary[
+                    max(self._extraction_response.dictionary.keys())
+                ].keys()
+            )
         )
         _logger.info(f"The number of paragraphs found: {paragraphs}.")
 
@@ -127,7 +134,9 @@ class PDFExtractor(BaseExtractor):
                     paragraphs_data = self.process_page(data)
                     if len(paragraphs_data) == 0:
                         continue
-                    idx = self.update_extraction_dict(idx, page_number, paragraphs_data, str(Path(pdf_file).name))
+                    idx = self.update_extraction_dict(
+                        idx, page_number, paragraphs_data, str(Path(pdf_file).name)
+                    )
                     retstr.truncate(0)
                     retstr.seek(0)
 
@@ -151,11 +160,15 @@ class PDFExtractor(BaseExtractor):
         # Get ride of table data if the number of alphabets in a paragraph is less than `min_paragraph_length`
         mpl = self._settings["min_paragraph_length"]
         paragraphs_cleaned = [
-            clean_text(p) for p in paragraphs if np.sum([c.isalpha() + c.isnumeric() for c in clean_text(p)]) > mpl
+            clean_text(p)
+            for p in paragraphs
+            if np.sum([c.isalpha() + c.isnumeric() for c in clean_text(p)]) > mpl
         ]
         return paragraphs_cleaned
 
-    def update_extraction_dict(self, idx: int, page_number: int, paragraphs_data: List[str], file_name: str) -> int:
+    def update_extraction_dict(
+        self, idx: int, page_number: int, paragraphs_data: List[str], file_name: str
+    ) -> int:
         """
         Update the extraction dictionary with the provided data and return the updated index.
 
@@ -180,7 +193,9 @@ class PDFExtractor(BaseExtractor):
                             "start_index_page": idx,
                             "last_index_page": idx + len(paragraphs_data) - 1,
                         }
-                        for (x, y) in zip(range(idx, idx + len(paragraphs_data)), paragraphs_data)
+                        for (x, y) in zip(
+                            range(idx, idx + len(paragraphs_data)), paragraphs_data
+                        )
                     }
                 }
             )

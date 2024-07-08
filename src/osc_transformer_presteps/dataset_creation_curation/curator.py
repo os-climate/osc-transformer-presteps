@@ -1,4 +1,5 @@
 """Python Script for Curation."""
+
 import ast
 import json
 import math
@@ -33,12 +34,12 @@ class Curator:
     """
 
     def __init__(
-            self,
-            annotation_folder: str,
-            extract_json: Path,
-            kpi_mapping_path: str,
-            neg_pos_ratio: int = 1,
-            create_neg_samples: bool = False,
+        self,
+        annotation_folder: str,
+        extract_json: Path,
+        kpi_mapping_path: str,
+        neg_pos_ratio: int = 1,
+        create_neg_samples: bool = False,
     ) -> None:
         """Initialize the constructor for Curator object."""
         self.annotation_folder = annotation_folder
@@ -128,9 +129,12 @@ class Curator:
         except (ValueError, SyntaxError):
             return [""]
 
-        if not sentences or \
-                self.json_file_name.replace(".json", "") != row["source_file"].replace(".pdf", "") or \
-                row["data_type"] != "TEXT":
+        if (
+            not sentences
+            or self.json_file_name.replace(".json", "")
+            != row["source_file"].replace(".pdf", "")
+            or row["data_type"] != "TEXT"
+        ):
             return [""]
 
         source_page = str(row["source_page"])
@@ -140,10 +144,13 @@ class Curator:
 
         if page_number and page_number in self.pdf_content:
             paragraphs = [
-                self.pdf_content[page_number][key_inner]["paragraph"] for key_inner in self.pdf_content[page_number]
+                self.pdf_content[page_number][key_inner]["paragraph"]
+                for key_inner in self.pdf_content[page_number]
             ]
             matching_sentences = [
-                para for para in paragraphs if any(sentence in para for sentence in sentences)
+                para
+                for para in paragraphs
+                if any(sentence in para for sentence in sentences)
             ]
             return matching_sentences if matching_sentences else sentences
 
@@ -155,9 +162,12 @@ class Curator:
 
         Returns a list of context paragraphs or an empty list.
         """
-        if not self.pdf_content or \
-                self.json_file_name.replace(".json", "") != row["source_file"].replace(".pdf", "") or \
-                row["data_type"] != "TEXT":
+        if (
+            not self.pdf_content
+            or self.json_file_name.replace(".json", "")
+            != row["source_file"].replace(".pdf", "")
+            or row["data_type"] != "TEXT"
+        ):
             return [""]
 
         paragraphs = [
@@ -180,7 +190,9 @@ class Curator:
         df["annotation_file"] = os.path.basename(self.annotation_folder)
 
         # Update the "source_page" column
-        df["source_page"] = df["source_page"].apply(lambda x: [str(p - 1) for p in ast.literal_eval(x)])
+        df["source_page"] = df["source_page"].apply(
+            lambda x: [str(p - 1) for p in ast.literal_eval(x)]
+        )
 
         # List to store new DataFrames
         new_dfs: List[pd.DataFrame] = []
@@ -189,13 +201,20 @@ class Curator:
             row["Index"] = i
             contexts = [
                 (self.create_pos_examples(row.copy()), 1),
-                (self.create_neg_examples(row.copy()) if self.create_neg_samples else [], 0)
+                (
+                    self.create_neg_examples(row.copy())
+                    if self.create_neg_samples
+                    else [],
+                    0,
+                ),
             ]
 
             for context, label in contexts:
                 if context:
                     context_df = pd.DataFrame({"context": context, "label": label})
-                    combined_df = pd.concat([row.to_frame().T.reset_index(drop=True), context_df], axis=1)
+                    combined_df = pd.concat(
+                        [row.to_frame().T.reset_index(drop=True), context_df], axis=1
+                    )
                     new_dfs.append(combined_df)
 
         return new_dfs
@@ -218,7 +237,7 @@ class Curator:
             "source_page",
             "Index",
             "data_type",
-            "kpi_id"
+            "kpi_id",
         ]
 
         # Initialize an empty DataFrame with specified columns
@@ -229,9 +248,13 @@ class Curator:
             if new_dfs:
                 # Concatenate the dataframes in new_dfs
                 new_df = pd.concat(new_dfs, ignore_index=True)
-                new_df.drop(columns=["question"], inplace=True, errors='ignore')  # Drop 'question' if it exists
+                new_df.drop(
+                    columns=["question"], inplace=True, errors="ignore"
+                )  # Drop 'question' if it exists
 
-                kpi_df = pd.read_csv(self.kpi_mapping_path, usecols=["kpi_id", "question"])
+                kpi_df = pd.read_csv(
+                    self.kpi_mapping_path, usecols=["kpi_id", "question"]
+                )
                 merged_df = pd.merge(new_df, kpi_df, on="kpi_id", how="left")
 
                 result_df = merged_df[columns_order]

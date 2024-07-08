@@ -1,4 +1,5 @@
 """Python Script to register and call extraction factory."""
+
 import logging
 from typing import Callable, Optional
 
@@ -17,6 +18,7 @@ def register_extractor(extractor_type: str) -> Callable:
     under a specified type. The registered extractors are stored in the
     `_extractors` dictionary.
     """
+
     def decorator(extractor_cls: Callable) -> Callable:
         _extractors[extractor_type] = extractor_cls
         return extractor_cls
@@ -30,7 +32,9 @@ def pdf_extractor(settings: Optional[dict] = None) -> PDFExtractor:
     return PDFExtractor(settings)
 
 
-def get_extractor(extractor_type: str, settings: Optional[dict] = None) -> BaseExtractor:
+def get_extractor(
+    extractor_type: str, settings: Optional[dict] = None
+) -> BaseExtractor:
     """
     Get an extractor instance based on the extractor_type.
 

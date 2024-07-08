@@ -1,4 +1,5 @@
 """Python Script to handle logging and Extraction Settings."""
+
 import logging
 from enum import Enum
 

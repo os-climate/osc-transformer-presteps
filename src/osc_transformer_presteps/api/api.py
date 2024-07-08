@@ -1,4 +1,5 @@
 """Python Script for FastAPI."""
+
 import logging
 
 import uvicorn

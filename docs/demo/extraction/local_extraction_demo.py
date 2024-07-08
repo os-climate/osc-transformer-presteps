@@ -1,4 +1,5 @@
 """Python script to run the extraction locally for testing."""
+
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -26,7 +27,9 @@ def extract_main(
     else:
         output_folder_path = None
 
-    if not extractor.check_for_skip_files(input_file_path=input_file_path, output_folder_path=output_folder_path):
+    if not extractor.check_for_skip_files(
+        input_file_path=input_file_path, output_folder_path=output_folder_path
+    ):
         extractor.extract(input_file_path=input_file_path)
 
     if extractor.get_settings()["store_to_file"] and output_file_path is not None:
@@ -40,7 +43,16 @@ if __name__ == "__main__":
     file_name = "Test.pdf"
 
     input_file_path_main = input_folder / file_name
-    output_file_path_main = output_folder / input_file_path_main.with_suffix(".json").name
-    settings_main: Optional[Dict[str, Union[str, bool]]] = {"skip_extracted_files": True, "store_to_file": True}
+    output_file_path_main = (
+        output_folder / input_file_path_main.with_suffix(".json").name
+    )
+    settings_main: Optional[Dict[str, Union[str, bool]]] = {
+        "skip_extracted_files": True,
+        "store_to_file": True,
+    }
 
-    extract_main(input_file_path=input_file_path_main, output_file_path=output_file_path_main, settings=settings_main)
+    extract_main(
+        input_file_path=input_file_path_main,
+        output_file_path=output_file_path_main,
+        settings=settings_main,
+    )

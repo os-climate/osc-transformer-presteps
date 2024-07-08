@@ -1,4 +1,5 @@
 """Python script for setting up FastApi router for extract."""
+
 import logging
 import shutil
 from pathlib import Path
@@ -70,7 +71,9 @@ def extract(
             file_path_temp.unlink()
         except Exception:
             pass
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=jsonable_encoder(v))
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_ENTITY, detail=jsonable_encoder(v)
+        )
 
 
 def save_upload_file(upload_file: UploadFile, destination: Path) -> None:

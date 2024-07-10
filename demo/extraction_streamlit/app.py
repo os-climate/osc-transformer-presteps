@@ -27,10 +27,6 @@ else:
     if st.button("Extract data"):
         st.info("Extraction started")
         file_bytes = input_file.getvalue()
-        liveness = requests.get(
-            url="http://localhost:8000/liveness", proxies={"http": "", "https": ""}
-        )
-        st.info(f"Liveness Check: {liveness.status_code}")
         file_upload = requests.post(
             url="http://localhost:8000/extract",
             files={"file": (input_file.name, file_bytes)},

@@ -5,9 +5,9 @@ import logging
 import uvicorn
 from fastapi import APIRouter, FastAPI
 from starlette.responses import RedirectResponse
+from server_settings import ExtractionServerSettings
 
-from osc_transformer_presteps.api.extract import router as extraction_router
-from osc_transformer_presteps.settings import ExtractionServerSettings
+from extract import router as extraction_router
 
 _logger = logging.getLogger(__name__)
 

@@ -1,3 +1,5 @@
+"""Module to test the pdf_extractor.py."""
+
 import json
 from pathlib import Path
 
@@ -7,8 +9,12 @@ from osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor i
 
 
 class TestPdfExtractor:
+    """Class to collect tests for the PDFExtractor class."""
+
     def test_pdf_with_extraction_issues(self):
-        """In this test we try to extract the data from a pdf, where one can not extract text as it was produced via
+        """Test with extraction issue.
+
+        A test where we try to extract the data from a pdf, where one can not extract text as it was produced via
         a "print". Check the file test_issue.pdf.
         """
         extractor = PDFExtractor()
@@ -17,7 +23,9 @@ class TestPdfExtractor:
         assert extraction_response.dictionary == {}
 
     def test_pdf_with_no_extraction_issues(self):
-        """In this test we try to extract the data from a pdf, where one can not extract text as it was produced via
+        """Test with no extraction issue.
+
+        In this test we try to extract the data from a pdf, where one can not extract text as it was produced via
         a "print". Check the file test_issue.pdf.
         """
         extractor = PDFExtractor()

@@ -1,4 +1,8 @@
-"""Python Script for locally running extraction on FastAPI."""
+"""Python Script for locally running extraction on FastAPI.
+
+Note: To make the following demo work you first have to start the server in the folder demo/extraction_api!
+
+"""
 
 import json
 from pathlib import Path

@@ -1,8 +1,11 @@
 import pytest
-from pydantic import ValidationError
-import logging 
+import logging
 
-from osc_transformer_presteps.settings import ExtractionServerSettings, ExtractionSettings, LogLevel
+from osc_transformer_presteps.settings import (
+    ExtractionServerSettings,
+    ExtractionSettings,
+    LogLevel,
+)
 
 
 _log_dict = {
@@ -33,7 +36,9 @@ def test_default_server_settings(default_server_settings):
     assert settings.log_level == LogLevel.info
 
 
-@pytest.mark.parametrize("log_level", ["critical", "error", "warning", "info", "debug", "notset"])
+@pytest.mark.parametrize(
+    "log_level", ["critical", "error", "warning", "info", "debug", "notset"]
+)
 def test_valid_log_levels(default_server_settings, log_level):
     default_server_settings["log_level"] = log_level
     settings = ExtractionServerSettings(**default_server_settings)
@@ -53,11 +58,12 @@ def test_default_extraction_settings():
     assert settings.store_to_file
 
 
-@pytest.mark.parametrize("skip_extracted_files,store_to_file", [(True, False), (False, False), (True, True)])
+@pytest.mark.parametrize(
+    "skip_extracted_files,store_to_file", [(True, False), (False, False), (True, True)]
+)
 def test_extraction_settings_variations(skip_extracted_files, store_to_file):
     settings = ExtractionSettings(
-        skip_extracted_files=skip_extracted_files,
-        store_to_file=store_to_file
+        skip_extracted_files=skip_extracted_files, store_to_file=store_to_file
     )
     assert settings.skip_extracted_files == skip_extracted_files
     assert settings.store_to_file == store_to_file

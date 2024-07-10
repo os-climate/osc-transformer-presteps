@@ -1,3 +1,5 @@
+"""Module to collect settings for the FastAPI server."""
+
 from pydantic import BaseModel
 from enum import Enum
 import logging

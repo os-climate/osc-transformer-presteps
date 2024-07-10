@@ -3,14 +3,14 @@
 On June 26 2024, Linux Foundation announced the merger of its financial services umbrella, the Fintech Open Source Foundation (`FINOS <https://finos.org>`_), with OS-Climate, an open source community dedicated to building data technologies, modelling, and analytic tools that will drive global capital flows into climate change mitigation and resilience; OS-Climate projects are in the process of transitioning to the `FINOS governance framework <https://community.finos.org/docs/governance>`_; read more on `finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg <https://finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg>`_
 
 
-=====================================================================
+=========================
 OSC Transformer Pre-Steps
-=====================================================================
+=========================
 
 |osc-climate-project| |osc-climate-slack| |osc-climate-github| |pypi| |build-status| |pdm| |PyScaffold|
 
 OS-Climate Transformer Pre-Steps Tool
-===============================
+=====================================
 
 .. _notes:
 
@@ -41,7 +41,7 @@ Developer space
 ===============
 
 Use code directly without CLI via Github Repository
------------------------------
+---------------------------------------------------
 
 First clone the repository to your local environment::
 
@@ -60,7 +60,7 @@ Now you have multiple demos on how to go on. See folder
 [here](demo)
 
 pdm
------------------------------
+---
 
 For adding new dependencies use pdm. You could add new packages via pdm add.
 For example numpy via::
@@ -73,7 +73,7 @@ https://pdm-project.org/en/latest/
 
 
 tox
------------------------------
+---
 
 For running linting tools we use tox which you run outside of your virtual environment::
 

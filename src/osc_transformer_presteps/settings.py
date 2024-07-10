@@ -1,4 +1,5 @@
 """Python Script to handle logging and Extraction Settings."""
+
 import logging
 from enum import Enum
 
@@ -26,36 +27,10 @@ _log_dict = {
 }
 
 
-class ExtractionServerSettingsBase(BaseModel):
-    """Class for Extraction server settings."""
-
-    port: int = 8000
-    host: str = "localhost"
-    log_type: int = 20
-    log_level: LogLevel = LogLevel("info")
-
-
-class ExtractionServerSettings(ExtractionServerSettingsBase):
-    """
-    Settings for configuring the extraction server.
-
-    This class extends `ExtractionServerSettingsBase` and adds additional
-    logging configuration.
-    """
-
-    def __init__(self, **data) -> None:
-        """Initialize the ExtractionServerSettings."""
-        if "log_level" in data:
-            data["log_level"] = LogLevel(data["log_level"])
-        super().__init__(**data)
-        self.log_type: int = _log_dict[self.log_level.value]
-
-
 class ExtractionSettings(BaseModel):
-    """
-    Settings for controlling extraction behavior.
+    """Settings for controlling extraction behavior.
 
-    Attributes:
+    Attributes
     ----------
     skip_extracted_files : bool, optional
         Flag indicating whether to skip files that have already been extracted.
@@ -63,6 +38,7 @@ class ExtractionSettings(BaseModel):
     store_to_file : bool, optional
         Flag indicating whether to store the extracted data to a file.
         Defaults to True.
+
     """
 
     skip_extracted_files: bool = False

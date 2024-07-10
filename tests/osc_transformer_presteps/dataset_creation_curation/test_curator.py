@@ -1,3 +1,5 @@
+"""Module to test the curator.py."""
+
 import os
 from pathlib import Path
 
@@ -17,6 +19,7 @@ cwd = Path(__file__).resolve().parent / "data"
 
 @pytest.fixture
 def mock_curator_data():
+    """Mimics the curator settings data."""
     return {
         "annotation_folder": cwd / "test_annotations_sliced.xlsx",
         "extract_json": cwd / "Test.json",
@@ -28,16 +31,18 @@ def mock_curator_data():
 
 @pytest.fixture
 def curator_object(mock_curator_data):
+    """Fixture to create a fixed Curator object with the given mocked settings data."""
     return Curator(
-        annotation_folder=mock_curator_data["annotation_folder"],
+        annotation_folder=str(mock_curator_data["annotation_folder"]),
         extract_json=mock_curator_data["extract_json"],
-        kpi_mapping_path=mock_curator_data["kpi_mapping_path"],
+        kpi_mapping_path=str(mock_curator_data["kpi_mapping_path"]),
         neg_pos_ratio=1,
         create_neg_samples=True,
     )
 
 
 def annotation_to_df(filepath: Path) -> pd.Series:
+    """Load curation data and return the first row."""
     df = pd.read_excel(filepath, sheet_name="data_ex_in_xls")
     df["annotation_file"] = os.path.basename(filepath)
 
@@ -50,7 +55,10 @@ def annotation_to_df(filepath: Path) -> pd.Series:
 
 
 class TestAnnotationData:
+    """Class to collect tests for the AnnotationData class."""
+
     def test_annotation_data_valid_paths(self, mock_curator_data):
+        """A test to validate that all mentioned paths are ok."""
         data = AnnotationData(
             annotation_folder=mock_curator_data["annotation_folder"],
             extract_json=mock_curator_data["extract_json"],
@@ -61,6 +69,7 @@ class TestAnnotationData:
         assert data.kpi_mapping_path == cwd / "kpi_mapping_sliced.csv"
 
     def test_annotation_data_invalid_paths(self):
+        """A test to validate that wrong paths will raise an error."""
         with pytest.raises(ValidationError):
             AnnotationData(
                 annotation_folder="/invalid/path",
@@ -70,6 +79,8 @@ class TestAnnotationData:
 
 
 class TestCurator:
+    """Class to collect tests for the curator module."""
+
     @pytest.mark.parametrize(
         "input_text, expected_output",
         [
@@ -84,29 +95,35 @@ class TestCurator:
         ],
     )
     def test_clean_text(self, curator_object, input_text, expected_output):
+        """A test where we test multiple test sentences."""
         cleaned_text = curator_object.clean_text(input_text)
         assert cleaned_text == expected_output
 
     def test_clean_text_basic(self, curator_object):
+        """A test where test sentence is already clean."""
         cleaned_text = curator_object.clean_text("This is a test sentence.")
         assert cleaned_text == "This is a test sentence."
 
     def test_clean_text_with_fancy_quotes(self, curator_object):
+        """A test on cleaning text with special quotes."""
         text_with_fancy_quotes = "“This is a test sentence.”"
         cleaned_text = curator_object.clean_text(text_with_fancy_quotes)
         assert cleaned_text == '"This is a test sentence."'
 
     def test_clean_text_with_newlines_and_tabs(self, curator_object):
+        """A test on removing new lines and tabs."""
         text_with_newlines_tabs = "This\nis\ta\ttest\nsentence."
         cleaned_text = curator_object.clean_text(text_with_newlines_tabs)
         assert cleaned_text == "This is a test sentence."
 
     def test_clean_text_removing_specific_terms(self, curator_object):
+        """A test on removing specific terms."""
         text_with_boe = "This sentence contains the term BOE."
         cleaned_text = curator_object.clean_text(text_with_boe)
         assert cleaned_text == "This sentence contains the term ."
 
     def test_clean_text_removing_invalid_escape_sequence(self, curator_object):
+        """A test on removing invalid escape sequence."""
         text_with_invalid_escape_sequence = (
             "This sentence has an invalid escape sequence: \x9d"
         )
@@ -114,12 +131,14 @@ class TestCurator:
         assert cleaned_text == "This sentence has an invalid escape sequence: "
 
     def test_clean_text_removing_extra_backslashes(self, curator_object):
+        """A test on removing extra  backslashes."""
         text_with_extra_backslashes = "This\\ sentence\\ has\\ extra\\ backslashes."
         cleaned_text = curator_object.clean_text(text_with_extra_backslashes)
         assert cleaned_text == "This sentence has extra backslashes."
 
     def test_create_pos_examples_correct_samples(self, curator_object):
-        row = annotation_to_df(curator_object.annotation_folder)
+        """A test where we create positive examples via curator."""
+        row = annotation_to_df(Path(curator_object.annotation_folder))
         pos_example = curator_object.create_pos_examples(row)
         expected_pos_example = [
             "We continue to work towards delivering on our Net Carbon Footprint ambition to "
@@ -133,35 +152,39 @@ class TestCurator:
         assert pos_example == expected_pos_example
 
     def test_create_pos_examples_json_filename_mismatch(self, mock_curator_data):
+        """A test for positive examples where we have a json filename mismatch."""
         curator = Curator(
-            annotation_folder=mock_curator_data["annotation_folder"],
+            annotation_folder=str(mock_curator_data["annotation_folder"]),
             extract_json=cwd / "Test_another.json",
-            kpi_mapping_path=mock_curator_data["kpi_mapping_path"],
+            kpi_mapping_path=str(mock_curator_data["kpi_mapping_path"]),
             neg_pos_ratio=1,
             create_neg_samples=True,
         )
-        row = annotation_to_df(curator.annotation_folder)
+        row = annotation_to_df(Path(curator.annotation_folder))
         pos_example = curator.create_pos_examples(row)
         assert pos_example == [""]
 
     def test_create_neg_examples_correct_samples(self, curator_object):
-        row = annotation_to_df(curator_object.annotation_folder)
+        """A test where we create negative examples via curator."""
+        row = annotation_to_df(Path(curator_object.annotation_folder))
         neg_example = curator_object.create_neg_examples(row)
         assert neg_example == ["Shell 2019 Sustainability Report"]
 
     def test_create_neg_examples_json_filename_mismatch(self, mock_curator_data):
+        """A test for negative examples where we have a json filename mismatch."""
         curator = Curator(
-            annotation_folder=mock_curator_data["annotation_folder"],
+            annotation_folder=str(mock_curator_data["annotation_folder"]),
             extract_json=cwd / "Test_another.json",
-            kpi_mapping_path=mock_curator_data["kpi_mapping_path"],
+            kpi_mapping_path=str(mock_curator_data["kpi_mapping_path"]),
             neg_pos_ratio=1,
             create_neg_samples=True,
         )
-        row = annotation_to_df(curator.annotation_folder)
+        row = annotation_to_df(Path(curator.annotation_folder))
         neg_example = curator.create_neg_examples(row)
         assert neg_example == [""]
 
     def test_create_curator_df(self, curator_object):
+        """A test to create the final dataframe output."""
         actual_df = pd.read_csv(cwd / "Actual.csv")
         output = curator_object.create_curator_df()
 

@@ -28,8 +28,7 @@ app.add_typer(
 
 
 def run():
-    """
-    Provide main entry point for the OSC Transformer CLI application.
+    """Provide main entry point for the OSC Transformer CLI application.
 
     This function sets up the Typer application with subcommands for local
     extraction and curation of data.

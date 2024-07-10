@@ -1,4 +1,5 @@
 """Python Script for locally running curation for testing."""
+
 from pathlib import Path
 
 from pydantic import BaseModel, FilePath, ValidationError
@@ -46,7 +47,7 @@ if __name__ == "__main__":
             extract_json=annotation_data.extract_json,
             kpi_mapping_path=annotation_data.kpi_mapping_path,
             create_neg_samples=True,
-            neg_pos_ratio=1
+            neg_pos_ratio=1,
         ).create_curator_df()
 
         curator.to_csv(output_file_path_main, index=False)

@@ -63,14 +63,14 @@ osc-transformer-presteps = "osc_transformer_presteps.cli:run"
   "pylint",
   "toml",
   "yapf",
-  "pdm"
+  "pdm",
+  "tox",
+  "tox-pdm",
 ]
 test = [
+    "pdm[pytest]",
     "pytest>=8.1.1",
     "pytest-cov>=5.0.0",
-]
-lint = [
-    "pre-commit>=3.7.0",
 ]
 
 [tool.pdm.scripts]
@@ -83,17 +83,15 @@ lint = "pre-commit run --all-files"
 complete = { call = "tasks.complete:main", help = "Create autocomplete files for bash and fish" }
 
 [tool.pdm.dev-dependencies]
-test = ["pdm[pytest]", "pytest", "pytest-cov"]
-tox = ["tox", "tox-pdm>=0.5"]
+tox = ["tox", "tox-pdm"]
 docs = ["sphinx>=7.2.6", "sphinx-copybutton>=0.5.2"]
-dev = ["tox>=4.11.3", "tox-pdm>=0.7.0"]
 lint = ["pre-commit"]
 
 [tool.pytest.ini_options]
 testpaths = [
     "tests/",
 ]
-addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 40"
+addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 65"
 
 [tool.coverage.run]
 source = ["src"]

@@ -1,3 +1,5 @@
+"""Module to test the base_extractor.py."""
+
 from pathlib import Path
 from typing import Optional
 
@@ -10,7 +12,7 @@ from osc_transformer_presteps.content_extraction.extractors.base_extractor impor
 
 
 def concrete_base_extractor(name: str):
-    """This function replaces all abstract methods by concrete ones."""
+    """Replace all abstract methods by concrete ones."""
 
     class ConcreteBaseExtractor(BaseExtractor):
         extractor_name = name
@@ -25,14 +27,15 @@ def concrete_base_extractor(name: str):
 
 
 class TestBaseExtractor:
+    """Class to collect tests for the BaseExtractor."""
+
     @pytest.fixture()
     def base_extractor(self):
+        """Initialize a concrete BaseExtractor element to test it."""
         return concrete_base_extractor("base_test")
 
     def test_extractor_name_is_base(self):
-        """This function tests if we get a ValueError in case a subclass has not changed extractor_name to
-        something different base.
-        """
+        """Tests if we get a ValueError in case a subclass has not changed extractor_name."""
         with pytest.raises(
             ValueError,
             match="Subclass must define an extractor_name not equal to 'base'.",
@@ -40,6 +43,7 @@ class TestBaseExtractor:
             concrete_base_extractor("base")
 
     def test_get_settings(self, base_extractor):
+        """Test if retrieving the right settings."""
         settings = base_extractor.get_settings()
         assert settings["annotation_folder"] is None
         assert settings["min_paragraph_length"] == 20
@@ -47,6 +51,7 @@ class TestBaseExtractor:
         assert settings["store_to_file"] is True
 
     def test_get_extractions(self, base_extractor):
+        """Test if we can retrieve extraction response correctly."""
         base_extractor._extraction_response = ExtractionResponse(
             **{"dictionary": {"a": "b"}, "success": True}
         )
@@ -54,6 +59,7 @@ class TestBaseExtractor:
         assert base_extractor.get_extractions().success is True
 
     def test_check_for_skip_files(self, base_extractor):
+        """Test if files are really skipped when defined as such."""
         input_file_path = Path(__file__).resolve().parent / "test.pdf"
         output_folder_path = Path(__file__).resolve().parent
         assert not base_extractor.check_for_skip_files(
@@ -77,6 +83,7 @@ class TestBaseExtractor:
         json_file_path.unlink(missing_ok=True)
 
     def test_save_extraction_to_file(self, base_extractor):
+        """Test if we can save the output."""
         output_file_path = Path(__file__).resolve().parent / "output.json"
         er = ExtractionResponse()
         er.dictionary = {"key": "value"}

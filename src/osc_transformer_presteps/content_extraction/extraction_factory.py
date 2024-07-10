@@ -38,12 +38,12 @@ def get_extractor(
 
     Args:
     ----
-    - extractor_type (str): Type of extractor to be retrieved
-    - settings: Settings specific to the extractor
+        extractor_type (str): Type of extractor to be retrieved
+        settings: Settings specific to the extractor
 
     Returns:
     -------
-    - BaseExtractor: Instance of the specified extractor type
+        BaseExtractor: Instance of the specified extractor type
 
     """
     _logger.info("The extractor type is: " + extractor_type)

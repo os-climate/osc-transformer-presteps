@@ -3,22 +3,20 @@
 On June 26 2024, Linux Foundation announced the merger of its financial services umbrella, the Fintech Open Source Foundation (`FINOS <https://finos.org>`_), with OS-Climate, an open source community dedicated to building data technologies, modelling, and analytic tools that will drive global capital flows into climate change mitigation and resilience; OS-Climate projects are in the process of transitioning to the `FINOS governance framework <https://community.finos.org/docs/governance>`_; read more on `finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg <https://finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg>`_
 
 
-=====================================================================
-OSC Data Extractor Pre-Steps
-=====================================================================
+=========================
+OSC Transformer Pre-Steps
+=========================
 
 |osc-climate-project| |osc-climate-slack| |osc-climate-github| |pypi| |build-status| |pdm| |PyScaffold|
 
-OS-Climate Data Extraction Tool
-===============================
+OS-Climate Transformer Pre-Steps Tool
+=====================================
 
 .. _notes:
 
-This code provides you with an api and a streamlit app to which you
-can provide a pdf document and the output will be the text content in a json format.
-In the backend it is using a python module for extracting text from pdfs, which
-might be extended in the future to other file types.
-The json file is needed for later usage in the context of transformer models
+This code provides you with a cli tool with the possibility to extract data from
+a pdf to a json document and to create a training data set for a later usage in the
+context of transformer models
 to extract relevant information, but it can also be used independently.
 
 Quick start
@@ -39,52 +37,54 @@ We are using typer to have a nice CLI tool here. All details and help will be sh
 tool itself and are not described here in more detail.
 
 
-Install via Github Repository
------------------------------
+Developer space
+===============
 
-For a quick start with the tool install python and clone the repository to your local environment::
+Use code directly without CLI via Github Repository
+---------------------------------------------------
+
+First clone the repository to your local environment::
 
     $ git clone https://github.com/os-climate/osc-transformer-presteps
 
-Afterwards update your python to the requirements (possible for example
-via pdm update) and start a local api server via::
-
-    $ python ./src/run_server.py
-
-**Note**:
-    * We assume that you are located in the cloned repository.
-    * To check if it is running open "http://localhost:8000/liveness" and you should see the
-      message {"message": "OSC Transformer Pre-Steps Server is running."}.
-
-Finally, run the following code to start a streamlit app which opens up the possibility
-to "upload" a file and extract data from pdf to json via this UI. Note that the UI needs
-the running server so you have to open the streamlit and the server in two different
-terminals.::
-
-    $ streamlit run ./src/osc_transformer_presteps/streamlit/app.py
-
-**Note**: Check also docs/demo. There you can
-find local_extraction_demo.py which will start an extraction
-without any API call and then there is post_request_demo.py
-which will send a file to the API (of course you have to start
-server as above first).
-
-Developer Notes
-===============
-
-For adding new dependencies use pdm. First install via pip::
+We are using pdm to manage the packages and tox for a stable test framework.
+Hence, first install pdm (possibly in a virtual environment) via
 
     $ pip install pdm
 
-And then you could add new packages via pdm add. For example numpy via::
+Afterwards sync you system via
+
+    $ pdm sync
+
+Now you have multiple demos on how to go on. See folder
+[here](demo)
+
+pdm
+---
+
+For adding new dependencies use pdm. You could add new packages via pdm add.
+For example numpy via::
 
     $ pdm add numpy
 
-For running linting tools just to the following::
+For a very detailed description check the homepage of the pdm project:
+
+https://pdm-project.org/en/latest/
+
+
+tox
+---
+
+For running linting tools we use tox which you run outside of your virtual environment::
 
     $ pip install tox
     $ tox -e lint
     $ tox -e test
+
+This will automatically apply some checks on your code and run the provided pytests. See
+more details on tox on the homepage of the tox project:
+
+https://tox.wiki/en/4.16.0/
 
 
 .. |osc-climate-project| image:: https://img.shields.io/badge/OS-Climate-blue

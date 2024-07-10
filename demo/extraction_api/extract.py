@@ -76,7 +76,7 @@ def extract(
             pass
         raise HTTPException(
             status.HTTP_422_UNPROCESSABLE_ENTITY, detail=jsonable_encoder(v)
-        )
+        ) from v
 
 
 def save_upload_file(upload_file: UploadFile, destination: Path) -> None:

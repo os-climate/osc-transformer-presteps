@@ -21,9 +21,9 @@ class _BaseSettings(BaseModel):
     min_paragraph_length (int)(Optional): Minimum alphabetic characters for paragraph,
                         any paragraph shorter than that will be disregarded.
     annotation_folder (str)(Optional): path to the folder containing all annotated
-            excel files. If provided, just the pdfs mentioned in annotation excels are
+            Excel files. If provided, just the pdfs mentioned in annotation excels are
             extracted. Otherwise, all the pdfs in the pdf folder will be extracted.
-    skip_extracted_files (bool)(Optional): whether to skip extracting a file if it exist in the extraction folder.
+    skip_extracted_files (bool)(Optional): whether to skip extracting a file if it exists in the extraction folder.
     """
 
     annotation_folder: Optional[str] = None
@@ -59,7 +59,7 @@ class BaseExtractor(ABC):
         self._settings: dict = settings_base
 
     def __init_subclass__(cls, **kwargs):
-        """Intialize the subclass."""
+        """Initialize the subclass."""
         super().__init_subclass__(**kwargs)
         if cls.extractor_name == "base":
             raise ValueError(
@@ -142,7 +142,7 @@ class BaseExtractor(ABC):
             raise ExtractionError(
                 f"While doing the extraction we faced the following error:\n "
                 f"{repr(e)}.\n Trace to the error is given by:\n {traceback_str}"
-            )
+            ) from e
 
     @abstractmethod
     def _generate_extractions(

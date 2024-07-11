@@ -51,8 +51,7 @@ def test_default_extraction_settings():
 def test_extraction_settings_variations(
     skip_extracted_files, store_to_file, protected_extraction
 ):
-    """
-    Test different variations of ExtractionSettings.
+    """Test different variations of ExtractionSettings.
 
     Parameters
     ----------
@@ -64,6 +63,7 @@ def test_extraction_settings_variations(
         Whether to allow extraction of protected PDFs.
 
     Ensures that the settings are correctly applied based on the parameters.
+
     """
     settings = ExtractionSettings(
         skip_extracted_files=skip_extracted_files,

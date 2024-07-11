@@ -60,8 +60,10 @@ class TestBaseExtractor:
 
     def test_check_for_skip_files(self, base_extractor):
         """Test if files are really skipped when defined as such."""
-        input_file_path = Path(__file__).resolve().parent / "test.pdf"
-        output_folder_path = Path(__file__).resolve().parent
+        input_file_path = (
+            Path(__file__).resolve().parents[3] / "data" / "pdf_files" / "test.pdf"
+        )
+        output_folder_path = Path(__file__).resolve().parents[3] / "data" / "pdf_files"
         assert not base_extractor.check_for_skip_files(
             input_file_path, output_folder_path
         )
@@ -84,7 +86,9 @@ class TestBaseExtractor:
 
     def test_save_extraction_to_file(self, base_extractor):
         """Test if we can save the output."""
-        output_file_path = Path(__file__).resolve().parent / "output.json"
+        output_file_path = (
+            Path(__file__).resolve().parents[3] / "data" / "json_files" / "output.json"
+        )
         er = ExtractionResponse()
         er.dictionary = {"key": "value"}
         base_extractor._extraction_response = er

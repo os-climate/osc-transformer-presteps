@@ -9,12 +9,8 @@ from pathlib import Path
 import typer
 
 # Internal modules
-from osc_transformer_presteps.api.api import run_api
 from osc_transformer_presteps.content_extraction.extraction_factory import get_extractor
-from osc_transformer_presteps.settings import (
-    ExtractionServerSettings,
-    ExtractionSettings,
-)
+from osc_transformer_presteps.settings import ExtractionSettings
 
 _logger = logging.getLogger(__name__)
 
@@ -48,34 +44,6 @@ def _specify_root_logger(log_level: int):
 
 
 @app.command()
-def run_local_server(
-    port: int = typer.Option(
-        8000,
-        "--port",
-        show_default=True,
-        help="The port which will be use as the default.",
-    ),
-    host: str = typer.Option(
-        "localhost",
-        "--host",
-        show_default=True,
-        help="The host name which will be use as the default.",
-    ),
-    log_level: str = typer.Option(
-        "info",
-        "--log_level",
-        show_default=True,
-        help="The log level to be used, see the different log levels from the logging package documentation."
-        " Examples are info, debug and warning.",
-    ),
-) -> None:
-    """Subcommand to start a local server."""
-    settings = ExtractionServerSettings(log_level=log_level, port=port, host=host)
-    _specify_root_logger(settings.log_type)
-    run_api(host, port)
-
-
-@app.command()
 def run_local_extraction(
     file_or_folder_name: str = typer.Argument(
         help="This is the name of the file you want to extract"
@@ -95,12 +63,20 @@ def run_local_extraction(
         help="Boolean to declare if you want to have the output as a file or not. Note that the output will"
         " be stored next to your input file with the name <input_file_name>_output.json.",
     ),
+    protected_extraction: bool = typer.Option(
+        False,
+        "--force",
+        show_default=False,
+        help="Boolean to allow users to extract data from protected pdf.",
+    ),
 ) -> None:
     """Command to start the extraction of text to json on your local machine. Check help for details."""
     cwd = Path.cwd()
     file_or_folder_path_temp = cwd / file_or_folder_name
     extraction_settings = ExtractionSettings(
-        store_to_file=store_to_file, skip_extracted_files=skip_extracted_files
+        store_to_file=store_to_file,
+        skip_extracted_files=skip_extracted_files,
+        protected_extraction=protected_extraction,
     )
     if file_or_folder_path_temp.is_file():
         _logger.info(f"Start extracting file {file_or_folder_path_temp.stem}.")

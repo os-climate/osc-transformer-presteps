@@ -18,7 +18,12 @@ class TestPdfExtractor:
         a "print". Check the file test_issue.pdf.
         """
         extractor = PDFExtractor()
-        input_file_path = Path(__file__).resolve().parent / "test_issue.pdf"
+        input_file_path = (
+            Path(__file__).resolve().parents[3]
+            / "data"
+            / "pdf_files"
+            / "test_issue.pdf"
+        )
         extraction_response = extractor.extract(input_file_path=input_file_path)
         assert extraction_response.dictionary == {}
 
@@ -29,10 +34,17 @@ class TestPdfExtractor:
         a "print". Check the file test_issue.pdf.
         """
         extractor = PDFExtractor()
-        input_file_path = Path(__file__).resolve().parent / "test.pdf"
+        input_file_path = (
+            Path(__file__).resolve().parents[3] / "data" / "pdf_files" / "test.pdf"
+        )
         extraction_response = extractor.extract(input_file_path=input_file_path)
 
-        json_file_path = str(Path(__file__).resolve().parent / "test_data.json")
+        json_file_path = str(
+            Path(__file__).resolve().parents[3]
+            / "data"
+            / "json_files"
+            / "test_data.json"
+        )
         with open(json_file_path, "r") as file:
             json_data = file.read()
         test_data = json.loads(json_data)

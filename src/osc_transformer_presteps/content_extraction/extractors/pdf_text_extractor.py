@@ -44,7 +44,7 @@ def clean_text(text):
     return text
 
 
-def check_pdf_accessibility(pdf_file: str) -> bool:
+def check_pdf_accessibility(pdf_file: str, protected_extraction: bool) -> bool:
     """Check if it can access the content of the pdf at all.
 
     Args:
@@ -58,6 +58,8 @@ def check_pdf_accessibility(pdf_file: str) -> bool:
     """
     try:
         pdf_instance = PdfReader(pdf_file)
+        if not protected_extraction and pdf_instance.is_encrypted:
+            raise PermissionError("Extraction of protected PDF data is not allowed.")
         _ = len(pdf_instance.pages)
         return True
     except Exception as e:
@@ -124,7 +126,7 @@ class PDFExtractor(BaseExtractor):
 
         """
         self._extraction_response.dictionary = {}
-        if check_pdf_accessibility(pdf_file):
+        if check_pdf_accessibility(pdf_file, self._settings["protected_extraction"]):
             idx = 0
 
             # Create a PDF resource manager
@@ -137,7 +139,9 @@ class PDFExtractor(BaseExtractor):
             interpreter = PDFPageInterpreter(rsrcmgr, device)
 
             with open(pdf_file, "rb") as fp:
-                for page_number, page in enumerate(PDFPage.get_pages(fp)):
+                for page_number, page in enumerate(
+                    PDFPage.get_pages(fp, check_extractable=False)
+                ):
                     interpreter.process_page(page)
                     data = retstr.getvalue()
                     paragraphs_data = self.process_page(data)

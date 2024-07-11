@@ -5,10 +5,24 @@ from osc_transformer_presteps.cli import app  # Import the Typer app
 
 @pytest.fixture
 def runner():
+    """Fixture that provides a CliRunner instance for invoking CLI commands.
+
+    Returns
+    -------
+        CliRunner: An instance of CliRunner to invoke commands.
+
+    """
     return CliRunner()
 
 
 def test_extraction_command(runner):
+    """Test the 'extraction' command.
+
+    Args:
+    ----
+        runner (CliRunner): The CLI runner fixture.
+
+    """
     result = runner.invoke(app, ["extraction"])
     assert result.exit_code == 0
     assert (
@@ -18,6 +32,13 @@ def test_extraction_command(runner):
 
 
 def test_curation_command(runner):
+    """Test the 'curation' command.
+
+    Args:
+    ----
+        runner (CliRunner): The CLI runner fixture.
+
+    """
     result = runner.invoke(app, ["curation"])
     assert result.exit_code == 0
     assert (
@@ -27,6 +48,13 @@ def test_curation_command(runner):
 
 
 def test_no_args(runner):
+    """Test running the CLI with no arguments.
+
+    Args:
+    ----
+        runner (CliRunner): The CLI runner fixture.
+
+    """
     result = runner.invoke(app, [])
     assert result.exit_code == 0
     assert "Usage:" in result.output
@@ -35,6 +63,13 @@ def test_no_args(runner):
 
 
 def test_invalid_command(runner):
+    """Test running the CLI with an invalid command.
+
+    Args:
+    ----
+        runner (CliRunner): The CLI runner fixture.
+
+    """
     result = runner.invoke(app, ["invalid_command"])
     assert result.exit_code != 0
     assert "No such command" in result.output

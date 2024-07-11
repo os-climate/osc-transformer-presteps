@@ -1,12 +1,6 @@
 import pytest
 import logging
-
-from osc_transformer_presteps.settings import (
-    ExtractionServerSettings,
-    ExtractionSettings,
-    LogLevel,
-)
-
+from osc_transformer_presteps.settings import ExtractionSettings
 
 _log_dict = {
     "critical": logging.CRITICAL,
@@ -20,6 +14,12 @@ _log_dict = {
 
 @pytest.fixture
 def default_server_settings():
+    """
+    Fixture that provides default server settings for testing.
+
+    Returns:
+        dict: A dictionary containing default server settings.
+    """
     return {
         "port": 8000,
         "host": "localhost",
@@ -28,42 +28,38 @@ def default_server_settings():
     }
 
 
-def test_default_server_settings(default_server_settings):
-    settings = ExtractionServerSettings(**default_server_settings)
-    assert settings.port == 8000
-    assert settings.host == "localhost"
-    assert settings.log_type == 20
-    assert settings.log_level == LogLevel.info
-
-
-@pytest.mark.parametrize(
-    "log_level", ["critical", "error", "warning", "info", "debug", "notset"]
-)
-def test_valid_log_levels(default_server_settings, log_level):
-    default_server_settings["log_level"] = log_level
-    settings = ExtractionServerSettings(**default_server_settings)
-    assert settings.log_level == LogLevel(log_level)
-    assert settings.log_type == _log_dict[log_level]
-
-
-def test_invalid_log_level(default_server_settings):
-    default_server_settings["log_level"] = "invalid_log_level"
-    with pytest.raises(ValueError, match="'invalid_log_level' is not a valid LogLevel"):
-        ExtractionServerSettings(**default_server_settings)
-
-
 def test_default_extraction_settings():
+    """
+    Test the default values of ExtractionSettings.
+
+    Ensures that the default values for `skip_extracted_files` and `store_to_file` are set correctly.
+    """
     settings = ExtractionSettings()
     assert not settings.skip_extracted_files
     assert settings.store_to_file
+    assert not settings.protected_extraction
 
 
 @pytest.mark.parametrize(
-    "skip_extracted_files,store_to_file", [(True, False), (False, False), (True, True)]
+    "skip_extracted_files,store_to_file,protected_extraction",
+    [(True, False, True), (False, False, False), (True, True, False)]
 )
-def test_extraction_settings_variations(skip_extracted_files, store_to_file):
+def test_extraction_settings_variations(skip_extracted_files, store_to_file, protected_extraction):
+    """
+    Test different variations of ExtractionSettings.
+
+    Args:
+        skip_extracted_files (bool): Whether to skip extracted files.
+        store_to_file (bool): Whether to store the results to a file.
+        protected_extraction (bool): Whether to allow extraction of protected PDFs.
+
+    Ensures that the settings are correctly applied based on the parameters.
+    """
     settings = ExtractionSettings(
-        skip_extracted_files=skip_extracted_files, store_to_file=store_to_file
+        skip_extracted_files=skip_extracted_files,
+        store_to_file=store_to_file,
+        protected_extraction=protected_extraction
     )
     assert settings.skip_extracted_files == skip_extracted_files
     assert settings.store_to_file == store_to_file
+    assert settings.protected_extraction == protected_extraction

@@ -47,7 +47,7 @@ def test_extraction_command(runner):
         runner (CliRunner): The CLI runner fixture.
 
     """
-    result = runner.invoke(app, ["extraction"])
+    result = runner.invoke(app, ["extraction"], color=False)
     assert result.exit_code == 0
     assert (
         "If you want to run local extraction of text from files to json then this is the subcommand to use."
@@ -63,7 +63,7 @@ def test_curation_command(runner):
         runner (CliRunner): The CLI runner fixture.
 
     """
-    result = runner.invoke(app, ["curation"])
+    result = runner.invoke(app, ["curation"], color=False)
     assert result.exit_code == 0
     assert (
         "If you want to run local creation of dataset of json files then this is the subcommand to use."

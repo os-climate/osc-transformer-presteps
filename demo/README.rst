@@ -59,4 +59,6 @@ and the server in two different terminals. An example file to upload can be foun
 curation
 ....................
 
-T.B.D.
+This demo allows users to get a training dataset for the relevance model. Creating this dataset requires a JSON file from the extraction module, kpi_mappping.csv, and annotation.xlsx. In this script, the location of these files is hardcoded which you can change based on your needs. You can run the script via:
+
+      $ python demo/curation/local_curation_demo.py

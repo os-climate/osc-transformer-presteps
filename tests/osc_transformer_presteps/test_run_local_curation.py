@@ -1,3 +1,5 @@
+"""Module to test the run_local_curation.py."""
+
 import pytest
 from typer.testing import CliRunner
 from osc_transformer_presteps.run_local_curation import app, curate_one_file
@@ -39,14 +41,17 @@ class TestCurationCLI:
 
     def test_run_local_curation_file(self, mock_curator_data):
         """Test running local curation using a single file."""
-        result = runner.invoke(app, [
-            str(mock_curator_data["extract_json"]),
-            str(mock_curator_data["annotation_folder"]),
-            str(mock_curator_data["kpi_mapping_path"]),
-            "--create_neg_samples",
-            "--neg_pos_ratio",
-            "1"
-        ])
+        result = runner.invoke(
+            app,
+            [
+                str(mock_curator_data["extract_json"]),
+                str(mock_curator_data["annotation_folder"]),
+                str(mock_curator_data["kpi_mapping_path"]),
+                "--create_neg_samples",
+                "--neg_pos_ratio",
+                "1",
+            ],
+        )
         # Assert that the CLI command exited successfully
         assert result.exit_code == 0
         # Assert that the output CSV file was created
@@ -57,14 +62,17 @@ class TestCurationCLI:
 
     def test_run_local_curation_folder(self, mock_curator_data):
         """Test running local curation using a folder of JSON files."""
-        result = runner.invoke(app, [
-            str(cwd / "json_files"),
-            str(mock_curator_data["annotation_folder"]),
-            str(mock_curator_data["kpi_mapping_path"]),
-            "--create_neg_samples",
-            "--neg_pos_ratio",
-            "1"
-        ])
+        result = runner.invoke(
+            app,
+            [
+                str(cwd / "json_files"),
+                str(mock_curator_data["annotation_folder"]),
+                str(mock_curator_data["kpi_mapping_path"]),
+                "--create_neg_samples",
+                "--neg_pos_ratio",
+                "1",
+            ],
+        )
         # Assert that the CLI command exited successfully
         assert result.exit_code == 0
         # Assert that the output CSV file was created
@@ -72,4 +80,3 @@ class TestCurationCLI:
         assert output_file.exists()
         # Clean up: Remove the created output file
         output_file.unlink(missing_ok=True)
-

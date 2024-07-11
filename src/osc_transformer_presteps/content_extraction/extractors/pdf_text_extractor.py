@@ -50,6 +50,7 @@ def check_pdf_accessibility(pdf_file: str, protected_extraction: bool) -> bool:
     Args:
     ----
         pdf_file (str): Path to the pdf file.
+        protected_extraction (bool): Allow user to extract protected pdf.
 
     Returns:
     -------

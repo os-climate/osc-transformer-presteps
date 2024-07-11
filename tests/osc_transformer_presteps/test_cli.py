@@ -1,4 +1,5 @@
-"""This module contains tests for the Typer-based CLI application `osc_transformer_presteps`.
+"""The module contains tests for the Typer-based CLI application `osc_transformer_presteps`.
+
 The tests include checking the execution and output of various CLI commands.
 
 Fixtures

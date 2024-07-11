@@ -1,4 +1,4 @@
-"""Module to test the settings.py"""
+"""Module to test the settings.py."""
 
 import pytest
 import logging
@@ -23,6 +23,7 @@ def default_server_settings():
         dict: A dictionary containing default server settings.
 
     """
+    
     return {
         "port": 8000,
         "host": "localhost",
@@ -33,8 +34,10 @@ def default_server_settings():
 
 def test_default_extraction_settings():
     """Test the default values of ExtractionSettings.
+
     Ensures that the default values for `skip_extracted_files` and `store_to_file` are set correctly.
     """
+
     settings = ExtractionSettings()
     assert not settings.skip_extracted_files
     assert settings.store_to_file

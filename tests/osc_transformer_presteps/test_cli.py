@@ -25,6 +25,7 @@ test_invalid_command(runner)
 import pytest
 from typer.testing import CliRunner
 from osc_transformer_presteps.cli import app  # Import the Typer app
+import re
 
 
 @pytest.fixture
@@ -39,6 +40,12 @@ def runner():
     return CliRunner()
 
 
+def strip_ansi(text):
+    '''A helper function. '''
+    ansi_escape = re.compile(r'(?:\x1B[@-_]|[\x80-\x9F]|\x1B\[0?m|\x1B\[38;5;\d+m|\x1B\[48;5;\d+m|\x1B\[\d+;\d+;\d+;\d+;\d+m|\x1B\[\d+;\d+m|\x1B\[\d+m)')
+    return ansi_escape.sub('', text)
+
+
 def test_extraction_command(runner):
     """Test the 'extraction' command.
 
@@ -47,11 +54,12 @@ def test_extraction_command(runner):
         runner (CliRunner): The CLI runner fixture.
 
     """
-    result = runner.invoke(app, ["extraction"], color=False)
+    result = runner.invoke(app, ["extraction"])
+    output = strip_ansi(result.output)
     assert result.exit_code == 0
     assert (
         "If you want to run local extraction of text from files to json then this is the subcommand to use."
-        in result.output
+        in output
     )
 
 
@@ -63,11 +71,12 @@ def test_curation_command(runner):
         runner (CliRunner): The CLI runner fixture.
 
     """
-    result = runner.invoke(app, ["curation"], color=False)
+    result = runner.invoke(app, ["curation"])
+    output = strip_ansi(result.output)
     assert result.exit_code == 0
     assert (
         "If you want to run local creation of dataset of json files then this is the subcommand to use."
-        in result.output
+        in output
     )
 
 
@@ -80,10 +89,11 @@ def test_no_args(runner):
 
     """
     result = runner.invoke(app, [])
+    output = strip_ansi(result.output)
     assert result.exit_code == 0
-    assert "Usage:" in result.output
-    assert "extraction" in result.output
-    assert "curation" in result.output
+    assert "Usage:" in output
+    assert "extraction" in output
+    assert "curation" in output
 
 
 def test_invalid_command(runner):
@@ -95,5 +105,6 @@ def test_invalid_command(runner):
 
     """
     result = runner.invoke(app, ["invalid_command"])
+    output = strip_ansi(result.output)
     assert result.exit_code != 0
-    assert "No such command" in result.output
+    assert "No such command" in output

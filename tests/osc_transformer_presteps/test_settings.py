@@ -17,14 +17,10 @@ _log_dict = {
 @pytest.fixture
 def default_server_settings():
     """Fixture that provides default server settings for testing.
-    """Fixture that provides default server settings for testing.
 
-    Returns
-    -------
     Returns
     -------
         dict: A dictionary containing default server settings.
-
 
     """
     return {
@@ -37,8 +33,6 @@ def default_server_settings():
 
 def test_default_extraction_settings():
     """Test the default values of ExtractionSettings.
-    """Test the default values of ExtractionSettings.
-
     Ensures that the default values for `skip_extracted_files` and `store_to_file` are set correctly.
     """
     settings = ExtractionSettings()
@@ -54,11 +48,8 @@ def test_default_extraction_settings():
 def test_extraction_settings_variations(
     skip_extracted_files, store_to_file, protected_extraction
 ):
-    """Test different variations of ExtractionSettings.
-def test_extraction_settings_variations(
-    skip_extracted_files, store_to_file, protected_extraction
-):
-    """Test different variations of ExtractionSettings.
+    """
+    Test different variations of ExtractionSettings.
 
     Parameters
     ----------
@@ -70,13 +61,10 @@ def test_extraction_settings_variations(
         Whether to allow extraction of protected PDFs.
 
     Ensures that the settings are correctly applied based on the parameters.
-
-
     """
     settings = ExtractionSettings(
         skip_extracted_files=skip_extracted_files,
         store_to_file=store_to_file,
-        protected_extraction=protected_extraction,
         protected_extraction=protected_extraction,
     )
     assert settings.skip_extracted_files == skip_extracted_files

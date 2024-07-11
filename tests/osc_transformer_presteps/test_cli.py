@@ -41,9 +41,11 @@ def runner():
 
 
 def strip_ansi(text):
-    '''A helper function. '''
-    ansi_escape = re.compile(r'(?:\x1B[@-_]|[\x80-\x9F]|\x1B\[0?m|\x1B\[38;5;\d+m|\x1B\[48;5;\d+m|\x1B\[\d+;\d+;\d+;\d+;\d+m|\x1B\[\d+;\d+m|\x1B\[\d+m)')
-    return ansi_escape.sub('', text)
+    """A helper function."""
+    ansi_escape = re.compile(
+        r"(?:\x1B[@-_]|[\x80-\x9F]|\x1B\[0?m|\x1B\[38;5;\d+m|\x1B\[48;5;\d+m|\x1B\[\d+;\d+;\d+;\d+;\d+m|\x1B\[\d+;\d+m|\x1B\[\d+m)"
+    )
+    return ansi_escape.sub("", text)
 
 
 def test_extraction_command(runner):

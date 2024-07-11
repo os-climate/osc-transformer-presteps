@@ -24,12 +24,15 @@ class _BaseSettings(BaseModel):
             Excel files. If provided, just the pdfs mentioned in annotation excels are
             extracted. Otherwise, all the pdfs in the pdf folder will be extracted.
     skip_extracted_files (bool)(Optional): whether to skip extracting a file if it exists in the extraction folder.
+    protected_extraction: bool, optional : Flag allowing users to extract the protected pdf.
+
     """
 
     annotation_folder: Optional[str] = None
     min_paragraph_length: Optional[int] = 20
     skip_extracted_files: Optional[bool] = False
     store_to_file: Optional[bool] = True
+    protected_extraction: Optional[bool] = False
 
 
 class ExtractionResponse(BaseModel):

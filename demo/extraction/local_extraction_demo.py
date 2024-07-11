@@ -50,6 +50,7 @@ if __name__ == "__main__":
     settings_main: Optional[Dict[str, Union[str, bool]]] = {
         "skip_extracted_files": True,
         "store_to_file": True,
+        "protected_extraction": False,
     }
 
     extract_main(

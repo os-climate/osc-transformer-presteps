@@ -38,8 +38,12 @@ class ExtractionSettings(BaseModel):
     store_to_file : bool, optional
         Flag indicating whether to store the extracted data to a file.
         Defaults to True.
+    protected_extraction: bool, optional
+        Flag allowing users to extract the protected pdf.
+        Defaults to False.
 
     """
 
     skip_extracted_files: bool = False
     store_to_file: bool = True
+    protected_extraction: bool = False

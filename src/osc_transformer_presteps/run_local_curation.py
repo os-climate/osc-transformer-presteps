@@ -9,11 +9,14 @@ import typer
 import pandas as pd
 
 # Internal modules
-from dataset_creation_curation.curator import Curator
+from osc_transformer_presteps.dataset_creation_curation.curator import Curator
 
 _logger = logging.getLogger(__name__)
 
 app = typer.Typer(no_args_is_help=True)
+
+# Set the log level (e.g., DEBUG, INFO, WARNING, ERROR)
+LOG_LEVEL = logging.INFO
 
 
 def _specify_root_logger(log_level: int):
@@ -69,6 +72,8 @@ def run_local_curation(
     ),
 ) -> None:
     """Start the creation of the dataset based on the extracted text on your local machine."""
+    _specify_root_logger(LOG_LEVEL)
+
     cwd = Path.cwd()
     extracted_json_temp = cwd / file_or_folder_name
     annotation_temp = cwd / annotation_dir

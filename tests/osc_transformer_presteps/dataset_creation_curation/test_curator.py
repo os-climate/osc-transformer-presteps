@@ -14,7 +14,7 @@ from osc_transformer_presteps.dataset_creation_curation.curator import (
 import ast
 
 # Define the common current working directory
-cwd = Path(__file__).resolve().parent / "data"
+cwd = Path(__file__).resolve().parents[2] / "data"
 
 
 @pytest.fixture
@@ -22,7 +22,7 @@ def mock_curator_data():
     """Mimics the curator settings data."""
     return {
         "annotation_folder": cwd / "test_annotations_sliced.xlsx",
-        "extract_json": cwd / "Test.json",
+        "extract_json": cwd / "json_files" / "Test.json",
         "kpi_mapping_path": cwd / "kpi_mapping_sliced.csv",
         "neg_pos_ratio": 1,
         "create_neg_samples": True,
@@ -65,7 +65,7 @@ class TestAnnotationData:
             kpi_mapping_path=mock_curator_data["kpi_mapping_path"],
         )
         assert data.annotation_folder == cwd / "test_annotations_sliced.xlsx"
-        assert data.extract_json == cwd / "Test.json"
+        assert data.extract_json == cwd / "json_files" / "Test.json"
         assert data.kpi_mapping_path == cwd / "kpi_mapping_sliced.csv"
 
     def test_annotation_data_invalid_paths(self):
@@ -155,7 +155,7 @@ class TestCurator:
         """A test for positive examples where we have a json filename mismatch."""
         curator = Curator(
             annotation_folder=str(mock_curator_data["annotation_folder"]),
-            extract_json=cwd / "Test_another.json",
+            extract_json=cwd / "json_files" / "Test_issue.json",
             kpi_mapping_path=str(mock_curator_data["kpi_mapping_path"]),
             neg_pos_ratio=1,
             create_neg_samples=True,
@@ -174,7 +174,7 @@ class TestCurator:
         """A test for negative examples where we have a json filename mismatch."""
         curator = Curator(
             annotation_folder=str(mock_curator_data["annotation_folder"]),
-            extract_json=cwd / "Test_another.json",
+            extract_json=cwd / "json_files" / "Test_issue.json",
             kpi_mapping_path=str(mock_curator_data["kpi_mapping_path"]),
             neg_pos_ratio=1,
             create_neg_samples=True,
@@ -185,10 +185,12 @@ class TestCurator:
 
     def test_create_curator_df(self, curator_object):
         """A test to create the final dataframe output."""
-        actual_df = pd.read_csv(cwd / "Actual.csv")
+        actual_df = pd.read_csv(cwd / "Actual_curator.csv")
         output = curator_object.create_curator_df()
 
-        output.to_csv(cwd / "Expected.csv", index=False)
-        expected_df = pd.read_csv(cwd / "Expected.csv")
+        output_file_path = cwd / "Expected.csv"
+        output.to_csv(output_file_path, index=False)
+        expected_df = pd.read_csv(output_file_path)
 
         assert actual_df.equals(expected_df)
+        output_file_path.unlink(missing_ok=True)

@@ -23,7 +23,6 @@ def default_server_settings():
         dict: A dictionary containing default server settings.
 
     """
-    
     return {
         "port": 8000,
         "host": "localhost",
@@ -37,7 +36,6 @@ def test_default_extraction_settings():
 
     Ensures that the default values for `skip_extracted_files` and `store_to_file` are set correctly.
     """
-
     settings = ExtractionSettings()
     assert not settings.skip_extracted_files
     assert settings.store_to_file

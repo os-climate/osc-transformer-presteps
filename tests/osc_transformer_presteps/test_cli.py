@@ -1,3 +1,26 @@
+"""This module contains tests for the Typer-based CLI application `osc_transformer_presteps`.
+The tests include checking the execution and output of various CLI commands.
+
+Fixtures
+--------
+runner : CliRunner
+    Provides a CliRunner instance for invoking CLI commands.
+
+Functions
+---------
+test_extraction_command(runner)
+    Tests the 'extraction' command.
+
+test_curation_command(runner)
+    Tests the 'curation' command.
+
+test_no_args(runner)
+    Tests running the CLI with no arguments.
+
+test_invalid_command(runner)
+    Tests running the CLI with an invalid command.
+"""
+
 import pytest
 from typer.testing import CliRunner
 from osc_transformer_presteps.cli import app  # Import the Typer app

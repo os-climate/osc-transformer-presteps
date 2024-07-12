@@ -24,8 +24,9 @@ test_invalid_command(runner)
 
 import pytest
 from typer.testing import CliRunner
-from osc_transformer_presteps.cli import app  # Import the Typer app
+from osc_transformer_presteps.cli import app, run  # Import the run function
 import re
+from unittest.mock import patch
 
 
 @pytest.fixture
@@ -106,3 +107,11 @@ def test_invalid_command(runner):
     output = strip_ansi(result.output)
     assert result.exit_code != 0
     assert "No such command" in output
+
+
+def test_run_function():
+    """Test the run function directly to ensure it is covered."""
+    # Patch sys.exit to prevent it from stopping the test execution
+    with patch("sys.exit") as exit_mock:
+        run()
+        exit_mock.assert_called_once_with(0)

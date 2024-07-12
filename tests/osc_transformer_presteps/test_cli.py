@@ -24,8 +24,9 @@ test_invalid_command(runner)
 
 import pytest
 from typer.testing import CliRunner
-from osc_transformer_presteps.cli import app  # Import the Typer app
+from osc_transformer_presteps.cli import app, run  # Import the run function
 import re
+from unittest.mock import patch
 
 
 @pytest.fixture
@@ -60,7 +61,8 @@ def test_extraction_command(runner):
     output = strip_ansi(result.output)
     assert result.exit_code == 0
     assert (
-        "If you want to run local extraction of text from files to json then" in output
+        "If you want to run local extraction of text from files to json then"
+        in output
     )
 
 
@@ -75,7 +77,10 @@ def test_curation_command(runner):
     result = runner.invoke(app, ["curation"])
     output = strip_ansi(result.output)
     assert result.exit_code == 0
-    assert "If you want to run local creation of dataset of json files then" in output
+    assert (
+        "If you want to run local creation of dataset of json files then"
+        in output
+    )
 
 
 def test_no_args(runner):
@@ -106,3 +111,11 @@ def test_invalid_command(runner):
     output = strip_ansi(result.output)
     assert result.exit_code != 0
     assert "No such command" in output
+
+
+def test_run_function():
+    """Test the run function directly to ensure it is covered."""
+    # Patch sys.exit to prevent it from stopping the test execution
+    with patch("sys.exit") as exit_mock:
+        run()
+        exit_mock.assert_called_once_with(0)

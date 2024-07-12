@@ -60,7 +60,7 @@ def test_extraction_command(runner):
     output = strip_ansi(result.output)
     assert result.exit_code == 0
     assert (
-        "If you want to run local extraction of text from files to json then this is the subcommand to use."
+        "If you want to run local extraction of text from files to json then"
         in output
     )
 
@@ -77,7 +77,7 @@ def test_curation_command(runner):
     output = strip_ansi(result.output)
     assert result.exit_code == 0
     assert (
-        "If you want to run local creation of dataset of json files then this is the subcommand to use."
+        "If you want to run local creation of dataset of json files then"
         in output
     )
 

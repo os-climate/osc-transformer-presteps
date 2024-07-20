@@ -31,7 +31,6 @@ class _BaseSettings(BaseModel):
     annotation_folder: Optional[str] = None
     min_paragraph_length: Optional[int] = 20
     skip_extracted_files: Optional[bool] = False
-    store_to_file: Optional[bool] = True
     protected_extraction: Optional[bool] = False
 
 
@@ -137,11 +136,13 @@ class BaseExtractor(ABC):
 
         """
         try:
-            self._generate_extractions(input_file_path=input_file_path)
-            return self.get_extractions()
+            extracted = self._generate_extractions(input_file_path=input_file_path)
+            extraction_response = self.get_extractions()
+            extraction_response.success = extracted
+            return extraction_response
         except Exception as e:
             traceback_str = traceback.format_exc()
-            print(traceback_str)
+            _logger.error(traceback_str)
             raise ExtractionError(
                 f"While doing the extraction we faced the following error:\n "
                 f"{repr(e)}.\n Trace to the error is given by:\n {traceback_str}"
@@ -151,7 +152,7 @@ class BaseExtractor(ABC):
     def _generate_extractions(
         self,
         input_file_path: Path,
-    ) -> Optional[dict]:
+    ) -> bool:
         """Define how text is extracted from a give file in path.
 
         Args:

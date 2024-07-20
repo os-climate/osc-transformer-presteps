@@ -48,7 +48,6 @@ class TestBaseExtractor:
         assert settings["annotation_folder"] is None
         assert settings["min_paragraph_length"] == 20
         assert settings["skip_extracted_files"] is False
-        assert settings["store_to_file"] is True
 
     def test_get_extractions(self, base_extractor):
         """Test if we can retrieve extraction response correctly."""

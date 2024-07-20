@@ -7,40 +7,17 @@ from pathlib import Path
 
 # External modules
 import typer
+from typing import Optional
 
 # Internal modules
 from osc_transformer_presteps.content_extraction.extraction_factory import get_extractor
 from osc_transformer_presteps.settings import ExtractionSettings
+from osc_transformer_presteps.utils import _specify_root_logger, set_log_folder
+from osc_transformer_presteps.settings import log_dict, LogLevel
 
 _logger = logging.getLogger(__name__)
 
 app = typer.Typer(no_args_is_help=True)
-
-
-def _specify_root_logger(log_level: int):
-    """Configure the root logger with a specific formatting and log level.
-
-    This function sets up the root logger, which is the top-level logger in the logging hierarchy, with a specific
-    configuration. It creates a StreamHandler that logs messages to stdout, sets the log level to DEBUG for all
-    messages, and applies a specific formatter to format the log messages.
-
-    Args:
-    ----
-        log_level (int): The log_level to use for the logging given as int.
-
-    Usage:
-    Call this function at the beginning of your code to configure the root logger
-    with the desired formatting and log level.
-
-    """
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-
-    handler = logging.StreamHandler()
-    handler.setLevel(log_level)
-    handler.setFormatter(formatter)
-
-    logging.root.handlers = [handler]
-    logging.root.setLevel(log_level)
 
 
 @app.command()
@@ -69,9 +46,25 @@ def run_local_extraction(
         show_default=False,
         help="Boolean to allow users to extract data from protected pdf.",
     ),
+    logs_folder: Optional[str] = typer.Argument(
+        default=None,
+        help="This is the folder where we store the log file. You can either provide a folder relative "
+        "to the current folder or you provide an absolute path. The default will be the current folder.",
+    ),
+    log_level: str = typer.Option(
+        "info",
+        show_default=True,
+        help="This gives you the possibilities to set different kinds of logging depth. Values you can choose are:"
+        "'critical', 'error', 'warning', 'info', 'debug', 'notset'.",
+    ),
 ) -> None:
     """Command to start the extraction of text to json on your local machine. Check help for details."""
     cwd = Path.cwd()
+    logs_folder = set_log_folder(cwd=cwd, logs_folder=logs_folder)
+    _specify_root_logger(
+        log_level=log_dict[LogLevel(log_level)], logs_folder=logs_folder
+    )
+
     file_or_folder_path_temp = cwd / file_or_folder_name
     extraction_settings = ExtractionSettings(
         store_to_file=store_to_file,
@@ -109,7 +102,9 @@ def extract_one_file(
     output_folder: Path, file_path: Path, extraction_settings: dict
 ) -> None:
     """Extract data for a given file to a given folder for a specific setting."""
-    extractor = get_extractor(file_path.suffix, extraction_settings)
+    extractor = get_extractor(
+        extractor_type=file_path.suffix, settings=extraction_settings
+    )
     extraction_response = extractor.extract(input_file_path=file_path)
     output_file_name = file_path.stem + "_output.json"
     output_file_path = output_folder / output_file_name

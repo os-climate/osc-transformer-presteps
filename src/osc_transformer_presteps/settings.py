@@ -17,7 +17,7 @@ class LogLevel(str, Enum):
     notset = "notset"
 
 
-_log_dict = {
+log_dict = {
     "critical": logging.CRITICAL,
     "error": logging.ERROR,
     "warning": logging.WARNING,

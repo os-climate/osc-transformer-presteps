@@ -47,7 +47,7 @@ def get_extractor(
 
     """
     _logger.info("The extractor type is: " + extractor_type)
-    extractor_class = _extractors.get(extractor_type)
+    extractor_class = _extractors.get(extractor_type.lower())
     if extractor_class:
         _logger.info(f"Retrieving {extractor_type} extractor instance")
         extractor_instance = extractor_class(settings)

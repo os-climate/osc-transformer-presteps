@@ -46,7 +46,7 @@ def run_local_extraction(
         show_default=False,
         help="Boolean to allow users to extract data from protected pdf.",
     ),
-    logs_folder: Optional[str] = typer.Argument(
+    logs_folder: Optional[str] = typer.Option(
         default=None,
         help="This is the folder where we store the log file. You can either provide a folder relative "
         "to the current folder or you provide an absolute path. The default will be the current folder.",

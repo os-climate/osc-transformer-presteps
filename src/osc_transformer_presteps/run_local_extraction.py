@@ -7,7 +7,6 @@ from pathlib import Path
 
 # External modules
 import typer
-from typing import Optional
 
 # Internal modules
 from osc_transformer_presteps.content_extraction.extraction_factory import get_extractor
@@ -27,7 +26,7 @@ def run_local_extraction(
         " data from or the folder in which you want to "
         "extract data from every file. This should be in the current folder.",
     ),
-    skip_extracted_files: bool = typer.Option(
+    skip_extracted_files_david: bool = typer.Option(
         False,
         "--skip_extracted_files",
         show_default=True,
@@ -46,7 +45,7 @@ def run_local_extraction(
         show_default=False,
         help="Boolean to allow users to extract data from protected pdf.",
     ),
-    logs_folder: Optional[str] = typer.Option(
+    logs_folder: str = typer.Option(
         default=None,
         help="This is the folder where we store the log file. You can either provide a folder relative "
         "to the current folder or you provide an absolute path. The default will be the current folder.",
@@ -68,7 +67,7 @@ def run_local_extraction(
     file_or_folder_path_temp = cwd / file_or_folder_name
     extraction_settings = ExtractionSettings(
         store_to_file=store_to_file,
-        skip_extracted_files=skip_extracted_files,
+        skip_extracted_files=skip_extracted_files_david,
         protected_extraction=protected_extraction,
     )
     if file_or_folder_path_temp.is_file():

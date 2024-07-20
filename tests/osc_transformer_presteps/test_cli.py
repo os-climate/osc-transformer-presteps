@@ -65,6 +65,22 @@ def test_extraction_command(runner):
     )
 
 
+def test_extraction_command_option_skip_extracted_files(runner):
+    """Test the 'extraction' command.
+
+    Args:
+    ----
+        runner (CliRunner): The CLI runner fixture.
+
+    """
+    result = runner.invoke(app, ["extraction", "run-local-extraction", "--help"])
+    output = strip_ansi(result.output)
+    assert result.exit_code == 0
+    assert (
+        "--skip_extracted_files" in output
+    )
+
+
 def test_curation_command(runner):
     """Test the 'curation' command.
 

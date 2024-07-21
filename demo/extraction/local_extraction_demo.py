@@ -33,9 +33,6 @@ def extract_main(
     ):
         extractor.extract(input_file_path=input_file_path)
 
-    if extractor.get_settings()["store_to_file"] and output_file_path is not None:
-        extractor.save_extraction_to_file(output_file_path=output_file_path)
-
 
 if __name__ == "__main__":
     input_folder = Path(__file__).resolve().parent / "input"
@@ -49,7 +46,6 @@ if __name__ == "__main__":
     )
     settings_main: Optional[Dict[str, Union[str, bool]]] = {
         "skip_extracted_files": True,
-        "store_to_file": True,
         "protected_extraction": False,
     }
 

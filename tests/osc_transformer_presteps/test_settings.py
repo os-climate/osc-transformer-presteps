@@ -45,9 +45,7 @@ def test_default_extraction_settings():
     "skip_extracted_files, protected_extraction",
     [(True, True), (False, False), (True, False)],
 )
-def test_extraction_settings_variations(
-    skip_extracted_files, protected_extraction
-):
+def test_extraction_settings_variations(skip_extracted_files, protected_extraction):
     """Test different variations of ExtractionSettings.
 
     Parameters

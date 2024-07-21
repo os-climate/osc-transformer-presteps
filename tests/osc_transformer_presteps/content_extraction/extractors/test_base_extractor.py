@@ -82,15 +82,3 @@ class TestBaseExtractor:
         )
 
         json_file_path.unlink(missing_ok=True)
-
-    def test_save_extraction_to_file(self, base_extractor):
-        """Test if we can save the output."""
-        output_file_path = (
-            Path(__file__).resolve().parents[3] / "data" / "json_files" / "output.json"
-        )
-        er = ExtractionResponse()
-        er.dictionary = {"key": "value"}
-        base_extractor._extraction_response = er
-        base_extractor.save_extraction_to_file(output_file_path)
-        assert output_file_path.exists()
-        output_file_path.unlink(missing_ok=True)

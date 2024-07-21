@@ -9,7 +9,6 @@ from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
 
-from .utils import dict_to_json
 
 _logger = logging.getLogger(__name__)
 
@@ -105,16 +104,6 @@ class BaseExtractor(ABC):
             return True
         else:
             return False
-
-    def save_extraction_to_file(self, output_file_path: Path) -> None:
-        """Save the extraction dictionary to a JSON file.
-
-        Args:
-        ----
-            output_file_path (Path): The path to the output JSON file.
-
-        """
-        dict_to_json(output_file_path, self._extraction_response.dictionary)
 
     def extract(
         self,

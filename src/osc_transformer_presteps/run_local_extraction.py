@@ -1,6 +1,5 @@
 """Python Script for running extraction on cli."""
 
-import json
 import logging
 import traceback
 from pathlib import Path
@@ -17,6 +16,7 @@ from osc_transformer_presteps.utils import (
     set_log_folder,
     log_dict,
     LogLevel,
+    dict_to_json,
 )
 from osc_transformer_presteps.content_extraction.extractors.base_extractor import (
     ExtractionResponse,
@@ -97,39 +97,68 @@ def run_local_extraction(
         )
         _logger.info(f"Done with extracting file {file_or_folder_path_temp.stem}.")
     elif file_or_folder_path_temp.is_dir():
-        files = [f for f in file_or_folder_path_temp.iterdir() if f.is_file()]
-        _logger.info(f"Files to extract: {len(files)}.")
-        extracted_files = 0
-        count = 0
-        for file in files:
-            _logger.debug(f"Start extracting file {file.stem}.")
-            try:
-                extraction_response = extract_one_file(
-                    output_folder=output_folder_path,
-                    file_path=file,
-                    extraction_settings=extraction_settings.model_dump(),
-                )
-                if extraction_response.success:
-                    extracted_files += 1
-            except Exception as e:
-                _logger.error(
-                    f"There was an error for file {file.stem}. See logs for more details."
-                )
-                _logger.debug(repr(e))
-                _logger.debug(traceback.format_exc())
-            count += 1
-            _logger.info(
-                f"Done with extracting file {file.stem}. Files to go: {len(files) - count}, "
-                f"{np.round(100 * count / len(files), 2)}% done."
-            )
-        _logger.info(
-            f"We are done with extraction. Extracted files: {extracted_files}, "
-            f"{np.round(100*extracted_files/len(files),2)}%."
-            f" Not extracted files: {len(files)-extracted_files}, "
-            f"{np.round(100*(len(files)-extracted_files)/len(files),2)}%."
+        extract_from_folder(
+            file_or_folder_path_temp=file_or_folder_path_temp,
+            output_folder_path=output_folder_path,
+            extraction_settings=extraction_settings,
         )
     else:
         _logger.error("Given file or folder name is neither a file nor a folder.")
+
+
+def extract_from_folder(
+    file_or_folder_path_temp: Path,
+    output_folder_path: Path,
+    extraction_settings: ExtractionSettings,
+) -> None:
+    """Coordinate the extraction from a folder.
+
+    Args:
+    ----
+        file_or_folder_path_temp (Path): The path to the folder from where we want to extract data.
+        output_folder_path (Path): The path where we should store the output
+        extraction_settings (ExtractionSettings): The additional settings needed.
+
+    """
+    files = [f for f in file_or_folder_path_temp.iterdir() if f.is_file()]
+    _logger.info(f"Files to extract: {len(files)}.")
+    extracted_files = 0
+    extracted_files_list = []
+    not_extracted_files_list = []
+    count = 0
+    for file in files:
+        _logger.debug(f"Start extracting file {file.stem}.")
+        try:
+            extraction_response = extract_one_file(
+                output_folder=output_folder_path,
+                file_path=file,
+                extraction_settings=extraction_settings.model_dump(),
+            )
+            if extraction_response.success:
+                extracted_files += 1
+                extracted_files_list.append(file.name)
+            else:
+                not_extracted_files_list.append(file.name)
+        except Exception as e:
+            _logger.error(
+                f"There was an error for file {file.stem}. See logs for more details."
+            )
+            not_extracted_files_list.append(file.name)
+            _logger.debug(repr(e))
+            _logger.debug(traceback.format_exc())
+        count += 1
+        _logger.info(
+            f"Done with extracting file {file.stem}. Files to go: {len(files) - count}, "
+            f"{np.round(100 * count / len(files), 2)}% done."
+        )
+    _logger.info(
+        f"We are done with extraction. Extracted files: {extracted_files}, "
+        f"{np.round(100 * extracted_files / len(files), 2)}%."
+        f" Not extracted files: {len(files) - extracted_files}, "
+        f"{np.round(100 * (len(files) - extracted_files) / len(files), 2)}%."
+    )
+    _logger.info("Extracted files: " + ", ".join(extracted_files_list))
+    _logger.info("Not extracted files: " + ", ".join(not_extracted_files_list))
 
 
 def extract_one_file(
@@ -142,8 +171,15 @@ def extract_one_file(
     extraction_response = extractor.extract(input_file_path=file_path)
     output_file_name = file_path.stem + "_output.json"
     output_file_path = output_folder / output_file_name
-    with open(str(output_file_path), "w") as file:
-        json.dump(extraction_response.dictionary, file, indent=4)
+    if len(extraction_response.dictionary) > 0:
+        dict_to_json(
+            json_path=output_file_path, dictionary=extraction_response.dictionary
+        )
+    else:
+        _logger.warning(
+            f"There was no data extracted from file {file_path.name}. Check file and rerun."
+        )
+        extraction_response.success = False
     return extraction_response
 
 

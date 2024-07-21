@@ -127,40 +127,46 @@ class PDFExtractor(BaseExtractor):
             pdf_file (str): Path to the pdf file.
 
         """
-        self._extraction_response.dictionary = {}
-        if check_pdf_accessibility(pdf_file, self._settings["protected_extraction"]):
-            # pdfminer logger issue: https://stackoverflow.com/questions/29762706/warnings-on-pdfminer
-            orig_level = _logger.level
-            logging.root.setLevel(logging.ERROR)
+        # pdfminer logger issue: https://stackoverflow.com/questions/29762706/warnings-on-pdfminer
+        orig_level = _logger.level
+        logging.root.setLevel(logging.ERROR)
+        try:
+            self._extraction_response.dictionary = {}
+            extracted = False
+            if check_pdf_accessibility(
+                pdf_file, self._settings["protected_extraction"]
+            ):
+                idx = 0
 
-            idx = 0
+                # Create a PDF resource manager
+                rsrcmgr = PDFResourceManager()
+                retstr = io.StringIO()
+                laparams = LAParams()
 
-            # Create a PDF resource manager
-            rsrcmgr = PDFResourceManager()
-            retstr = io.StringIO()
-            laparams = LAParams()
+                # Create a PDF page interpreter
+                device = TextConverter(rsrcmgr, retstr, laparams=laparams)
+                interpreter = PDFPageInterpreter(rsrcmgr, device)
 
-            # Create a PDF page interpreter
-            device = TextConverter(rsrcmgr, retstr, laparams=laparams)
-            interpreter = PDFPageInterpreter(rsrcmgr, device)
-
-            with open(pdf_file, "rb") as fp:
-                for page_number, page in enumerate(
-                    PDFPage.get_pages(fp, check_extractable=False)
-                ):
-                    interpreter.process_page(page)
-                    data = retstr.getvalue()
-                    paragraphs_data = self.process_page(data)
-                    if len(paragraphs_data) == 0:
-                        continue
-                    idx = self.update_extraction_dict(
-                        idx, page_number, paragraphs_data, str(Path(pdf_file).name)
-                    )
-                    retstr.truncate(0)
-                    retstr.seek(0)
+                with open(pdf_file, "rb") as fp:
+                    for page_number, page in enumerate(
+                        PDFPage.get_pages(fp, check_extractable=False)
+                    ):
+                        interpreter.process_page(page)
+                        data = retstr.getvalue()
+                        paragraphs_data = self.process_page(data)
+                        if len(paragraphs_data) == 0:
+                            continue
+                        idx = self.update_extraction_dict(
+                            idx, page_number, paragraphs_data, str(Path(pdf_file).name)
+                        )
+                        retstr.truncate(0)
+                        retstr.seek(0)
+                extracted = True
             logging.root.setLevel(orig_level)
-            return True
-        return False
+            return extracted
+        except Exception as e:
+            logging.root.setLevel(orig_level)
+            raise e
 
     def process_page(self, input_text):
         r"""Process the input text from a PDF page.

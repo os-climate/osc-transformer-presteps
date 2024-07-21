@@ -12,7 +12,7 @@ import typer
 from osc_transformer_presteps.content_extraction.extraction_factory import get_extractor
 from osc_transformer_presteps.settings import ExtractionSettings
 from osc_transformer_presteps.utils import (
-    _specify_root_logger,
+    specify_root_logger,
     set_log_folder,
     log_dict,
     LogLevel,
@@ -68,7 +68,7 @@ def run_local_extraction(
     # Set logging set-up
     cwd = Path.cwd()
     logs_folder = set_log_folder(cwd=cwd, logs_folder=logs_folder)
-    _specify_root_logger(
+    specify_root_logger(
         log_level=log_dict[LogLevel(log_level)], logs_folder=logs_folder
     )
 
@@ -96,14 +96,12 @@ def run_local_extraction(
             extraction_settings=extraction_settings.model_dump(),
         )
         _logger.info(f"Done with extracting file {file_or_folder_path_temp.stem}.")
-    elif file_or_folder_path_temp.is_dir():
+    if file_or_folder_path_temp.is_dir():
         extract_from_folder(
             file_or_folder_path_temp=file_or_folder_path_temp,
             output_folder_path=output_folder_path,
             extraction_settings=extraction_settings,
         )
-    else:
-        _logger.error("Given file or folder name is neither a file nor a folder.")
 
 
 def extract_from_folder(

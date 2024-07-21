@@ -30,7 +30,7 @@ log_dict = {
 }
 
 
-def _specify_root_logger(log_level: int, logs_folder: Path):
+def specify_root_logger(log_level: int, logs_folder: Path):
     """Configure the root logger with a specific formatting and log level.
 
     This function sets up the root logger,

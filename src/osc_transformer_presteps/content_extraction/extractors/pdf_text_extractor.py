@@ -133,9 +133,10 @@ class PDFExtractor(BaseExtractor):
         try:
             self._extraction_response.dictionary = {}
             extracted = False
-            if check_pdf_accessibility(
+            pdf_accessibility = check_pdf_accessibility(
                 pdf_file, self._settings["protected_extraction"]
-            ):
+            )
+            if pdf_accessibility:
                 idx = 0
 
                 # Create a PDF resource manager
@@ -163,6 +164,7 @@ class PDFExtractor(BaseExtractor):
                         retstr.seek(0)
                 extracted = True
             logging.root.setLevel(orig_level)
+            _logger.debug("Pdf was accessible: " + str(pdf_accessibility))
             return extracted
         except Exception as e:
             logging.root.setLevel(orig_level)

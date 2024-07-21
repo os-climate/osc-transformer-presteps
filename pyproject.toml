@@ -91,7 +91,7 @@ lint = ["pre-commit"]
 testpaths = [
     "tests/",
 ]
-addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 75"
+addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
 
 [tool.coverage.run]
 source = ["src"]

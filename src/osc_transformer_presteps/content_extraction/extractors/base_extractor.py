@@ -1,9 +1,7 @@
 """Python Script for Base Extractor."""
 
 import logging
-import traceback
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -38,13 +36,6 @@ class ExtractionResponse(BaseModel):
 
     success: bool = True
     dictionary: Dict[str, Any] = {}
-
-
-@dataclass
-class ExtractionError(Exception):
-    """Get Extraction error."""
-
-    error: str
 
 
 class BaseExtractor(ABC):
@@ -119,23 +110,11 @@ class BaseExtractor(ABC):
         -------
             ExtractionResponse: An instance of the `ExtractionResponse` class containing the extraction results.
 
-        Raises:
-        ------
-            ExtractionError: If an error occurs during the extraction process.
-
         """
-        try:
-            extracted = self._generate_extractions(input_file_path=input_file_path)
-            extraction_response = self.get_extractions()
-            extraction_response.success = extracted
-            return extraction_response
-        except Exception as e:
-            traceback_str = traceback.format_exc()
-            _logger.error(traceback_str)
-            raise ExtractionError(
-                f"While doing the extraction we faced the following error:\n "
-                f"{repr(e)}.\n Trace to the error is given by:\n {traceback_str}"
-            ) from e
+        extracted = self._generate_extractions(input_file_path=input_file_path)
+        extraction_response = self.get_extractions()
+        extraction_response.success = extracted
+        return extraction_response
 
     @abstractmethod
     def _generate_extractions(

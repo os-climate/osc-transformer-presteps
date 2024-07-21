@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>OSC Data Extractor Pre-Steps &#8212; osc-transformer-presteps unknown documentation</title>
+    <title>OSC Transformer Pre-Steps &#8212; osc-transformer-presteps unknown documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=89af775e" />
     <script src="_static/documentation_options.js?v=3f1b9271"></script>
@@ -34,16 +34,14 @@
             
   <p id="readme">💬 Important</p>
 <p>On June 26 2024, Linux Foundation announced the merger of its financial services umbrella, the Fintech Open Source Foundation (<a class="reference external" href="https://finos.org">FINOS</a>), with OS-Climate, an open source community dedicated to building data technologies, modelling, and analytic tools that will drive global capital flows into climate change mitigation and resilience; OS-Climate projects are in the process of transitioning to the <a class="reference external" href="https://community.finos.org/docs/governance">FINOS governance framework</a>; read more on <a class="reference external" href="https://finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg">finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg</a></p>
-<section id="osc-data-extractor-pre-steps">
-<h1>OSC Data Extractor Pre-Steps<a class="headerlink" href="#osc-data-extractor-pre-steps" title="Link to this heading">¶</a></h1>
+<section id="osc-transformer-pre-steps">
+<h1>OSC Transformer Pre-Steps<a class="headerlink" href="#osc-transformer-pre-steps" title="Link to this heading">¶</a></h1>
 <p><a class="reference external" href="https://os-climate.org/"><img alt="An OS-Climate Project" src="https://img.shields.io/badge/OS-Climate-blue" /></a> <a class="reference external" href="https://os-climate.slack.com"><img alt="Join OS-Climate on Slack" src="https://img.shields.io/badge/slack-osclimate-brightgreen.svg?logo=slack" /></a> <a class="reference external" href="https://github.com/ModeSevenIndustrialSolutions/osc-data-extractor"><img alt="Source code on GitHub" src="https://img.shields.io/badge/GitHub-100000?logo=github&amp;logoColor=white" /></a> <a class="reference external" href="https://pypi.org/project/osc-data-extractor/"><img alt="PyPI package" src="https://img.shields.io/pypi/v/osc-data-extractor.svg" /></a> <a class="reference external" href="https://cirrus-ci.com/github/os-climate/osc-data-extractor"><img alt="Built Status" src="https://api.cirrus-ci.com/github/os-climate/osc-data-extractor.svg?branch=main" /></a> <a class="reference external" href="https://pdm-project.org/latest/"><img alt="Built using PDM" src="https://img.shields.io/badge/PDM-Project-purple" /></a> <a class="reference external" href="https://pyscaffold.org/"><img alt="Project generated with PyScaffold" src="https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold" /></a></p>
-<section id="os-climate-data-extraction-tool">
-<h2>OS-Climate Data Extraction Tool<a class="headerlink" href="#os-climate-data-extraction-tool" title="Link to this heading">¶</a></h2>
-<p id="notes">This code provides you with an api and a streamlit app to which you
-can provide a pdf document and the output will be the text content in a json format.
-In the backend it is using a python module for extracting text from pdfs, which
-might be extended in the future to other file types.
-The json file is needed for later usage in the context of transformer models
+<section id="os-climate-transformer-pre-steps-tool">
+<h2>OS-Climate Transformer Pre-Steps Tool<a class="headerlink" href="#os-climate-transformer-pre-steps-tool" title="Link to this heading">¶</a></h2>
+<p id="notes">This code provides you with a cli tool with the possibility to extract data from
+a pdf to a json document and to create a training data set for a later usage in the
+context of transformer models
 to extract relevant information, but it can also be used independently.</p>
 </section>
 <section id="quick-start">
@@ -61,55 +59,49 @@ to extract relevant information, but it can also be used independently.</p>
 <p>We are using typer to have a nice CLI tool here. All details and help will be shown in the CLI
 tool itself and are not described here in more detail.</p>
 </section>
-<section id="install-via-github-repository">
-<h3>Install via Github Repository<a class="headerlink" href="#install-via-github-repository" title="Link to this heading">¶</a></h3>
-<p>For a quick start with the tool install python and clone the repository to your local environment:</p>
+</section>
+<section id="developer-space">
+<h2>Developer space<a class="headerlink" href="#developer-space" title="Link to this heading">¶</a></h2>
+<section id="use-code-directly-without-cli-via-github-repository">
+<h3>Use code directly without CLI via Github Repository<a class="headerlink" href="#use-code-directly-without-cli-via-github-repository" title="Link to this heading">¶</a></h3>
+<p>First clone the repository to your local environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/os-climate/osc-transformer-presteps
 </pre></div>
 </div>
-<p>Afterwards update your python to the requirements (possible for example
-via pdm update) and start a local api server via:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python ./src/run_server.py
-</pre></div>
-</div>
-<dl class="simple">
-<dt><strong>Note</strong>:</dt><dd><ul class="simple">
-<li><p>We assume that you are located in the cloned repository.</p></li>
-<li><p>To check if it is running open “<a class="reference external" href="http://localhost:8000/liveness">http://localhost:8000/liveness</a>” and you should see the
-message {“message”: “OSC Transformer Pre-Steps Server is running.”}.</p></li>
-</ul>
-</dd>
-</dl>
-<p>Finally, run the following code to start a streamlit app which opens up the possibility
-to “upload” a file and extract data from pdf to json via this UI. Note that the UI needs
-the running server so you have to open the streamlit and the server in two different
-terminals.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ streamlit run ./src/osc_transformer_presteps/streamlit/app.py
-</pre></div>
-</div>
-<p><strong>Note</strong>: Check also docs/demo. There you can
-find local_extraction_demo.py which will start an extraction
-without any API call and then there is post_request_demo.py
-which will send a file to the API (of course you have to start
-server as above first).</p>
+<p>We are using pdm to manage the packages and tox for a stable test framework.
+Hence, first install pdm (possibly in a virtual environment) via</p>
+<blockquote>
+<div><p>$ pip install pdm</p>
+</div></blockquote>
+<p>Afterwards sync you system via</p>
+<blockquote>
+<div><p>$ pdm sync</p>
+</div></blockquote>
+<p>Now you have multiple demos on how to go on. See folder
+[here](demo)</p>
 </section>
-</section>
-<section id="developer-notes">
-<h2>Developer Notes<a class="headerlink" href="#developer-notes" title="Link to this heading">¶</a></h2>
-<p>For adding new dependencies use pdm. First install via pip:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install pdm
-</pre></div>
-</div>
-<p>And then you could add new packages via pdm add. For example numpy via:</p>
+<section id="pdm">
+<h3>pdm<a class="headerlink" href="#pdm" title="Link to this heading">¶</a></h3>
+<p>For adding new dependencies use pdm. You could add new packages via pdm add.
+For example numpy via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pdm add numpy
 </pre></div>
 </div>
-<p>For running linting tools just to the following:</p>
+<p>For a very detailed description check the homepage of the pdm project:</p>
+<p><a class="reference external" href="https://pdm-project.org/en/latest/">https://pdm-project.org/en/latest/</a></p>
+</section>
+<section id="tox">
+<h3>tox<a class="headerlink" href="#tox" title="Link to this heading">¶</a></h3>
+<p>For running linting tools we use tox which you run outside of your virtual environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install tox
 $ tox -e lint
 $ tox -e test
 </pre></div>
 </div>
+<p>This will automatically apply some checks on your code and run the provided pytests. See
+more details on tox on the homepage of the tox project:</p>
+<p><a class="reference external" href="https://tox.wiki/en/4.16.0/">https://tox.wiki/en/4.16.0/</a></p>
+</section>
 </section>
 </section>
 
@@ -118,7 +110,7 @@ $ tox -e test
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="index.html">osc-transformer-presteps</a></h1>
 
@@ -132,9 +124,9 @@ $ tox -e test
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#os-climate-data-extraction-tool">OS-Climate Data Extraction Tool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#os-climate-transformer-pre-steps-tool">OS-Climate Transformer Pre-Steps Tool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick start</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#developer-notes">Developer Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#developer-space">Developer space</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a></li>
@@ -179,7 +171,7 @@ $ tox -e test
       &#169;2023, Matthew Watkins.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |

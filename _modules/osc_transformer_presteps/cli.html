@@ -31,31 +31,49 @@
             
   <h1>Source code for osc_transformer_presteps.cli</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
-
-<span class="sd">&quot;&quot;&quot;Python wrapper for the pre-steps needed for the transformer application in</span>
-<span class="sd">the OSC Data Extraction Project&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Python wrapper for the pre-steps needed for the transformer application in the OSC Data Extraction Project.&quot;&quot;&quot;</span>
 
 <span class="c1"># External modules</span>
 <span class="kn">import</span> <span class="nn">typer</span>
 
 <span class="c1"># Bundled modules</span>
 <span class="kn">from</span> <span class="nn">osc_transformer_presteps.run_local_extraction</span> <span class="kn">import</span> <span class="n">app</span> <span class="k">as</span> <span class="n">extraction</span>
+<span class="kn">from</span> <span class="nn">osc_transformer_presteps.run_local_curation</span> <span class="kn">import</span> <span class="n">app</span> <span class="k">as</span> <span class="n">curation</span>
 
 <span class="c1"># Define command structure with typer module</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">typer</span><span class="o">.</span><span class="n">Typer</span><span class="p">(</span><span class="n">no_args_is_help</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<span class="c1"># Additional sub-commands</span>
+<span class="c1"># Additional sub-commands for extraction</span>
 <span class="n">app</span><span class="o">.</span><span class="n">add_typer</span><span class="p">(</span>
     <span class="n">extraction</span><span class="p">,</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;extraction&quot;</span><span class="p">,</span>
     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;If you want to run local extraction of text from files to json then this is the subcommand to use.&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="c1"># Additional sub-commands for curation</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_typer</span><span class="p">(</span>
+    <span class="n">curation</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;curation&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;If you want to run local creation of dataset of json files then this is the subcommand to use.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
 
 <div class="viewcode-block" id="run">
 <a class="viewcode-back" href="../../api/osc_transformer_presteps.html#osc_transformer_presteps.cli.run">[docs]</a>
 <span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide main entry point for the OSC Transformer CLI application.</span>
+
+<span class="sd">    This function sets up the Typer application with subcommands for local</span>
+<span class="sd">    extraction and curation of data.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        To run local extraction:</span>
+<span class="sd">            osc_transformer_presteps extraction</span>
+
+<span class="sd">        To run local curation:</span>
+<span class="sd">            osc_transformer_presteps curation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">app</span><span class="p">()</span></div>
 
 </pre></div>
@@ -64,7 +82,7 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../../index.html">osc-transformer-presteps</a></h1>
 
@@ -120,7 +138,7 @@
       &#169;2023, Matthew Watkins.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>

@@ -245,12 +245,13 @@ file_name (str): The name of the PDF file.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.check_pdf_accessibility">
-<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.</span></span><span class="sig-name descname"><span class="pre">check_pdf_accessibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/pdf_text_extractor.html#check_pdf_accessibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.check_pdf_accessibility" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.</span></span><span class="sig-name descname"><span class="pre">check_pdf_accessibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">protected_extraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/pdf_text_extractor.html#check_pdf_accessibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.check_pdf_accessibility" title="Link to this definition">¶</a></dt>
 <dd><p>Check if it can access the content of the pdf at all.</p>
 <section id="id9">
 <h3>Args:<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <blockquote>
-<div><p>pdf_file (str): Path to the pdf file.</p>
+<div><p>pdf_file (str): Path to the pdf file.
+protected_extraction (bool): Allow user to extract protected pdf.</p>
 </div></blockquote>
 </section>
 <section id="id10">
@@ -338,7 +339,7 @@ data = {“name”: “John Doe”, “age”: 30, “city”: “New York”}</
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">osc-transformer-presteps</a></h1>
 
@@ -403,7 +404,7 @@ data = {“name”: “John Doe”, “age”: 30, “city”: “New York”}</
       &#169;2023, Matthew Watkins.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |

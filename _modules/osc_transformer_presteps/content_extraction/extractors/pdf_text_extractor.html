@@ -81,12 +81,13 @@
 
 <div class="viewcode-block" id="check_pdf_accessibility">
 <a class="viewcode-back" href="../../../../api/osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.check_pdf_accessibility">[docs]</a>
-<span class="k">def</span> <span class="nf">check_pdf_accessibility</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">check_pdf_accessibility</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">protected_extraction</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if it can access the content of the pdf at all.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">    ----</span>
 <span class="sd">        pdf_file (str): Path to the pdf file.</span>
+<span class="sd">        protected_extraction (bool): Allow user to extract protected pdf.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">    -------</span>
@@ -95,6 +96,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">pdf_instance</span> <span class="o">=</span> <span class="n">PdfReader</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">protected_extraction</span> <span class="ow">and</span> <span class="n">pdf_instance</span><span class="o">.</span><span class="n">is_encrypted</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">PermissionError</span><span class="p">(</span><span class="s2">&quot;Extraction of protected PDF data is not allowed.&quot;</span><span class="p">)</span>
         <span class="n">_</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdf_instance</span><span class="o">.</span><span class="n">pages</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -166,7 +169,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">check_pdf_accessibility</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">check_pdf_accessibility</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="p">[</span><span class="s2">&quot;protected_extraction&quot;</span><span class="p">]):</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="c1"># Create a PDF resource manager</span>
@@ -179,7 +182,9 @@
             <span class="n">interpreter</span> <span class="o">=</span> <span class="n">PDFPageInterpreter</span><span class="p">(</span><span class="n">rsrcmgr</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
 
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">page_number</span><span class="p">,</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">PDFPage</span><span class="o">.</span><span class="n">get_pages</span><span class="p">(</span><span class="n">fp</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">page_number</span><span class="p">,</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                    <span class="n">PDFPage</span><span class="o">.</span><span class="n">get_pages</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">check_extractable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="p">):</span>
                     <span class="n">interpreter</span><span class="o">.</span><span class="n">process_page</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">retstr</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
                     <span class="n">paragraphs_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_page</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -270,7 +275,7 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../../../../index.html">osc-transformer-presteps</a></h1>
 
@@ -326,7 +331,7 @@
       &#169;2023, Matthew Watkins.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>

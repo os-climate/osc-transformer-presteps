@@ -75,6 +75,7 @@ def test_extraction_command_option_skip_extracted_files(runner):
     """
     result = runner.invoke(app, ["extraction", "run-local-extraction", "--help"])
     output = strip_ansi(result.output)
+    print(output)
     assert result.exit_code == 0
     assert "--skip_extracted_files" in output
 

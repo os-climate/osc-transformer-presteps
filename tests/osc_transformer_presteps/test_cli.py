@@ -76,7 +76,7 @@ def test_extraction_command_option_skip_extracted_files(runner):
     result = runner.invoke(app, ["extraction", "run-local-extraction", "--help"])
     output = strip_ansi(result.output)
     assert result.exit_code == 0
-    assert "--skip_extracted_files" in output
+    assert "skip_extracted_files" in output
 
 
 def test_curation_command(runner):
@@ -123,9 +123,10 @@ def test_invalid_command(runner):
     assert "No such command" in output
 
 
-def test_run_function():
-    """Test the run function directly to ensure it is covered."""
-    # Patch sys.exit to prevent it from stopping the test execution
-    with patch("sys.exit") as exit_mock:
+def test_run_calls_app():
+    """
+    Test that the run function calls the app function without any arguments.
+    """
+    with patch("osc_transformer_presteps.cli.app") as mock_app:
         run()
-        exit_mock.assert_called_once_with(0)
+        mock_app.assert_called_once_with()

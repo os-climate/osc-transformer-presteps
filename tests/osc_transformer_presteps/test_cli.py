@@ -27,6 +27,7 @@ from typer.testing import CliRunner
 from osc_transformer_presteps.cli import app, run  # Import the run function
 import re
 from unittest.mock import patch
+import os
 
 
 @pytest.fixture
@@ -128,6 +129,7 @@ def test_run_function():
     # Patch sys.exit to prevent it from stopping the test execution
     with patch("sys.exit") as exit_mock:
         try:
+            print("THIS IS A TEST: 1 " + os.getcwd())
             run()
         except Exception as e:
             print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")

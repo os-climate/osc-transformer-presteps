@@ -27,7 +27,6 @@ from typer.testing import CliRunner
 from osc_transformer_presteps.cli import app, run  # Import the run function
 import re
 from unittest.mock import patch
-import os
 
 
 @pytest.fixture
@@ -124,23 +123,10 @@ def test_invalid_command(runner):
     assert "No such command" in output
 
 
-def test_run_function():
-    """Test the run function directly to ensure it is covered."""
-    # Patch sys.exit to prevent it from stopping the test execution
-    with patch("sys.exit") as exit_mock:
-        try:
-            print("THIS IS A TEST: 1 " + os.getcwd())
-            run()
-        except Exception as e:
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            print(str(e))
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-        exit_mock.assert_called_once_with(0)
+def test_run_calls_app():
+    """
+    Test that the run function calls the app function without any arguments.
+    """
+    with patch("osc_transformer_presteps.cli.app") as mock_app:
+        run()
+        mock_app.assert_called_once_with()

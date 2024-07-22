@@ -40,5 +40,4 @@ def run():
         To run local curation:
             osc_transformer_presteps curation
     """
-    print("THIS IS A TEST: 2")
     app()

@@ -1,6 +1,6 @@
 [project]
 name = "osc-transformer-presteps"
-version = "0.1.1"
+version = "0.1.2"
 description = "OS-Climate Data Extraction Tool"
 authors = [
     {name = "David Besslich", email = "90916810+DaBeIDS@users.noreply.github.com"},
@@ -91,7 +91,7 @@ lint = ["pre-commit"]
 testpaths = [
     "tests/",
 ]
-addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 80"
+addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
 
 [tool.coverage.run]
 source = ["src"]

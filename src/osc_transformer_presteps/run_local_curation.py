@@ -1,7 +1,6 @@
 """Python script for using local curation as cli."""
 
 import logging
-import traceback
 from pathlib import Path
 
 # External modules
@@ -88,29 +87,22 @@ def run_local_curation(
             neg_pos_ratio=neg_pos_ratio,
         ).to_csv("Curated_dataset.csv", index=False)
         _logger.info(f"Done with creating dataset {extracted_json_temp.stem}.")
-    elif extracted_json_temp.is_dir():
+    if extracted_json_temp.is_dir():
         files = [f for f in extracted_json_temp.iterdir() if f.is_file()]
         curator_df = pd.DataFrame()
 
         for file in files:
             _logger.info(f"Start curating file {file.stem}.")
-            try:
-                temp_df = curate_one_file(
-                    dir_extracted_json_name=file,
-                    annotation_dir=annotation_temp,
-                    kpi_mapping_dir=kpi_mapping_temp,
-                    create_neg_samples=create_neg_samples,
-                    neg_pos_ratio=neg_pos_ratio,
-                )
-                curator_df = pd.concat([curator_df, temp_df], ignore_index=True)
-                curator_df.to_csv("Curated_dataset.csv", index=False)
-                _logger.info(f"Done with creating dataset {file.stem}.")
-            except Exception as e:
-                _logger.error(f"The was an error for file {file.stem}.")
-                _logger.error(repr(e))
-                _logger.error(traceback.format_exc())
-    else:
-        _logger.error("Given file or folder name is neither a file nor a folder.")
+            temp_df = curate_one_file(
+                dir_extracted_json_name=file,
+                annotation_dir=annotation_temp,
+                kpi_mapping_dir=kpi_mapping_temp,
+                create_neg_samples=create_neg_samples,
+                neg_pos_ratio=neg_pos_ratio,
+            )
+            curator_df = pd.concat([curator_df, temp_df], ignore_index=True)
+            curator_df.to_csv("Curated_dataset.csv", index=False)
+            _logger.info(f"Done with creating dataset {file.stem}.")
 
 
 def curate_one_file(

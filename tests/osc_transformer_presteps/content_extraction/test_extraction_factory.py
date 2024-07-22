@@ -16,6 +16,11 @@ class TestGetExtractor:
         extractor = get_extractor(".pdf")
         assert isinstance(extractor, PDFExtractor)
 
+    def test_get_pdf_extractor_non_standard_ending(self):
+        """Test if we can retrieve the pdf extractor even if file ending is not classical lowercase."""
+        extractor = get_extractor(".PdF")
+        assert isinstance(extractor, PDFExtractor)
+
     def test_get_non_existing_extractor(self):
         """Test for an error message for an invalid extractor type."""
         with pytest.raises(KeyError, match="Invalid extractor type"):

@@ -2,6 +2,8 @@
 
 import json
 from pathlib import Path
+from pypdf.errors import PdfStreamError
+import pytest
 
 from osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor import (
     PDFExtractor,
@@ -26,6 +28,30 @@ class TestPdfExtractor:
         )
         extraction_response = extractor.extract(input_file_path=input_file_path)
         assert extraction_response.dictionary == {}
+
+    def test_encrypted_pdf(self):
+        """Test with encrypted pdf.
+
+        A test where we try to extract the data from a pdf which is encrypted.
+        """
+        extractor = PDFExtractor()
+        input_file_path = (
+            Path(__file__).resolve().parents[3] / "data" / "pdf_files" / "encrypted.pdf"
+        )
+        extraction_response = extractor.extract(input_file_path=input_file_path)
+        assert extraction_response.dictionary == {}
+
+    def test_error_pdf(self):
+        """Test with encrypted pdf.
+
+        A test where we try to extract the data from a pdf which is encrypted.
+        """
+        extractor = PDFExtractor()
+        input_file_path = (
+            Path(__file__).resolve().parents[3] / "data" / "pdf_files" / "no_pdf.pdf"
+        )
+        with pytest.raises(PdfStreamError):
+            extractor.extract(input_file_path=input_file_path)
 
     def test_pdf_with_no_extraction_issues(self):
         """Test with no extraction issue.

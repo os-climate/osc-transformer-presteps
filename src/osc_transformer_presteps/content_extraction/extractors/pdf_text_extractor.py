@@ -57,15 +57,14 @@ def check_pdf_accessibility(pdf_file: str, protected_extraction: bool) -> bool:
         boolean: If an error occurs while loading the pdf it returns false, otherwise true.
 
     """
-    try:
-        pdf_instance = PdfReader(pdf_file)
-        if not protected_extraction and pdf_instance.is_encrypted:
-            raise PermissionError("Extraction of protected PDF data is not allowed.")
-        _ = len(pdf_instance.pages)
-        return True
-    except Exception as e:
-        _logger.warning(f"{e}: Unable to process {pdf_file}")
-        raise e
+    pdf_instance = PdfReader(pdf_file)
+    if not protected_extraction and pdf_instance.is_encrypted:
+        _logger.warning(
+            f"Extraction of protected PDF data is not allowed: Problem with pdf_file: {Path(pdf_file).name}."
+        )
+        return False
+    _ = len(pdf_instance.pages)
+    return True
 
 
 class PDFExtractor(BaseExtractor):
@@ -89,7 +88,7 @@ class PDFExtractor(BaseExtractor):
     def _generate_extractions(
         self,
         input_file_path: Path,
-    ) -> None:
+    ) -> bool:
         """Extract text from a single pdf file and stores it to the <filename>.json.
 
         The dictionary output will be returned. If the file was already processed
@@ -100,25 +99,27 @@ class PDFExtractor(BaseExtractor):
             input_file_path (Path): full path to the pdf file
 
         """
-        _logger.info(f"Extracting {input_file_path.name} ...")
+        _logger.debug(f"Extracting {input_file_path.name} ...")
 
-        self.extract_pdf_by_page(str(input_file_path))
-
-        _logger.info(
-            f"The number of pages extracted: {len(self._extraction_response.dictionary)}"
-        )
-        paragraphs = (
-            0
-            if len(self._extraction_response.dictionary.keys()) == 0
-            else max(
-                self._extraction_response.dictionary[
-                    max(self._extraction_response.dictionary.keys())
-                ].keys()
+        extracted = self.extract_pdf_by_page(str(input_file_path))
+        if extracted:
+            _logger.debug(
+                f"The number of pages extracted: {len(self._extraction_response.dictionary)}"
             )
-        )
-        _logger.info(f"The number of paragraphs found: {paragraphs}.")
+            paragraphs = (
+                0
+                if len(self._extraction_response.dictionary.keys()) == 0
+                else max(
+                    self._extraction_response.dictionary[
+                        max(self._extraction_response.dictionary.keys())
+                    ].keys()
+                )
+            )
+            _logger.debug(f"The number of paragraphs found: {paragraphs}.")
+            return True
+        return False
 
-    def extract_pdf_by_page(self, pdf_file):
+    def extract_pdf_by_page(self, pdf_file: str) -> bool:
         """Read the content of each page in a pdf file.
 
         Args:
@@ -126,33 +127,48 @@ class PDFExtractor(BaseExtractor):
             pdf_file (str): Path to the pdf file.
 
         """
-        self._extraction_response.dictionary = {}
-        if check_pdf_accessibility(pdf_file, self._settings["protected_extraction"]):
-            idx = 0
+        # pdfminer logger issue: https://stackoverflow.com/questions/29762706/warnings-on-pdfminer
+        orig_level = _logger.level
+        logging.root.setLevel(logging.ERROR)
+        try:
+            self._extraction_response.dictionary = {}
+            extracted = False
+            pdf_accessibility = check_pdf_accessibility(
+                pdf_file, self._settings["protected_extraction"]
+            )
+            if pdf_accessibility:
+                idx = 0
 
-            # Create a PDF resource manager
-            rsrcmgr = PDFResourceManager()
-            retstr = io.StringIO()
-            laparams = LAParams()
+                # Create a PDF resource manager
+                rsrcmgr = PDFResourceManager()
+                retstr = io.StringIO()
+                laparams = LAParams()
 
-            # Create a PDF page interpreter
-            device = TextConverter(rsrcmgr, retstr, laparams=laparams)
-            interpreter = PDFPageInterpreter(rsrcmgr, device)
+                # Create a PDF page interpreter
+                device = TextConverter(rsrcmgr, retstr, laparams=laparams)
+                interpreter = PDFPageInterpreter(rsrcmgr, device)
 
-            with open(pdf_file, "rb") as fp:
-                for page_number, page in enumerate(
-                    PDFPage.get_pages(fp, check_extractable=False)
-                ):
-                    interpreter.process_page(page)
-                    data = retstr.getvalue()
-                    paragraphs_data = self.process_page(data)
-                    if len(paragraphs_data) == 0:
-                        continue
-                    idx = self.update_extraction_dict(
-                        idx, page_number, paragraphs_data, str(Path(pdf_file).name)
-                    )
-                    retstr.truncate(0)
-                    retstr.seek(0)
+                with open(pdf_file, "rb") as fp:
+                    for page_number, page in enumerate(
+                        PDFPage.get_pages(fp, check_extractable=False)
+                    ):
+                        interpreter.process_page(page)
+                        data = retstr.getvalue()
+                        paragraphs_data = self.process_page(data)
+                        if len(paragraphs_data) == 0:
+                            continue
+                        idx = self.update_extraction_dict(
+                            idx, page_number, paragraphs_data, str(Path(pdf_file).name)
+                        )
+                        retstr.truncate(0)
+                        retstr.seek(0)
+                extracted = True
+            logging.root.setLevel(orig_level)
+            _logger.debug("Pdf was accessible: " + str(pdf_accessibility))
+            return extracted
+        except Exception as e:
+            logging.root.setLevel(orig_level)
+            raise e
 
     def process_page(self, input_text):
         r"""Process the input text from a PDF page.
@@ -173,7 +189,7 @@ class PDFExtractor(BaseExtractor):
         """
         paragraphs = input_text.split("\n\n")
 
-        # Get ride of table data if the number of alphabets in a paragraph is less than `min_paragraph_length`
+        # Get rid of table data if the number of alphabets in a paragraph is less than `min_paragraph_length`
         mpl = self._settings["min_paragraph_length"]
         paragraphs_cleaned = [
             clean_text(p)

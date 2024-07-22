@@ -46,12 +46,12 @@ def get_extractor(
         BaseExtractor: Instance of the specified extractor type
 
     """
-    _logger.info("The extractor type is: " + extractor_type)
-    extractor_class = _extractors.get(extractor_type)
+    _logger.debug("The extractor type is: " + extractor_type)
+    extractor_class = _extractors.get(extractor_type.lower())
     if extractor_class:
-        _logger.info(f"Retrieving {extractor_type} extractor instance")
+        _logger.debug(f"Retrieving {extractor_type} extractor instance")
         extractor_instance = extractor_class(settings)
         return extractor_instance
     else:
-        _logger.error("Invalid extractor type")
+        _logger.error(f"Invalid extractor type: {extractor_type}")
         raise KeyError("Invalid extractor type")

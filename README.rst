@@ -36,6 +36,24 @@ Afterwards you can use the tooling as a CLI tool by simply typing::
 We are using typer to have a nice CLI tool here. All details and help will be shown in the CLI
 tool itself and are not described here in more detail.
 
+**Example**: Assume the folder structure is like that:
+
+.. code-block:: text
+
+    project/
+    ├-input/
+    │ ├-file_1.pdf
+    │ ├-file_2.pdf
+    │ └─file_3.pdf
+    ├-logs/
+    └─output/
+
+Then you can now simply run (after installation of osc-transformer-presteps)
+the following command to extract the data from the pdfs to json:
+
+    $ osc-transformer-presteps extraction run-local-extraction 'input' --output-folder='output' --logs-folder='logs' --force
+
+*Note*: Here force overcomes encryption. Please check if that is a legal action for you.
 
 Developer space
 ===============

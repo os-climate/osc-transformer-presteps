@@ -1,15 +1,12 @@
 """Python Script for Base Extractor."""
 
 import logging
-import traceback
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
 
-from .utils import dict_to_json
 
 _logger = logging.getLogger(__name__)
 
@@ -31,7 +28,6 @@ class _BaseSettings(BaseModel):
     annotation_folder: Optional[str] = None
     min_paragraph_length: Optional[int] = 20
     skip_extracted_files: Optional[bool] = False
-    store_to_file: Optional[bool] = True
     protected_extraction: Optional[bool] = False
 
 
@@ -40,13 +36,6 @@ class ExtractionResponse(BaseModel):
 
     success: bool = True
     dictionary: Dict[str, Any] = {}
-
-
-@dataclass
-class ExtractionError(Exception):
-    """Get Extraction error."""
-
-    error: str
 
 
 class BaseExtractor(ABC):
@@ -107,16 +96,6 @@ class BaseExtractor(ABC):
         else:
             return False
 
-    def save_extraction_to_file(self, output_file_path: Path) -> None:
-        """Save the extraction dictionary to a JSON file.
-
-        Args:
-        ----
-            output_file_path (Path): The path to the output JSON file.
-
-        """
-        dict_to_json(output_file_path, self._extraction_response.dictionary)
-
     def extract(
         self,
         input_file_path: Path,
@@ -131,27 +110,17 @@ class BaseExtractor(ABC):
         -------
             ExtractionResponse: An instance of the `ExtractionResponse` class containing the extraction results.
 
-        Raises:
-        ------
-            ExtractionError: If an error occurs during the extraction process.
-
         """
-        try:
-            self._generate_extractions(input_file_path=input_file_path)
-            return self.get_extractions()
-        except Exception as e:
-            traceback_str = traceback.format_exc()
-            print(traceback_str)
-            raise ExtractionError(
-                f"While doing the extraction we faced the following error:\n "
-                f"{repr(e)}.\n Trace to the error is given by:\n {traceback_str}"
-            ) from e
+        extracted = self._generate_extractions(input_file_path=input_file_path)
+        extraction_response = self.get_extractions()
+        extraction_response.success = extracted
+        return extraction_response
 
     @abstractmethod
     def _generate_extractions(
         self,
         input_file_path: Path,
-    ) -> Optional[dict]:
+    ) -> bool:
         """Define how text is extracted from a give file in path.
 
         Args:

@@ -91,10 +91,17 @@ lint = ["pre-commit"]
 testpaths = [
     "tests/",
 ]
-addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
+addopts = "--cov"
 
 [tool.coverage.run]
 source = ["src"]
+omit = ["test/*"]
+# relative_files = true
+
+[tool.coverage.report]
+fail_under = 95
+skip_empty = true
+format = ["term", "term-missing", "html", "text"]
 
 [tool.yapf]
 blank_line_before_nested_class_or_def = true

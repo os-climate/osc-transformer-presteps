@@ -49,7 +49,7 @@ tool itself and are not described here in more detail.
     └─output/
 
 Then you can now simply run (after installation of osc-transformer-presteps)
-the following command:
+the following command to extract the data from the pdfs to json:
 
     $ osc-transformer-presteps extraction run-local-extraction 'input' --output-folder='output' --logs-folder='logs' --force
 

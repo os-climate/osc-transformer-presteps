@@ -58,6 +58,22 @@ to extract relevant information, but it can also be used independently.</p>
 </div>
 <p>We are using typer to have a nice CLI tool here. All details and help will be shown in the CLI
 tool itself and are not described here in more detail.</p>
+<p><strong>Example</strong>: Assume the folder structure is like that:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>project/
+├-input/
+│ ├-file_1.pdf
+│ ├-file_2.pdf
+│ └─file_3.pdf
+├-logs/
+└─output/
+</pre></div>
+</div>
+<p>Then you can now simply run (after installation of osc-transformer-presteps)
+the following command to extract the data from the pdfs to json:</p>
+<blockquote>
+<div><p>$ osc-transformer-presteps extraction run-local-extraction ‘input’ –output-folder=’output’ –logs-folder=’logs’ –force</p>
+</div></blockquote>
+<p><em>Note</em>: Here force overcomes encryption. Please check if that is a legal action for you.</p>
 </section>
 </section>
 <section id="developer-space">

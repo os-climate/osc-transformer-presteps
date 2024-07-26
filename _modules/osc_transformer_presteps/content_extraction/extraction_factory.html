@@ -86,14 +86,14 @@
 <span class="sd">        BaseExtractor: Instance of the specified extractor type</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The extractor type is: &quot;</span> <span class="o">+</span> <span class="n">extractor_type</span><span class="p">)</span>
-    <span class="n">extractor_class</span> <span class="o">=</span> <span class="n">_extractors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">extractor_type</span><span class="p">)</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The extractor type is: &quot;</span> <span class="o">+</span> <span class="n">extractor_type</span><span class="p">)</span>
+    <span class="n">extractor_class</span> <span class="o">=</span> <span class="n">_extractors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">extractor_type</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">extractor_class</span><span class="p">:</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrieving </span><span class="si">{</span><span class="n">extractor_type</span><span class="si">}</span><span class="s2"> extractor instance&quot;</span><span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrieving </span><span class="si">{</span><span class="n">extractor_type</span><span class="si">}</span><span class="s2"> extractor instance&quot;</span><span class="p">)</span>
         <span class="n">extractor_instance</span> <span class="o">=</span> <span class="n">extractor_class</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">extractor_instance</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Invalid extractor type&quot;</span><span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid extractor type: </span><span class="si">{</span><span class="n">extractor_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Invalid extractor type&quot;</span><span class="p">)</span></div>
 
 </pre></div>

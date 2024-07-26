@@ -45,6 +45,14 @@ osc\_transformer\_presteps.settings module
    :undoc-members:
    :show-inheritance:
 
+osc\_transformer\_presteps.utils module
+---------------------------------------
+
+.. automodule:: osc_transformer_presteps.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

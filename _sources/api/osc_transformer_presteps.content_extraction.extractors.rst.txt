@@ -20,14 +20,6 @@ osc\_transformer\_presteps.content\_extraction.extractors.pdf\_text\_extractor m
    :undoc-members:
    :show-inheritance:
 
-osc\_transformer\_presteps.content\_extraction.extractors.utils module
-----------------------------------------------------------------------
-
-.. automodule:: osc_transformer_presteps.content_extraction.extractors.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

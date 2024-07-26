@@ -44,7 +44,6 @@
 <li class="toctree-l4"><a class="reference internal" href="osc_transformer_presteps.content_extraction.extractors.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="osc_transformer_presteps.content_extraction.extractors.html#module-osc_transformer_presteps.content_extraction.extractors.base_extractor">osc_transformer_presteps.content_extraction.extractors.base_extractor module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="osc_transformer_presteps.content_extraction.extractors.html#module-osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor">osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="osc_transformer_presteps.content_extraction.extractors.html#module-osc_transformer_presteps.content_extraction.extractors.utils">osc_transformer_presteps.content_extraction.extractors.utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="osc_transformer_presteps.content_extraction.extractors.html#module-osc_transformer_presteps.content_extraction.extractors">Module contents</a></li>
 </ul>
 </li>
@@ -134,42 +133,46 @@ extraction and curation of data.</p>
 <span id="osc-transformer-presteps-run-local-extraction-module"></span><h2>osc_transformer_presteps.run_local_extraction module<a class="headerlink" href="#module-osc_transformer_presteps.run_local_extraction" title="Link to this heading">¶</a></h2>
 <p>Python Script for running extraction on cli.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="osc_transformer_presteps.run_local_extraction.extract_from_folder">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.run_local_extraction.</span></span><span class="sig-name descname"><span class="pre">extract_from_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_or_folder_path_temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraction_settings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#osc_transformer_presteps.settings.ExtractionSettings" title="osc_transformer_presteps.settings.ExtractionSettings"><span class="pre">ExtractionSettings</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/run_local_extraction.html#extract_from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.run_local_extraction.extract_from_folder" title="Link to this definition">¶</a></dt>
+<dd><p>Coordinate the extraction from a folder.</p>
+<section id="args">
+<h3>Args:<a class="headerlink" href="#args" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>file_or_folder_path_temp (Path): The path to the folder from where we want to extract data.
+output_folder_path (Path): The path where we should store the output
+extraction_settings (ExtractionSettings): The additional settings needed.</p>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="osc_transformer_presteps.run_local_extraction.extract_one_file">
-<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.run_local_extraction.</span></span><span class="sig-name descname"><span class="pre">extract_one_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraction_settings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/run_local_extraction.html#extract_one_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.run_local_extraction.extract_one_file" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.run_local_extraction.</span></span><span class="sig-name descname"><span class="pre">extract_one_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraction_settings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse" title="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionResponse"><span class="pre">ExtractionResponse</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/run_local_extraction.html#extract_one_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.run_local_extraction.extract_one_file" title="Link to this definition">¶</a></dt>
 <dd><p>Extract data for a given file to a given folder for a specific setting.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="osc_transformer_presteps.run_local_extraction.run_local_extraction">
-<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.run_local_extraction.</span></span><span class="sig-name descname"><span class="pre">run_local_extraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_or_folder_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.ArgumentInfo</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_extracted_files:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_to_file:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protected_extraction:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/run_local_extraction.html#run_local_extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.run_local_extraction.run_local_extraction" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.run_local_extraction.</span></span><span class="sig-name descname"><span class="pre">run_local_extraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_or_folder_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.ArgumentInfo</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_extracted_files:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protected_extraction:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logs_folder:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/run_local_extraction.html#run_local_extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.run_local_extraction.run_local_extraction" title="Link to this definition">¶</a></dt>
 <dd><p>Command to start the extraction of text to json on your local machine. Check help for details.</p>
 </dd></dl>
 
 </section>
 <section id="module-osc_transformer_presteps.settings">
 <span id="osc-transformer-presteps-settings-module"></span><h2>osc_transformer_presteps.settings module<a class="headerlink" href="#module-osc_transformer_presteps.settings" title="Link to this heading">¶</a></h2>
-<p>Python Script to handle logging and Extraction Settings.</p>
+<p>Python Script to define Extraction Settings.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="osc_transformer_presteps.settings.ExtractionSettings">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.settings.</span></span><span class="sig-name descname"><span class="pre">ExtractionSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_extracted_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_to_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protected_extraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/settings.html#ExtractionSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.settings.</span></span><span class="sig-name descname"><span class="pre">ExtractionSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_extracted_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protected_extraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/settings.html#ExtractionSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>Settings for controlling extraction behavior.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="osc_transformer_presteps.settings.ExtractionSettings.skip_extracted_files">
 <span class="sig-name descname"><span class="pre">skip_extracted_files</span></span><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings.skip_extracted_files" title="Link to this definition">¶</a></dt>
 <dd><p>Flag indicating whether to skip files that have already been extracted.
-Defaults to False.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)">bool</a>, optional</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.ExtractionSettings.store_to_file">
-<span class="sig-name descname"><span class="pre">store_to_file</span></span><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings.store_to_file" title="Link to this definition">¶</a></dt>
-<dd><p>Flag indicating whether to store the extracted data to a file.
+Defaults to False.
+Flag indicating whether to store the extracted data to a file.
 Defaults to True.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -204,7 +207,7 @@ Defaults to False.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="osc_transformer_presteps.settings.ExtractionSettings.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_extraction':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=False),</span> <span class="pre">'skip_extracted_files':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=False),</span> <span class="pre">'store_to_file':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=True)}</span></em><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings.model_fields" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_extraction':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=False),</span> <span class="pre">'skip_extracted_files':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=False)}</span></em><a class="headerlink" href="#osc_transformer_presteps.settings.ExtractionSettings.model_fields" title="Link to this definition">¶</a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -220,47 +223,180 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <span class="sig-name descname"><span class="pre">skip_extracted_files</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+</section>
+<section id="module-osc_transformer_presteps.utils">
+<span id="osc-transformer-presteps-utils-module"></span><h2>osc_transformer_presteps.utils module<a class="headerlink" href="#module-osc_transformer_presteps.utils" title="Link to this heading">¶</a></h2>
+<p>Module to collect multiple functions which are helping utils for the osc-transformer-presteps package.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.LogLevel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">LogLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/utils.html#LogLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.utils.LogLevel" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.12/library/enum.html#enum.Enum" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Class for different log levels.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">store_to_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.LogLevel.critical">
+<span class="sig-name descname"><span class="pre">critical</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'critical'</span></em><a class="headerlink" href="#osc_transformer_presteps.utils.LogLevel.critical" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.LogLevel.debug">
+<span class="sig-name descname"><span class="pre">debug</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'debug'</span></em><a class="headerlink" href="#osc_transformer_presteps.utils.LogLevel.debug" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.LogLevel.error">
+<span class="sig-name descname"><span class="pre">error</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'error'</span></em><a class="headerlink" href="#osc_transformer_presteps.utils.LogLevel.error" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.LogLevel.info">
+<span class="sig-name descname"><span class="pre">info</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'info'</span></em><a class="headerlink" href="#osc_transformer_presteps.utils.LogLevel.info" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.LogLevel.notset">
+<span class="sig-name descname"><span class="pre">notset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'notset'</span></em><a class="headerlink" href="#osc_transformer_presteps.utils.LogLevel.notset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.LogLevel.warning">
+<span class="sig-name descname"><span class="pre">warning</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'warning'</span></em><a class="headerlink" href="#osc_transformer_presteps.utils.LogLevel.warning" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.LogLevel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.settings.</span></span><span class="sig-name descname"><span class="pre">LogLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/settings.html#LogLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.settings.LogLevel" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.12/library/enum.html#enum.Enum" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
-<p>Class for different log levels.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.create_file_handler">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">create_file_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logs_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/logging.handlers.html#logging.FileHandler" title="(in Python v3.12)"><span class="pre">FileHandler</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/utils.html#create_file_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.utils.create_file_handler" title="Link to this definition">¶</a></dt>
+<dd><p>Create a file handler for logging to a file.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.LogLevel.critical">
-<span class="sig-name descname"><span class="pre">critical</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'critical'</span></em><a class="headerlink" href="#osc_transformer_presteps.settings.LogLevel.critical" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.logs_path">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">logs_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#osc_transformer_presteps.utils.logs_path" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path where the log file should be stored.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.dict_to_json">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">dict_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/utils.html#dict_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.utils.dict_to_json" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a dictionary to JSON and write it to a file.</p>
+<section id="id2">
+<h3>Args:<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>json_path (Path): The path to the JSON file to be written.
+dictionary (dict): The dictionary to be converted to JSON.</p>
+</div></blockquote>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>None: This function does not return anything.</p>
+</div></blockquote>
+</section>
+<section id="raises">
+<h3>Raises:<a class="headerlink" href="#raises" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>OSError: If there is an error writing the JSON file.</p>
+</div></blockquote>
+</section>
+<section id="note">
+<h3>Note:<a class="headerlink" href="#note" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>This function uses the <cite>json.dump()</cite> method from the built-in <cite>json</cite> module to convert the dictionary to JSON
+and write it to the specified file. The function opens the file in write mode and overwrites any existing
+content.</p>
+</div></blockquote>
+</section>
+<section id="example">
+<h3>Example:<a class="headerlink" href="#example" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>json_path = Path(“output.json”)
+data = {“name”: “John Doe”, “age”: 30, “city”: “New York”}</p>
+<p>dict_to_json(json_path, data)</p>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.set_log_folder">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">set_log_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logs_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/utils.html#set_log_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.utils.set_log_folder" title="Link to this definition">¶</a></dt>
+<dd><p>Create a path object from a given logs_folder if one is given.</p>
+<p>This function creates a path object from a given logs_folder if one is given. If no string
+is provided then we choose the current working directory as the logs folder. You can either just provide
+one folder which is relative to the cwd or you give an absolute path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Path</strong></p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>The path where the logs will be stored.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3.12/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – If <cite>cwd</cite> does not exist.:</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3.12/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – If logs_folder is not none, but neither cwd / logs_folder nor logs_folder exist as folders.:</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.cwd">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">cwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#osc_transformer_presteps.utils.cwd" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current working directory as a path object.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.LogLevel.debug">
-<span class="sig-name descname"><span class="pre">debug</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'debug'</span></em><a class="headerlink" href="#osc_transformer_presteps.settings.LogLevel.debug" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.logs_folder">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">logs_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">:obj:`str`</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#osc_transformer_presteps.utils.logs_folder" title="Link to this definition">¶</a></dt>
+<dd><p>If not provided cwd is the folder to store the logs in.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path we should store the logs in. Defaults to None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.specify_root_logger">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">specify_root_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logs_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/utils.html#specify_root_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.utils.specify_root_logger" title="Link to this definition">¶</a></dt>
+<dd><p>Configure the root logger with a specific formatting and log level.</p>
+<p>This function sets up the root logger,
+which is the top-level logger in the logging hierarchy, with a specific
+configuration. It creates a StreamHandler and a FileHandler that log messages to stdout and a file, sets the log
+level to log_level for all messages, and applies a specific formatter to format the log messages.
+Usage:
+Call this function at the beginning of your code to configure the root logger
+with the desired formatting and log level.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="osc_transformer_presteps.utils.log_level">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">log_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#osc_transformer_presteps.utils.log_level" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The log_level to use for the logging given as int.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.LogLevel.error">
-<span class="sig-name descname"><span class="pre">error</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'error'</span></em><a class="headerlink" href="#osc_transformer_presteps.settings.LogLevel.error" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.LogLevel.info">
-<span class="sig-name descname"><span class="pre">info</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'info'</span></em><a class="headerlink" href="#osc_transformer_presteps.settings.LogLevel.info" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.LogLevel.notset">
-<span class="sig-name descname"><span class="pre">notset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'notset'</span></em><a class="headerlink" href="#osc_transformer_presteps.settings.LogLevel.notset" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.settings.LogLevel.warning">
-<span class="sig-name descname"><span class="pre">warning</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'warning'</span></em><a class="headerlink" href="#osc_transformer_presteps.settings.LogLevel.warning" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="id3">
+<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.utils.</span></span><span class="sig-name descname"><span class="pre">logs_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The folder where we store the log file.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

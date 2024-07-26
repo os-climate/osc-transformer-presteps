@@ -74,12 +74,6 @@ output_folder_path (Path): The path of the output folder.</p>
 <div><p>ExtractionResponse: An instance of the <cite>ExtractionResponse</cite> class containing the extraction results.</p>
 </div></blockquote>
 </section>
-<section id="raises">
-<h3>Raises:<a class="headerlink" href="#raises" title="Link to this heading">¶</a></h3>
-<blockquote>
-<div><p>ExtractionError: If an error occurs during the extraction process.</p>
-</div></blockquote>
-</section>
 </dd></dl>
 
 <dl class="py attribute">
@@ -98,30 +92,6 @@ output_folder_path (Path): The path of the output folder.</p>
 <span class="sig-name descname"><span class="pre">get_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/base_extractor.html#BaseExtractor.get_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.BaseExtractor.get_settings" title="Link to this definition">¶</a></dt>
 <dd><p>Get settings for extraction.</p>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.BaseExtractor.save_extraction_to_file">
-<span class="sig-name descname"><span class="pre">save_extraction_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/base_extractor.html#BaseExtractor.save_extraction_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.BaseExtractor.save_extraction_to_file" title="Link to this definition">¶</a></dt>
-<dd><p>Save the extraction dictionary to a JSON file.</p>
-<section id="id2">
-<h3>Args:<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
-<blockquote>
-<div><p>output_file_path (Path): The path to the output JSON file.</p>
-</div></blockquote>
-</section>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.content_extraction.extractors.base_extractor.</span></span><span class="sig-name descname"><span class="pre">ExtractionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/base_extractor.html#ExtractionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/exceptions.html#Exception" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
-<p>Get Extraction error.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError.error">
-<span class="sig-name descname"><span class="pre">error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.base_extractor.ExtractionError.error" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -173,17 +143,17 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <p>Class responsible for extracting text data from PDFs and saving the result in a json format file.</p>
 <p>Each name/value pair in the json file refers to page_number and
 the list of paragraphs in that page.</p>
-<section id="id3">
-<h3>Args:<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<section id="id2">
+<h3>Args:<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>settings (dict)(optional): See specification under _Settings class.</p>
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract_pdf_by_page">
-<span class="sig-name descname"><span class="pre">extract_pdf_by_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdf_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/pdf_text_extractor.html#PDFExtractor.extract_pdf_by_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract_pdf_by_page" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_pdf_by_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/pdf_text_extractor.html#PDFExtractor.extract_pdf_by_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract_pdf_by_page" title="Link to this definition">¶</a></dt>
 <dd><p>Read the content of each page in a pdf file.</p>
-<section id="id4">
-<h4>Args:<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
+<section id="id3">
+<h4>Args:<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
 <blockquote>
 <div><p>pdf_file (str): Path to the pdf file.</p>
 </div></blockquote>
@@ -205,14 +175,14 @@ the list of paragraphs in that page.</p>
 <blockquote>
 <div><p>is less min_paragraph_length, it is considered as table cell and it will be removed.</p>
 </div></blockquote>
-<section id="id5">
-<h4>Args:<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h4>
+<section id="id4">
+<h4>Args:<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
 <blockquote>
 <div><p>input_text (str): Content of each pdf.</p>
 </div></blockquote>
 </section>
-<section id="id6">
-<h4>Returns:<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h4>
+<section id="id5">
+<h4>Returns:<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h4>
 <blockquote>
 <div><p>paragraphs (list of str): List of paragraphs.</p>
 </div></blockquote>
@@ -223,8 +193,8 @@ the list of paragraphs in that page.</p>
 <dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.update_extraction_dict">
 <span class="sig-name descname"><span class="pre">update_extraction_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paragraphs_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/pdf_text_extractor.html#PDFExtractor.update_extraction_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.update_extraction_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Update the extraction dictionary with the provided data and return the updated index.</p>
-<section id="id7">
-<h4>Args:<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h4>
+<section id="id6">
+<h4>Args:<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h4>
 <blockquote>
 <div><p>idx (int): The starting index for the paragraphs in the extraction dictionary.
 page_number (int): The page number of the paragraphs.
@@ -232,8 +202,8 @@ paragraphs_data (List[str]): The list of paragraphs data.
 file_name (str): The name of the PDF file.</p>
 </div></blockquote>
 </section>
-<section id="id8">
-<h4>Returns:<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h4>
+<section id="id7">
+<h4>Returns:<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h4>
 <blockquote>
 <div><p>int: The updated index after adding the paragraphs to the extraction dictionary.</p>
 </div></blockquote>
@@ -247,15 +217,15 @@ file_name (str): The name of the PDF file.</p>
 <dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.check_pdf_accessibility">
 <span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.</span></span><span class="sig-name descname"><span class="pre">check_pdf_accessibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">protected_extraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/pdf_text_extractor.html#check_pdf_accessibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.check_pdf_accessibility" title="Link to this definition">¶</a></dt>
 <dd><p>Check if it can access the content of the pdf at all.</p>
-<section id="id9">
-<h3>Args:<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<section id="id8">
+<h3>Args:<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>pdf_file (str): Path to the pdf file.
 protected_extraction (bool): Allow user to extract protected pdf.</p>
 </div></blockquote>
 </section>
-<section id="id10">
-<h3>Returns:<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<section id="id9">
+<h3>Returns:<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>boolean: If an error occurs while loading the pdf it returns false, otherwise true.</p>
 </div></blockquote>
@@ -266,8 +236,8 @@ protected_extraction (bool): Allow user to extract protected pdf.</p>
 <dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.clean_text">
 <span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.</span></span><span class="sig-name descname"><span class="pre">clean_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/pdf_text_extractor.html#clean_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.clean_text" title="Link to this definition">¶</a></dt>
 <dd><p>Clean text.</p>
-<section id="id11">
-<h3>Args:<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
+<section id="id10">
+<h3>Args:<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>text (str): The input text to clean</p>
 </div></blockquote>
@@ -279,51 +249,6 @@ protected_extraction (bool): Allow user to extract protected pdf.</p>
 <dd class="field-even"><p>str</p>
 </dd>
 </dl>
-</section>
-</dd></dl>
-
-</section>
-<section id="module-osc_transformer_presteps.content_extraction.extractors.utils">
-<span id="osc-transformer-presteps-content-extraction-extractors-utils-module"></span><h2>osc_transformer_presteps.content_extraction.extractors.utils module<a class="headerlink" href="#module-osc_transformer_presteps.content_extraction.extractors.utils" title="Link to this heading">¶</a></h2>
-<p>Python Script for public utility functions.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="osc_transformer_presteps.content_extraction.extractors.utils.dict_to_json">
-<span class="sig-prename descclassname"><span class="pre">osc_transformer_presteps.content_extraction.extractors.utils.</span></span><span class="sig-name descname"><span class="pre">dict_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/osc_transformer_presteps/content_extraction/extractors/utils.html#dict_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#osc_transformer_presteps.content_extraction.extractors.utils.dict_to_json" title="Link to this definition">¶</a></dt>
-<dd><p>Convert a dictionary to JSON and write it to a file.</p>
-<section id="id12">
-<h3>Args:<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
-<blockquote>
-<div><p>json_path (Path): The path to the JSON file to be written.
-dictionary (dict): The dictionary to be converted to JSON.</p>
-</div></blockquote>
-</section>
-<section id="id13">
-<h3>Returns:<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
-<blockquote>
-<div><p>None: This function does not return anything.</p>
-</div></blockquote>
-</section>
-<section id="id14">
-<h3>Raises:<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
-<blockquote>
-<div><p>OSError: If there is an error writing the JSON file.</p>
-</div></blockquote>
-</section>
-<section id="note">
-<h3>Note:<a class="headerlink" href="#note" title="Link to this heading">¶</a></h3>
-<blockquote>
-<div><p>This function uses the <cite>json.dump()</cite> method from the built-in <cite>json</cite> module to convert the dictionary to JSON
-and write it to the specified file. The function opens the file in write mode and overwrites any existing
-content.</p>
-</div></blockquote>
-</section>
-<section id="example">
-<h3>Example:<a class="headerlink" href="#example" title="Link to this heading">¶</a></h3>
-<blockquote>
-<div><p>json_path = Path(“output.json”)
-data = {“name”: “John Doe”, “age”: 30, “city”: “New York”}</p>
-<p>dict_to_json(json_path, data)</p>
-</div></blockquote>
 </section>
 </dd></dl>
 

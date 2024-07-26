@@ -94,15 +94,14 @@
 <span class="sd">        boolean: If an error occurs while loading the pdf it returns false, otherwise true.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">pdf_instance</span> <span class="o">=</span> <span class="n">PdfReader</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">protected_extraction</span> <span class="ow">and</span> <span class="n">pdf_instance</span><span class="o">.</span><span class="n">is_encrypted</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">PermissionError</span><span class="p">(</span><span class="s2">&quot;Extraction of protected PDF data is not allowed.&quot;</span><span class="p">)</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdf_instance</span><span class="o">.</span><span class="n">pages</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">: Unable to process </span><span class="si">{</span><span class="n">pdf_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">e</span></div>
+    <span class="n">pdf_instance</span> <span class="o">=</span> <span class="n">PdfReader</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">protected_extraction</span> <span class="ow">and</span> <span class="n">pdf_instance</span><span class="o">.</span><span class="n">is_encrypted</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Extraction of protected PDF data is not allowed: Problem with pdf_file: </span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdf_instance</span><span class="o">.</span><span class="n">pages</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
 
 
 
@@ -129,7 +128,7 @@
     <span class="k">def</span> <span class="nf">_generate_extractions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract text from a single pdf file and stores it to the &lt;filename&gt;.json.</span>
 
 <span class="sd">        The dictionary output will be returned. If the file was already processed</span>
@@ -140,27 +139,29 @@
 <span class="sd">            input_file_path (Path): full path to the pdf file</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extracting </span><span class="si">{</span><span class="n">input_file_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extracting </span><span class="si">{</span><span class="n">input_file_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">extract_pdf_by_page</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">))</span>
-
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The number of pages extracted: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="n">paragraphs</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="mi">0</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
-            <span class="k">else</span> <span class="nb">max</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="p">[</span>
-                    <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-                <span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">extracted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_pdf_by_page</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">extracted</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The number of pages extracted: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The number of paragraphs found: </span><span class="si">{</span><span class="n">paragraphs</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">paragraphs</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="mi">0</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
+                <span class="k">else</span> <span class="nb">max</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="p">[</span>
+                        <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The number of paragraphs found: </span><span class="si">{</span><span class="n">paragraphs</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="PDFExtractor.extract_pdf_by_page">
 <a class="viewcode-back" href="../../../../api/osc_transformer_presteps.content_extraction.extractors.html#osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor.PDFExtractor.extract_pdf_by_page">[docs]</a>
-    <span class="k">def</span> <span class="nf">extract_pdf_by_page</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdf_file</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">extract_pdf_by_page</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdf_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the content of each page in a pdf file.</span>
 
 <span class="sd">        Args:</span>
@@ -168,33 +169,48 @@
 <span class="sd">            pdf_file (str): Path to the pdf file.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">check_pdf_accessibility</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="p">[</span><span class="s2">&quot;protected_extraction&quot;</span><span class="p">]):</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># pdfminer logger issue: https://stackoverflow.com/questions/29762706/warnings-on-pdfminer</span>
+        <span class="n">orig_level</span> <span class="o">=</span> <span class="n">_logger</span><span class="o">.</span><span class="n">level</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_extraction_response</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">extracted</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">pdf_accessibility</span> <span class="o">=</span> <span class="n">check_pdf_accessibility</span><span class="p">(</span>
+                <span class="n">pdf_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="p">[</span><span class="s2">&quot;protected_extraction&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">pdf_accessibility</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="c1"># Create a PDF resource manager</span>
-            <span class="n">rsrcmgr</span> <span class="o">=</span> <span class="n">PDFResourceManager</span><span class="p">()</span>
-            <span class="n">retstr</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-            <span class="n">laparams</span> <span class="o">=</span> <span class="n">LAParams</span><span class="p">()</span>
+                <span class="c1"># Create a PDF resource manager</span>
+                <span class="n">rsrcmgr</span> <span class="o">=</span> <span class="n">PDFResourceManager</span><span class="p">()</span>
+                <span class="n">retstr</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+                <span class="n">laparams</span> <span class="o">=</span> <span class="n">LAParams</span><span class="p">()</span>
 
-            <span class="c1"># Create a PDF page interpreter</span>
-            <span class="n">device</span> <span class="o">=</span> <span class="n">TextConverter</span><span class="p">(</span><span class="n">rsrcmgr</span><span class="p">,</span> <span class="n">retstr</span><span class="p">,</span> <span class="n">laparams</span><span class="o">=</span><span class="n">laparams</span><span class="p">)</span>
-            <span class="n">interpreter</span> <span class="o">=</span> <span class="n">PDFPageInterpreter</span><span class="p">(</span><span class="n">rsrcmgr</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+                <span class="c1"># Create a PDF page interpreter</span>
+                <span class="n">device</span> <span class="o">=</span> <span class="n">TextConverter</span><span class="p">(</span><span class="n">rsrcmgr</span><span class="p">,</span> <span class="n">retstr</span><span class="p">,</span> <span class="n">laparams</span><span class="o">=</span><span class="n">laparams</span><span class="p">)</span>
+                <span class="n">interpreter</span> <span class="o">=</span> <span class="n">PDFPageInterpreter</span><span class="p">(</span><span class="n">rsrcmgr</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">page_number</span><span class="p">,</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-                    <span class="n">PDFPage</span><span class="o">.</span><span class="n">get_pages</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">check_extractable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="p">):</span>
-                    <span class="n">interpreter</span><span class="o">.</span><span class="n">process_page</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
-                    <span class="n">data</span> <span class="o">=</span> <span class="n">retstr</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-                    <span class="n">paragraphs_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_page</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paragraphs_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="k">continue</span>
-                    <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_extraction_dict</span><span class="p">(</span>
-                        <span class="n">idx</span><span class="p">,</span> <span class="n">page_number</span><span class="p">,</span> <span class="n">paragraphs_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-                    <span class="p">)</span>
-                    <span class="n">retstr</span><span class="o">.</span><span class="n">truncate</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                    <span class="n">retstr</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">page_number</span><span class="p">,</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                        <span class="n">PDFPage</span><span class="o">.</span><span class="n">get_pages</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">check_extractable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="p">):</span>
+                        <span class="n">interpreter</span><span class="o">.</span><span class="n">process_page</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">retstr</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+                        <span class="n">paragraphs_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_page</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paragraphs_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_extraction_dict</span><span class="p">(</span>
+                            <span class="n">idx</span><span class="p">,</span> <span class="n">page_number</span><span class="p">,</span> <span class="n">paragraphs_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">retstr</span><span class="o">.</span><span class="n">truncate</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">retstr</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">extracted</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">orig_level</span><span class="p">)</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pdf was accessible: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pdf_accessibility</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">extracted</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">orig_level</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span></div>
 
 
 <div class="viewcode-block" id="PDFExtractor.process_page">
@@ -218,7 +234,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">paragraphs</span> <span class="o">=</span> <span class="n">input_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Get ride of table data if the number of alphabets in a paragraph is less than `min_paragraph_length`</span>
+        <span class="c1"># Get rid of table data if the number of alphabets in a paragraph is less than `min_paragraph_length`</span>
         <span class="n">mpl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="p">[</span><span class="s2">&quot;min_paragraph_length&quot;</span><span class="p">]</span>
         <span class="n">paragraphs_cleaned</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">clean_text</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>

@@ -1,14 +1,14 @@
-"""Python script for using local curation as cli."""
+"""Python script for using local curation as CLI."""
 
 import logging
 from pathlib import Path
+from datetime import datetime
 
 # External modules
 import typer
 import pandas as pd
-
-# Internal modules
 from osc_transformer_presteps.dataset_creation_curation.curator import Curator
+
 
 _logger = logging.getLogger(__name__)
 
@@ -19,28 +19,33 @@ LOG_LEVEL = logging.INFO
 
 
 def _specify_root_logger(log_level: int):
-    """Configure the root logger with a specific formatting and log level.
+    """Configure the root logger with specific formatting, log level, and handlers.
 
-    This function sets up the root logger, which is the top-level logger in the logging hierarchy, with a specific
-    configuration. It creates a StreamHandler that logs messages to stdout, sets the log level to DEBUG for all
-    messages, and applies a specific formatter to format the log messages.
+    This function sets up the root logger with both a StreamHandler for stdout and a FileHandler for a log file.
 
     Args:
     ----
-        log_level (int): The log_level to use for the logging given as int.
-
-    Usage:
-    Call this function at the beginning of your code to configure the root logger
-    with the desired formatting and log level.
+        log_level (int): The log level to use for logging.
 
     """
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
-    handler = logging.StreamHandler()
-    handler.setLevel(log_level)
-    handler.setFormatter(formatter)
+    # StreamHandler for logging to stdout
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(log_level)
+    stream_handler.setFormatter(formatter)
 
-    logging.root.handlers = [handler]
+    # FileHandler for logging to a file
+    log_dir = Path("logs")  # Specify the directory where you want to store log files
+    log_dir.mkdir(
+        parents=True, exist_ok=True
+    )  # Create the directory if it doesn't exist
+    log_filename = log_dir / datetime.now().strftime("curation_log_%d%m%Y_%H%M.log")
+    file_handler = logging.FileHandler(log_filename)
+    file_handler.setLevel(log_level)
+    file_handler.setFormatter(formatter)
+
+    logging.root.handlers = [stream_handler, file_handler]
     logging.root.setLevel(log_level)
 
 
@@ -77,22 +82,29 @@ def run_local_curation(
     extracted_json_temp = cwd / file_or_folder_name
     annotation_temp = cwd / annotation_dir
     kpi_mapping_temp = cwd / kpi_mapping_dir
+
+    _logger.info("Curation started.")
+
     if extracted_json_temp.is_file():
-        _logger.info(f"Start curating file {extracted_json_temp.stem}.")
-        curate_one_file(
+        _logger.info(f"Processing file {extracted_json_temp.stem}.")
+        curated_data = curate_one_file(
             dir_extracted_json_name=extracted_json_temp,
             annotation_dir=annotation_temp,
             kpi_mapping_dir=kpi_mapping_temp,
             create_neg_samples=create_neg_samples,
             neg_pos_ratio=neg_pos_ratio,
-        ).to_csv("Curated_dataset.csv", index=False)
-        _logger.info(f"Done with creating dataset {extracted_json_temp.stem}.")
-    if extracted_json_temp.is_dir():
+        )
+        curated_data.to_csv("Curated_dataset.csv", index=False)
+        _logger.info(
+            f"Added info from file {extracted_json_temp.stem}.json to the curation file."
+        )
+
+    elif extracted_json_temp.is_dir():
         files = [f for f in extracted_json_temp.iterdir() if f.is_file()]
         curator_df = pd.DataFrame()
 
         for file in files:
-            _logger.info(f"Start curating file {file.stem}.")
+            _logger.info(f"Processing file {file.stem}.")
             temp_df = curate_one_file(
                 dir_extracted_json_name=file,
                 annotation_dir=annotation_temp,
@@ -101,8 +113,13 @@ def run_local_curation(
                 neg_pos_ratio=neg_pos_ratio,
             )
             curator_df = pd.concat([curator_df, temp_df], ignore_index=True)
-            curator_df.to_csv("Curated_dataset.csv", index=False)
-            _logger.info(f"Done with creating dataset {file.stem}.")
+            _logger.info(f"Added info from file {file.stem}.json to the curation file.")
+
+        timestamp = datetime.now().strftime("%d%m%Y_%H%M")
+        csv_filename = f"Curated_dataset_{timestamp}.csv"
+        curator_df.to_csv(csv_filename, index=False)
+
+    _logger.info("Curation ended.")
 
 
 def curate_one_file(

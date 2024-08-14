@@ -90,31 +90,15 @@ class Curator:
         if text is None or isinstance(text, float) and math.isnan(text) or text == "":
             return ""
 
-        # Replace fancy quotes
         text = re.sub(r"[“”]", '"', text)
-
-        # Replace specific fancy quotes within square brackets
         text = re.sub(r"(?<=\[)“", '"', text)
         text = re.sub(r"”(?=])", '"', text)
-
-        # Replace newline and tab characters with spaces
         text = re.sub(r"[\n\t]", " ", text)
-
-        # Remove control characters (except line feed, carriage return, and horizontal tab)
         text = re.sub(r"[^\x20-\x7E\x0A\x0D\x09]", "", text)
-
-        # Replace multiple spaces with a single space
         text = re.sub(r"\s{2,}", " ", text)
-
-        # Remove the term "BOE"
         text = text.replace("BOE", "")
-
-        # Remove invalid escape sequence
         text = text.replace("\x9d", "")
-
-        # Remove extra backslashes
         text = text.replace("\\", "")
-
         return text
 
     def create_pos_examples(self, row: pd.Series) -> Tuple[List[str], bool]:
@@ -205,7 +189,6 @@ class Curator:
             lambda x: [str(p - 1) for p in ast.literal_eval(x)]
         )
 
-        # List to store new DataFrames
         new_dfs: List[pd.DataFrame] = []
 
         new_dfs = []
@@ -219,7 +202,6 @@ class Curator:
                 # Create positive examples and get the in_json_flag
                 pos_examples, in_json_flag = self.create_pos_examples(row.copy())
 
-                # Add the in_json_flag to the row
                 row["in_extraction_data_flag"] = in_json_flag
 
                 contexts = [
@@ -258,7 +240,7 @@ class Curator:
             "question",
             "kpi_id",
             "label",
-            "in_extraction_data_flag",  # Ensure this matches with in_json_flag's new name
+            "in_extraction_data_flag",
             # "unique_paragraph_id",
             # "annotation_file_name",
             "annotation_file_row",

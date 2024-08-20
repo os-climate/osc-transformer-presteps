@@ -116,7 +116,7 @@ class Curator:
             else:
                 sentences = [cleaned_value]
         except (ValueError, SyntaxError):
-            return ([""], False)  # Return with in_json_flag as False
+            return ([(None, "")], False)  # Return with in_json_flag as False
 
         if (
             not sentences
@@ -124,7 +124,7 @@ class Curator:
             != row["source_file"].replace(".pdf", "")
             or row["data_type"] != "TEXT"
         ):
-            return ([""], False)  # Return with in_json_flag as False
+            return ([(None, "")], False)  # Return with in_json_flag as False
 
         source_page = str(row["source_page"])
 
@@ -132,24 +132,21 @@ class Curator:
         page_number = match.group() if match else None
 
         if page_number in self.pdf_content:
-            paragraphs = [
-                self.pdf_content[page_number][key_inner]["paragraph"]
-                for key_inner in self.pdf_content[page_number]
-            ]
             matching_sentences = [
-                para
-                for para in paragraphs
+                (key_inner, para)
+                for key_inner in self.pdf_content[page_number]
+                for para in [self.pdf_content[page_number][key_inner]["paragraph"]]
                 if any(sentence in para for sentence in sentences)
             ]
 
             # Flag to know if sentence is available in json or not
             in_json_flag = bool(matching_sentences)
             return (
-                matching_sentences if matching_sentences else sentences,
+                matching_sentences if matching_sentences else [(None, sentence) for sentence in sentences],
                 in_json_flag,
             )
 
-        return ([""], False)  # Return with in_json_flag as False
+        return ([(None, "")], False)  # Return with in_json_flag as False
 
     def create_neg_examples(self, row: pd.Series) -> List[str]:
         """Create negative examples based on the provided row from a DataFrame.
@@ -194,9 +191,7 @@ class Curator:
         new_dfs = []
 
         for i, row in df.iterrows():
-            if self.json_file_name.replace(".json", "") == row["source_file"].replace(
-                ".pdf", ""
-            ):
+            if self.json_file_name.replace(".json", "") == row["source_file"].replace(".pdf", ""):
                 row["annotation_file_row"] = i
 
                 # Create positive examples and get the in_json_flag
@@ -204,19 +199,25 @@ class Curator:
 
                 row["in_extraction_data_flag"] = in_json_flag
 
+                # Extract key_inner and paragraph from pos_examples
+                pos_contexts = [(para, key_inner) for key_inner, para in pos_examples]
+
+                # Prepare contexts (positive and negative examples)
                 contexts = [
-                    (pos_examples, 1),
+                    (pos_contexts, 1),
                     (
-                        self.create_neg_examples(row.copy())
-                        if self.create_neg_samples
-                        else [],
+                        [(neg_example, None) for neg_example in self.create_neg_examples(row.copy())]
+                        if self.create_neg_samples else [],
                         0,
                     ),
                 ]
 
                 for context, label in contexts:
                     if context:
-                        context_df = pd.DataFrame({"context": context, "label": label})
+                        # Convert context and label to DataFrame
+                        context_df = pd.DataFrame(
+                            {"context": [ctx[0] for ctx in context], "label": label, "unique_paragraph_id": [ctx[1] for ctx in context]}
+                        )
                         combined_df = pd.concat(
                             [row.to_frame().T.reset_index(drop=True), context_df],
                             axis=1,
@@ -241,22 +242,18 @@ class Curator:
             "kpi_id",
             "label",
             "in_extraction_data_flag",
-            # "unique_paragraph_id",
-            # "annotation_file_name",
+            "unique_paragraph_id",
+            "annotation_file_name",
             "annotation_file_row",
-            # "data_type",
-            # "annotation_paragraph"
-            "answer",
+            "annotation_answer",
+            
         ]
 
-        # Initialize an empty DataFrame with specified columns
-        result_df = pd.DataFrame(columns=columns_order)
-
         if self.pdf_content:  # Check if pdf_content is not empty
-            # Create the examples to be annotated
+           
             new_dfs = self.create_examples_annotate()
             if new_dfs:
-                # Concatenate the dataframes in new_dfs
+                
                 new_df = pd.concat(new_dfs, ignore_index=True)
 
                 # Load the KPI mapping and merge with the newly created DataFrame
@@ -265,14 +262,18 @@ class Curator:
                 )
                 merged_df = pd.merge(new_df, kpi_df, on="kpi_id", how="left")
 
-                # Reorder columns as specified in columns_order
-                result_df = merged_df[columns_order]
-                result_df = result_df.rename(columns={"answer": "annotation_answer"})
+                result_df = merged_df.rename(columns={"answer": "annotation_answer"})
 
                 result_df.loc[result_df["label"] == 0, "in_extraction_data_flag"] = (
                     bool(0)
                 )
+                result_df.loc[result_df["in_extraction_data_flag"] == 0, "unique_paragraph_id"] = (
+                    None
+                )
                 result_df["annotation_file_name"] = Path(self.annotation_folder).name
+                
+                # Reorder columns as specified in columns_order
+                result_df = result_df[columns_order]
                 result_df = result_df.reset_index(drop=True)
 
         return result_df

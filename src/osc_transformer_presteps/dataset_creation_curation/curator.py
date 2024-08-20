@@ -7,7 +7,7 @@ import os
 import random
 import re
 from typing import List, Tuple
-
+import logging
 import pandas as pd
 from pathlib import Path
 from pydantic import BaseModel, FilePath
@@ -225,6 +225,86 @@ class Curator:
                         new_dfs.append(combined_df)
 
         return new_dfs
+
+    '''def create_curator_df(self) -> pd.DataFrame:
+        """Create a DataFrame containing the examples to be annotated by the curator.
+
+        The DataFrame is saved as a CSV file in the output directory.
+        """
+        # Set up logging
+        log_dir = Path('LOG')
+        log_dir.mkdir(parents=True, exist_ok=True)  # Create the directory if it doesn't exist
+
+        # Set up logging
+        logging.basicConfig(
+            filename=log_dir / "curation_df_log.txt",
+            level=logging.INFO,
+            format="%(asctime)s - %(levelname)s - %(message)s"
+        )
+
+        # Define the order of columns for the final DataFrame
+        columns_order = [
+            "company",
+            "year",
+            "source_file",
+            "source_page",
+            "context",
+            "question",
+            "kpi_id",
+            "label",
+            "in_extraction_data_flag",
+            "unique_paragraph_id",
+            "annotation_file_name",
+            "annotation_file_row",
+            "annotation_answer",
+        ]
+
+        refused_rows = []  # To store rows that are excluded
+
+        if self.pdf_content:  # Check if pdf_content is not empty
+
+            new_dfs = self.create_examples_annotate()
+            if new_dfs:
+                new_df = pd.concat(new_dfs, ignore_index=True)
+
+                # Load the KPI mapping and merge with the newly created DataFrame
+                kpi_df = pd.read_csv(
+                    self.kpi_mapping_path, usecols=["kpi_id", "question"]
+                )
+                merged_df = pd.merge(new_df, kpi_df, on="kpi_id", how="left")
+
+                result_df = merged_df.rename(columns={"answer": "annotation_answer"})
+
+                # Exclude rows where annotation_answer is not in the context
+                for index, row in result_df.iterrows():
+                    if str(row["annotation_answer"]) not in str(row["context"]):
+                        refused_rows.append(row["annotation_file_row"])
+                        logging.warning(
+                            f"Row {row['annotation_file_row']} excluded: "
+                            f"annotation_answer '{row['annotation_answer']}' not in context."
+                        )
+                        result_df.drop(index, inplace=True)
+
+                # Handle flags and IDs
+                result_df.loc[result_df["label"] == 0, "in_extraction_data_flag"] = bool(0)
+                result_df.loc[
+                    result_df["in_extraction_data_flag"] == 0, "unique_paragraph_id"
+                ] = None
+                result_df["annotation_file_name"] = Path(self.annotation_folder).name
+
+                # Reorder columns as specified in columns_order, handling missing columns
+                for col in columns_order:
+                    if col not in result_df.columns:
+                        result_df[col] = None  # or np.nan for numeric default
+                result_df = result_df[columns_order]
+                result_df = result_df.reset_index(drop=True)
+
+                # Log summary
+                logging.info(f"{len(refused_rows)} rows were refused.")
+                logging.info(f"Refused rows: {refused_rows}")
+
+        return result_df
+    '''
 
     def create_curator_df(self) -> pd.DataFrame:
         """Create a DataFrame containing the examples to be annotated by the curator.

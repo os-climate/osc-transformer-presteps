@@ -115,15 +115,15 @@ https://tox.wiki/en/4.16.0/
 
 .. |osc-climate-github| image:: https://img.shields.io/badge/GitHub-100000?logo=github&logoColor=white
   :alt: Source code on GitHub
-  :target: https://github.com/ModeSevenIndustrialSolutions/osc-data-extractor
+  :target: https://github.com/ModeSevenIndustrialSolutions/osc-transformer-presteps
 
-.. |pypi| image:: https://img.shields.io/pypi/v/osc-data-extractor.svg
+.. |pypi| image:: https://img.shields.io/pypi/v/osc-transformer-presteps.svg
   :alt: PyPI package
-  :target: https://pypi.org/project/osc-data-extractor/
+  :target: https://pypi.org/project/osc-transformer-presteps/
 
-.. |build-status| image:: https://api.cirrus-ci.com/github/os-climate/osc-data-extractor.svg?branch=main
+.. |build-status| image:: https://api.cirrus-ci.com/github/os-climate/osc-transformer-presteps.svg?branch=main
   :alt: Built Status
-  :target: https://cirrus-ci.com/github/os-climate/osc-data-extractor
+  :target: https://cirrus-ci.com/github/os-climate/osc-transformer-presteps
 
 .. |pdm| image:: https://img.shields.io/badge/PDM-Project-purple
   :alt: Built using PDM

@@ -55,6 +55,52 @@ the following command to extract the data from the pdfs to json:
 
 *Note*: Here force overcomes encryption. Please check if that is a legal action for you.
 
+For performing Curation, you will need a KPI Mapping file and Annoattions file. following are example of such files.
+
+.. list-table:: kpi_mapping.csv
+   :header-rows: 1
+
+   * - kpi_id
+     - question
+     - sectors
+     - add_year
+     - kpi_category
+   * - 11
+     - What is the target year for climate commitment?
+     - "OG, CM, CU"
+     - FALSE
+     - TEXT
+
+
+
+
+.. list-table:: Data Overview
+   :header-rows: 1
+
+   * - Company
+     - Source File
+     - Source Page
+     - KPI ID
+     - Year
+     - Answer
+     - Data Type
+     - Relevant Paragraphs
+     - Annotator
+     - Sector
+   * - John Wood Group Plc
+     - LSE_WG_2016.pdf
+     - [1]
+     - 1
+     - 2016
+     - 2016
+     - TEXT
+     - ["John Wood Group PLC Annual Report and Accounts 2016"]
+     - 1qbit_edited_kpi_extraction_Roman.xlsx
+     - OG
+
+
+
+
 Developer space
 ===============
 

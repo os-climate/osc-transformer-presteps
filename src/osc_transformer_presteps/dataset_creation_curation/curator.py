@@ -6,8 +6,7 @@ import math
 import os
 import random
 import re
-from typing import List, Tuple
-import logging
+from typing import List, Tuple, Optional
 import pandas as pd
 from pathlib import Path
 from pydantic import BaseModel, FilePath
@@ -101,7 +100,9 @@ class Curator:
         text = text.replace("\\", "")
         return text
 
-    def create_pos_examples(self, row: pd.Series) -> Tuple[List[str], bool]:
+    def create_pos_examples(
+        self, row: pd.Series
+    ) -> Tuple[List[Tuple[Optional[str], str]], bool]:
         """Create positive examples based on the provided row from a DataFrame.
 
         Returns a list of matching sentences or an empty list, along with a flag indicating if sentences were found in the JSON.
@@ -142,7 +143,9 @@ class Curator:
             # Flag to know if sentence is available in json or not
             in_json_flag = bool(matching_sentences)
             return (
-                matching_sentences if matching_sentences else [(None, sentence) for sentence in sentences],
+                matching_sentences
+                if matching_sentences
+                else [(None, sentence) for sentence in sentences],
                 in_json_flag,
             )
 
@@ -191,7 +194,9 @@ class Curator:
         new_dfs = []
 
         for i, row in df.iterrows():
-            if self.json_file_name.replace(".json", "") == row["source_file"].replace(".pdf", ""):
+            if self.json_file_name.replace(".json", "") == row["source_file"].replace(
+                ".pdf", ""
+            ):
                 row["annotation_file_row"] = i
 
                 # Create positive examples and get the in_json_flag
@@ -199,24 +204,40 @@ class Curator:
 
                 row["in_extraction_data_flag"] = in_json_flag
 
-                # Extract key_inner and paragraph from pos_examples
-                pos_contexts = [(para, key_inner) for key_inner, para in pos_examples]
+                # Extract unique_para_id and paragraph from pos_examples
+                pos_contexts = [
+                    (para, unique_para_id) for unique_para_id, para in pos_examples
+                ]
 
-                # Prepare contexts (positive and negative examples)
                 contexts = [
                     (pos_contexts, 1),
                     (
-                        [(neg_example, None) for neg_example in self.create_neg_examples(row.copy())]
-                        if self.create_neg_samples else [],
+                        [
+                            (neg_example, None)
+                            for neg_example in self.create_neg_examples(row.copy())
+                        ]
+                        if self.create_neg_samples
+                        else [("", None)],
                         0,
                     ),
                 ]
 
                 for context, label in contexts:
-                    if context:
-                        # Convert context and label to DataFrame
+                    if (
+                        isinstance(context, list) and context
+                    ):  # Check if context is a list and not empty
                         context_df = pd.DataFrame(
-                            {"context": [ctx[0] for ctx in context], "label": label, "unique_paragraph_id": [ctx[1] for ctx in context]}
+                            {
+                                "context": [
+                                    ctx[0] if isinstance(ctx, tuple) else ""
+                                    for ctx in context
+                                ],
+                                "label": label,
+                                "unique_paragraph_id": [
+                                    ctx[1] if isinstance(ctx, tuple) else None
+                                    for ctx in context
+                                ],
+                            }
                         )
                         combined_df = pd.concat(
                             [row.to_frame().T.reset_index(drop=True), context_df],
@@ -225,86 +246,6 @@ class Curator:
                         new_dfs.append(combined_df)
 
         return new_dfs
-
-    '''def create_curator_df(self) -> pd.DataFrame:
-        """Create a DataFrame containing the examples to be annotated by the curator.
-
-        The DataFrame is saved as a CSV file in the output directory.
-        """
-        # Set up logging
-        log_dir = Path('LOG')
-        log_dir.mkdir(parents=True, exist_ok=True)  # Create the directory if it doesn't exist
-
-        # Set up logging
-        logging.basicConfig(
-            filename=log_dir / "curation_df_log.txt",
-            level=logging.INFO,
-            format="%(asctime)s - %(levelname)s - %(message)s"
-        )
-
-        # Define the order of columns for the final DataFrame
-        columns_order = [
-            "company",
-            "year",
-            "source_file",
-            "source_page",
-            "context",
-            "question",
-            "kpi_id",
-            "label",
-            "in_extraction_data_flag",
-            "unique_paragraph_id",
-            "annotation_file_name",
-            "annotation_file_row",
-            "annotation_answer",
-        ]
-
-        refused_rows = []  # To store rows that are excluded
-
-        if self.pdf_content:  # Check if pdf_content is not empty
-
-            new_dfs = self.create_examples_annotate()
-            if new_dfs:
-                new_df = pd.concat(new_dfs, ignore_index=True)
-
-                # Load the KPI mapping and merge with the newly created DataFrame
-                kpi_df = pd.read_csv(
-                    self.kpi_mapping_path, usecols=["kpi_id", "question"]
-                )
-                merged_df = pd.merge(new_df, kpi_df, on="kpi_id", how="left")
-
-                result_df = merged_df.rename(columns={"answer": "annotation_answer"})
-
-                # Exclude rows where annotation_answer is not in the context
-                for index, row in result_df.iterrows():
-                    if str(row["annotation_answer"]) not in str(row["context"]):
-                        refused_rows.append(row["annotation_file_row"])
-                        logging.warning(
-                            f"Row {row['annotation_file_row']} excluded: "
-                            f"annotation_answer '{row['annotation_answer']}' not in context."
-                        )
-                        result_df.drop(index, inplace=True)
-
-                # Handle flags and IDs
-                result_df.loc[result_df["label"] == 0, "in_extraction_data_flag"] = bool(0)
-                result_df.loc[
-                    result_df["in_extraction_data_flag"] == 0, "unique_paragraph_id"
-                ] = None
-                result_df["annotation_file_name"] = Path(self.annotation_folder).name
-
-                # Reorder columns as specified in columns_order, handling missing columns
-                for col in columns_order:
-                    if col not in result_df.columns:
-                        result_df[col] = None  # or np.nan for numeric default
-                result_df = result_df[columns_order]
-                result_df = result_df.reset_index(drop=True)
-
-                # Log summary
-                logging.info(f"{len(refused_rows)} rows were refused.")
-                logging.info(f"Refused rows: {refused_rows}")
-
-        return result_df
-    '''
 
     def create_curator_df(self) -> pd.DataFrame:
         """Create a DataFrame containing the examples to be annotated by the curator.
@@ -326,14 +267,11 @@ class Curator:
             "annotation_file_name",
             "annotation_file_row",
             "annotation_answer",
-            
         ]
 
         if self.pdf_content:  # Check if pdf_content is not empty
-           
             new_dfs = self.create_examples_annotate()
             if new_dfs:
-                
                 new_df = pd.concat(new_dfs, ignore_index=True)
 
                 # Load the KPI mapping and merge with the newly created DataFrame
@@ -347,11 +285,11 @@ class Curator:
                 result_df.loc[result_df["label"] == 0, "in_extraction_data_flag"] = (
                     bool(0)
                 )
-                result_df.loc[result_df["in_extraction_data_flag"] == 0, "unique_paragraph_id"] = (
-                    None
-                )
+                result_df.loc[
+                    result_df["in_extraction_data_flag"] == 0, "unique_paragraph_id"
+                ] = None
                 result_df["annotation_file_name"] = Path(self.annotation_folder).name
-                
+
                 # Reorder columns as specified in columns_order
                 result_df = result_df[columns_order]
                 result_df = result_df.reset_index(drop=True)

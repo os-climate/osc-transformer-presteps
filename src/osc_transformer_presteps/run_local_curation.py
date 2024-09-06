@@ -8,6 +8,12 @@ from datetime import datetime
 import typer
 import pandas as pd
 from osc_transformer_presteps.dataset_creation_curation.curator import Curator
+from osc_transformer_presteps.utils import (
+    specify_root_logger,
+    set_log_folder,
+    log_dict,
+    LogLevel,
+)
 
 
 _logger = logging.getLogger(__name__)
@@ -56,11 +62,11 @@ def run_local_curation(
         " data from. All the files in the directory should be "
         "of json format generated from Extraction module.",
     ),
-    annotation_dir: str = typer.Argument(
-        help="This is the directory of annotation_xlsx file"
+    annotation_file_path: str = typer.Argument(
+        help="This is the path to annotations.xlsx file"
     ),
-    kpi_mapping_dir: str = typer.Argument(
-        help="This is the directory of kpi_mapping_csv file"
+    kpi_mapping_file_path: str = typer.Argument(
+        help="This is the path to kpi_mapping.csv file"
     ),
     create_neg_samples: bool = typer.Option(
         False,
@@ -74,14 +80,66 @@ def run_local_curation(
         show_default=True,
         help="Ratio of number of negative samples you want per positive samples.",
     ),
+    logs_folder: str = typer.Option(
+        default=None,
+        help="This is the folder where we store the log file. You can either provide a folder relative "
+        "to the current folder or you provide an absolute path. The default will be the current folder.",
+    ),
+    log_level: str = typer.Option(
+        "info",
+        show_default=True,
+        help="This gives you the possibilities to set different kinds of logging depth. Values you can choose are:"
+        "'critical', 'error', 'warning', 'info', 'debug', 'notset'.",
+    ),
 ) -> None:
     """Start the creation of the dataset based on the extracted text on your local machine."""
-    _specify_root_logger(LOG_LEVEL)
+    cwd = Path.cwd()
+    logs_folder = set_log_folder(cwd=cwd, logs_folder=logs_folder)
+    specify_root_logger(
+        log_level=log_dict[LogLevel(log_level)], logs_folder=logs_folder
+    )
+
+    def resolve_path(path_name: str, cwd: Path) -> Path:
+        """Resolve a path as either absolute or relative to the current working directory."""
+        try:
+            # Try to resolve the path as an absolute path
+            resolved_path = Path(path_name).resolve(strict=True)
+            _logger.debug(f"The given path {resolved_path} is a valid absolute path.")
+        except FileNotFoundError:
+            # If it fails, check if the path exists relative to the cwd
+            _logger.debug(
+                f"The given path {path_name} is not an absolute path, checking as a relative path."
+            )
+            resolved_path = cwd / path_name
+            _logger.debug(
+                f"Trying to resolve the path relative to cwd: {resolved_path}"
+            )
+            try:
+                # Try to resolve the relative path
+                resolved_path = resolved_path.resolve(strict=True)
+                _logger.debug(
+                    f"The given path {resolved_path} is a valid relative path."
+                )
+            except FileNotFoundError:
+                # If neither works, raise an error
+                _logger.error(
+                    f"Given path {path_name} does not exist as an absolute or relative path."
+                )
+                raise FileNotFoundError(
+                    f"Given path {path_name} does not exist as an absolute or relative path."
+                ) from None
+
+        return resolved_path
 
     cwd = Path.cwd()
-    extracted_json_temp = cwd / file_or_folder_name
-    annotation_temp = cwd / annotation_dir
-    kpi_mapping_temp = cwd / kpi_mapping_dir
+    try:
+        extracted_json_temp = resolve_path(file_or_folder_name, cwd)
+        annotation_temp = resolve_path(annotation_file_path, cwd)
+        kpi_mapping_temp = resolve_path(kpi_mapping_file_path, cwd)
+
+    except FileNotFoundError as e:
+        _logger.error(f"Error resolving paths: {e}")
+        raise
 
     _logger.info("Curation started.")
 
@@ -89,8 +147,8 @@ def run_local_curation(
         _logger.info(f"Processing file {extracted_json_temp.stem}.")
         curated_data = curate_one_file(
             dir_extracted_json_name=extracted_json_temp,
-            annotation_dir=annotation_temp,
-            kpi_mapping_dir=kpi_mapping_temp,
+            annotation_file_path=annotation_temp,
+            kpi_mapping_file_path=kpi_mapping_temp,
             create_neg_samples=create_neg_samples,
             neg_pos_ratio=neg_pos_ratio,
         )
@@ -107,8 +165,8 @@ def run_local_curation(
             _logger.info(f"Processing file {file.stem}.")
             temp_df = curate_one_file(
                 dir_extracted_json_name=file,
-                annotation_dir=annotation_temp,
-                kpi_mapping_dir=kpi_mapping_temp,
+                annotation_file_path=annotation_temp,
+                kpi_mapping_file_path=kpi_mapping_temp,
                 create_neg_samples=create_neg_samples,
                 neg_pos_ratio=neg_pos_ratio,
             )
@@ -124,8 +182,8 @@ def run_local_curation(
 
 def curate_one_file(
     dir_extracted_json_name: Path,
-    annotation_dir: Path,
-    kpi_mapping_dir: Path,
+    annotation_file_path: Path,
+    kpi_mapping_file_path: Path,
     create_neg_samples: bool,
     neg_pos_ratio: int,
 ):
@@ -134,9 +192,9 @@ def curate_one_file(
     Return: Curated Dataframe
     """
     return Curator(
-        annotation_folder=annotation_dir,
+        annotation_folder=annotation_file_path,
         extract_json=dir_extracted_json_name,
-        kpi_mapping_path=kpi_mapping_dir,
+        kpi_mapping_path=kpi_mapping_file_path,
         create_neg_samples=create_neg_samples,
         neg_pos_ratio=neg_pos_ratio,
     ).create_curator_df()

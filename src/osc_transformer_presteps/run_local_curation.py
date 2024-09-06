@@ -100,7 +100,7 @@ def run_local_curation(
     )
 
     def resolve_path(path_name: str, cwd: Path) -> Path:
-        """Attempts to resolve a path as either absolute or relative to the current working directory."""
+        """Resolve a path as either absolute or relative to the current working directory."""
         try:
             # Try to resolve the path as an absolute path
             resolved_path = Path(path_name).resolve(strict=True)
@@ -127,7 +127,7 @@ def run_local_curation(
                 )
                 raise FileNotFoundError(
                     f"Given path {path_name} does not exist as an absolute or relative path."
-                )
+                ) from None
 
         return resolved_path
 

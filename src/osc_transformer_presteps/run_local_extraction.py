@@ -103,7 +103,7 @@ def run_local_extraction(
             )
             raise FileNotFoundError(
                 f"Given path {file_or_folder_name} does not exist as an absolute or relative path."
-            )
+            ) from None
 
     # Set settings
     extraction_settings = ExtractionSettings(

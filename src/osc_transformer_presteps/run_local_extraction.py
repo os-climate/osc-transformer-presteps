@@ -73,9 +73,37 @@ def run_local_extraction(
     )
 
     # Set input path
-    file_or_folder_path_temp = cwd / file_or_folder_name
-    _logger.debug(f"The given file_or_folder_path is {file_or_folder_path_temp}.")
-    assert file_or_folder_path_temp.exists(), "Given path does not exist."
+    try:
+        # Try to resolve the input path as an absolute path
+        file_or_folder_path_temp = Path(file_or_folder_name).resolve(strict=True)
+        _logger.debug(
+            f"The given path {file_or_folder_path_temp} is a valid absolute path."
+        )
+    except FileNotFoundError:
+        # If the path is not absolute, check if it exists relative to the current working directory (cwd)
+        _logger.debug(
+            f"The given file_or_folder_name {file_or_folder_name} is not an absolute path, "
+            f"checking as a relative path."
+        )
+        file_or_folder_path_temp = Path.cwd() / file_or_folder_name
+        _logger.debug(
+            f"Trying to resolve the path relative to cwd: {file_or_folder_path_temp}"
+        )
+
+        try:
+            # Try to resolve the relative path
+            file_or_folder_path_temp = file_or_folder_path_temp.resolve(strict=True)
+            _logger.debug(
+                f"The given path {file_or_folder_path_temp} is a valid relative path."
+            )
+        except FileNotFoundError:
+            # If the relative path also doesn't exist, raise an error
+            _logger.error(
+                f"Given path {file_or_folder_name} does not exist as an absolute or relative path."
+            )
+            raise FileNotFoundError(
+                f"Given path {file_or_folder_name} does not exist as an absolute or relative path."
+            )
 
     # Set settings
     extraction_settings = ExtractionSettings(

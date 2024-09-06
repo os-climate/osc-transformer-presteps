@@ -1,7 +1,6 @@
-💬 Important
+💬 **Important**
 
-On June 26 2024, Linux Foundation announced the merger of its financial services umbrella, the Fintech Open Source Foundation (`FINOS <https://finos.org>`_), with OS-Climate, an open source community dedicated to building data technologies, modelling, and analytic tools that will drive global capital flows into climate change mitigation and resilience; OS-Climate projects are in the process of transitioning to the `FINOS governance framework <https://community.finos.org/docs/governance>`_; read more on `finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg <https://finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg>`_
-
+On June 26 2024, Linux Foundation announced the merger of its financial services umbrella, the Fintech Open Source Foundation (FINOS <https://finos.org>), with OS-Climate, an open source community dedicated to building data technologies, modelling, and analytic tools that will drive global capital flows into climate change mitigation and resilience; OS-Climate projects are in the process of transitioning to the FINOS governance framework <https://community.finos.org/docs/governance>; read more on finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg <https://finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg>_
 
 =========================
 OSC Transformer Pre-Steps
@@ -20,7 +19,7 @@ context of transformer models
 to extract relevant information, but it can also be used independently.
 
 Quick start
-===========
+============
 
 Install via PyPi
 ----------------
@@ -29,14 +28,16 @@ You can simply install the package via::
 
     $ pip install osc-transformer-presteps
 
-Afterwards you can use the tooling as a CLI tool by simply typing::
+Afterwards, you can use the tooling as a CLI tool by typing::
 
     $ osc-transformer-presteps
 
-We are using typer to have a nice CLI tool here. All details and help will be shown in the CLI
-tool itself and are not described here in more detail.
+We are using Typer to provide a user-friendly CLI. All details and help will be shown within the CLI itself and are not described here in more detail.
 
-**Example**: Assume the folder structure is like that:
+Example 1: Extracting Data from PDFs
+------------------------------------
+
+Assume the folder structure is as follows:
 
 .. code-block:: text
 
@@ -48,14 +49,18 @@ tool itself and are not described here in more detail.
     ├-logs/
     └─output/
 
-Then you can now simply run (after installation of osc-transformer-presteps)
-the following command to extract the data from the pdfs to json:
+Now, after installing ``osc-transformer-presteps``, run the following command to extract data from the PDFs to JSON::
 
     $ osc-transformer-presteps extraction run-local-extraction 'input' --output-folder='output' --logs-folder='logs' --force
 
-*Note*: Here force overcomes encryption. Please check if that is a legal action for you.
+Note: The ``--force`` flag overcomes encryption. Please check if this is a legal action in your jurisdiction.
 
-For performing Curation, you will need a KPI Mapping file and Annoattions file. following are example of such files.
+Example 2: Curating a New Training Data Set
+-------------------------------------------
+
+To perform curation, you will need a KPI mapping file and an annotations file. Here are examples of such files:
+
+**KPI Mapping File**:
 
 .. list-table:: kpi_mapping.csv
    :header-rows: 1
@@ -65,91 +70,121 @@ For performing Curation, you will need a KPI Mapping file and Annoattions file. 
      - sectors
      - add_year
      - kpi_category
-   * - 11
-     - What is the target year for climate commitment?
+   * - 0
+     - What is the company name?
      - "OG, CM, CU"
      - FALSE
      - TEXT
 
+* **kpi_id**: The unique identifier for each KPI.
+* **question**: The specific question being asked to extract relevant information.
+* **sectors**: The industry sectors to which the KPI applies.
+* **add_year**: Indicates whether to include the year in the extracted data (TRUE/FALSE).
+* **kpi_category**: The category of the KPI, typically specifying the data type (e.g., TEXT).
 
+**Annotation File**:
 
-
-.. list-table:: Data Overview
+.. list-table:: annotations_file.xlsx
    :header-rows: 1
 
-   * - Company
-     - Source File
-     - Source Page
-     - KPI ID
-     - Year
-     - Answer
-     - Data Type
-     - Relevant Paragraphs
-     - Annotator
-     - Sector
-   * - John Wood Group Plc
-     - LSE_WG_2016.pdf
+   * - company
+     - source_file
+     - source_page
+     - kpi_id
+     - year
+     - answer
+     - data_type
+     - relevant_paragraphs
+     - annotator
+     - sector
+   * - Royal Dutch Shell plc
+     - Test.pdf
      - [1]
      - 1
-     - 2016
-     - 2016
+     - 2019
+     - 2019
      - TEXT
-     - ["John Wood Group PLC Annual Report and Accounts 2016"]
-     - 1qbit_edited_kpi_extraction_Roman.xlsx
+     - ["Sustainability Report 2019"]
+     - 1qbit_edited_kpi_extraction_Carolin.xlsx
      - OG
 
+* **company**: The name of the company being analyzed.
+* **source_file**: The document from which data is extracted.
+* **source_page**: The page number(s) containing the relevant information.
+* **kpi_id**: The ID of the KPI associated with the data.
+* **year**: The year to which the data refers.
+* **answer**: The specific data or text extracted as an answer.
+* **data_type**: The type of the extracted data (e.g., TEXT or TABLE).
+* **relevant_paragraphs**: The paragraph(s) or context where the data was found.
+* **annotator**: The person or tool that performed the annotation.
+* **sector**: The industry sector the company belongs to.
 
 
+You can find demo files in the ``demo/curation/input`` folder.
+
+Assume the folder structure is as follows:
+
+.. code-block:: text
+
+    project/
+    ├-input/
+    │ ├-data_from_extraction/
+    │ │ ├-file_1.json
+    │ │ ├-file_2.json
+    │ │ └─file_3.json
+    │ ├-kpi_mapping/
+    │ │ └─kpi_mapping.csv
+    │ ├-annotations_file/
+    │ │ └─annotations_file.xlsx
+    ├-logs/
+    └─output/
+
+Now, you can run the following command to curate a new training data set::
+
+    $ osc-transformer-presteps curation run-local-curation 'input/-data_from_extraction/file_1.json' 'input/annotations_file/annotations_file.xlsx' 'input/kpi_mapping/kpi_mapping.csv'
+
+Note: The previous comment may need some adjustment when running on different machine like windows due to the slash.
 
 Developer space
-===============
+==============
 
-Use code directly without CLI via Github Repository
+Use Code Directly Without CLI via Github Repository
 ---------------------------------------------------
 
-First clone the repository to your local environment::
+First, clone the repository to your local environment::
 
     $ git clone https://github.com/os-climate/osc-transformer-presteps
 
-We are using pdm to manage the packages and tox for a stable test framework.
-Hence, first install pdm (possibly in a virtual environment) via
+We are using ``pdm`` to manage the packages and ``tox`` for a stable test framework.
+First, install ``pdm`` (possibly in a virtual environment) via::
 
     $ pip install pdm
 
-Afterwards sync you system via
+Afterwards, sync your system via::
 
     $ pdm sync
 
-Now you have multiple demos on how to go on. See folder
-[here](demo)
+You will find multiple demos on how to proceed in the ``demo`` folder.
 
 pdm
 ---
 
-For adding new dependencies use pdm. You could add new packages via pdm add.
-For example numpy via::
+To add new dependencies, use ``pdm``. For example, you can add numpy via::
 
     $ pdm add numpy
 
-For a very detailed description check the homepage of the pdm project:
-
-https://pdm-project.org/en/latest/
-
+For more detailed descriptions, check the `PDM project homepage <https://pdm-project.org/en/latest/>`_.
 
 tox
 ---
 
-For running linting tools we use tox which you run outside of your virtual environment::
+For running linting tools, we use ``tox``. You can run this outside of your virtual environment::
 
     $ pip install tox
     $ tox -e lint
     $ tox -e test
 
-This will automatically apply some checks on your code and run the provided pytests. See
-more details on tox on the homepage of the tox project:
-
-https://tox.wiki/en/4.16.0/
-
+This will automatically apply checks on your code and run the provided pytests. See more details on `tox <https://tox.wiki/en/4.16.0/>`_.
 
 .. |osc-climate-project| image:: https://img.shields.io/badge/OS-Climate-blue
   :alt: An OS-Climate Project
@@ -168,7 +203,7 @@ https://tox.wiki/en/4.16.0/
   :target: https://pypi.org/project/osc-transformer-presteps/
 
 .. |build-status| image:: https://api.cirrus-ci.com/github/os-climate/osc-transformer-presteps.svg?branch=main
-  :alt: Built Status
+  :alt: Build Status
   :target: https://cirrus-ci.com/github/os-climate/osc-transformer-presteps
 
 .. |pdm| image:: https://img.shields.io/badge/PDM-Project-purple

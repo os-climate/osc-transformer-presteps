@@ -160,6 +160,6 @@ jobs:
         uses: pdm-project/setup-pdm@v3
 
       - name: 'Publish release to PyPI'
-        uses: pypa/gh-action-pypi-publish@release/v1.10.1
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           verbose: true

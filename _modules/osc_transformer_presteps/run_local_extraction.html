@@ -108,9 +108,37 @@
     <span class="p">)</span>
 
     <span class="c1"># Set input path</span>
-    <span class="n">file_or_folder_path_temp</span> <span class="o">=</span> <span class="n">cwd</span> <span class="o">/</span> <span class="n">file_or_folder_name</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The given file_or_folder_path is </span><span class="si">{</span><span class="n">file_or_folder_path_temp</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="s2">&quot;Given path does not exist.&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Try to resolve the input path as an absolute path</span>
+        <span class="n">file_or_folder_path_temp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_or_folder_name</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The given path </span><span class="si">{</span><span class="n">file_or_folder_path_temp</span><span class="si">}</span><span class="s2"> is a valid absolute path.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="c1"># If the path is not absolute, check if it exists relative to the current working directory (cwd)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The given file_or_folder_name </span><span class="si">{</span><span class="n">file_or_folder_name</span><span class="si">}</span><span class="s2"> is not an absolute path, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;checking as a relative path.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">file_or_folder_path_temp</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="n">file_or_folder_name</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Trying to resolve the path relative to cwd: </span><span class="si">{</span><span class="n">file_or_folder_path_temp</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try to resolve the relative path</span>
+            <span class="n">file_or_folder_path_temp</span> <span class="o">=</span> <span class="n">file_or_folder_path_temp</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The given path </span><span class="si">{</span><span class="n">file_or_folder_path_temp</span><span class="si">}</span><span class="s2"> is a valid relative path.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="c1"># If the relative path also doesn&#39;t exist, raise an error</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Given path </span><span class="si">{</span><span class="n">file_or_folder_name</span><span class="si">}</span><span class="s2"> does not exist as an absolute or relative path.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Given path </span><span class="si">{</span><span class="n">file_or_folder_name</span><span class="si">}</span><span class="s2"> does not exist as an absolute or relative path.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
 
     <span class="c1"># Set settings</span>
     <span class="n">extraction_settings</span> <span class="o">=</span> <span class="n">ExtractionSettings</span><span class="p">(</span>

@@ -33,11 +33,11 @@
 
           <div class="body" role="main">
             
-  <p id="readme">💬 Important</p>
-<p>On June 26 2024, Linux Foundation announced the merger of its financial services umbrella, the Fintech Open Source Foundation (<a class="reference external" href="https://finos.org">FINOS</a>), with OS-Climate, an open source community dedicated to building data technologies, modelling, and analytic tools that will drive global capital flows into climate change mitigation and resilience; OS-Climate projects are in the process of transitioning to the <a class="reference external" href="https://community.finos.org/docs/governance">FINOS governance framework</a>; read more on <a class="reference external" href="https://finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg">finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg</a></p>
+  <p id="readme">💬 <strong>Important</strong></p>
+<p>On June 26 2024, Linux Foundation announced the merger of its financial services umbrella, the Fintech Open Source Foundation (FINOS &lt;<a class="reference external" href="https://finos.org">https://finos.org</a>&gt;), with OS-Climate, an open source community dedicated to building data technologies, modelling, and analytic tools that will drive global capital flows into climate change mitigation and resilience; OS-Climate projects are in the process of transitioning to the FINOS governance framework &lt;<a class="reference external" href="https://community.finos.org/docs/governance">https://community.finos.org/docs/governance</a>&gt;; read more on finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg &lt;<a class="reference external" href="https://finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg">https://finos.org/press/finos-join-forces-os-open-source-climate-sustainability-esg</a>&gt;_</p>
 <section id="osc-transformer-pre-steps">
 <h1>OSC Transformer Pre-Steps<a class="headerlink" href="#osc-transformer-pre-steps" title="Link to this heading">¶</a></h1>
-<p><a class="reference external" href="https://os-climate.org/"><img alt="An OS-Climate Project" src="https://img.shields.io/badge/OS-Climate-blue" /></a> <a class="reference external" href="https://os-climate.slack.com"><img alt="Join OS-Climate on Slack" src="https://img.shields.io/badge/slack-osclimate-brightgreen.svg?logo=slack" /></a> <a class="reference external" href="https://github.com/ModeSevenIndustrialSolutions/osc-transformer-presteps"><img alt="Source code on GitHub" src="https://img.shields.io/badge/GitHub-100000?logo=github&amp;logoColor=white" /></a> <a class="reference external" href="https://pypi.org/project/osc-transformer-presteps/"><img alt="PyPI package" src="https://img.shields.io/pypi/v/osc-transformer-presteps.svg" /></a> <a class="reference external" href="https://cirrus-ci.com/github/os-climate/osc-transformer-presteps"><img alt="Built Status" src="https://api.cirrus-ci.com/github/os-climate/osc-transformer-presteps.svg?branch=main" /></a> <a class="reference external" href="https://pdm-project.org/latest/"><img alt="Built using PDM" src="https://img.shields.io/badge/PDM-Project-purple" /></a> <a class="reference external" href="https://pyscaffold.org/"><img alt="Project generated with PyScaffold" src="https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold" /></a></p>
+<p><a class="reference external" href="https://os-climate.org/"><img alt="An OS-Climate Project" src="https://img.shields.io/badge/OS-Climate-blue" /></a> <a class="reference external" href="https://os-climate.slack.com"><img alt="Join OS-Climate on Slack" src="https://img.shields.io/badge/slack-osclimate-brightgreen.svg?logo=slack" /></a> <a class="reference external" href="https://github.com/ModeSevenIndustrialSolutions/osc-transformer-presteps"><img alt="Source code on GitHub" src="https://img.shields.io/badge/GitHub-100000?logo=github&amp;logoColor=white" /></a> <a class="reference external" href="https://pypi.org/project/osc-transformer-presteps/"><img alt="PyPI package" src="https://img.shields.io/pypi/v/osc-transformer-presteps.svg" /></a> <a class="reference external" href="https://cirrus-ci.com/github/os-climate/osc-transformer-presteps"><img alt="Build Status" src="https://api.cirrus-ci.com/github/os-climate/osc-transformer-presteps.svg?branch=main" /></a> <a class="reference external" href="https://pdm-project.org/latest/"><img alt="Built using PDM" src="https://img.shields.io/badge/PDM-Project-purple" /></a> <a class="reference external" href="https://pyscaffold.org/"><img alt="Project generated with PyScaffold" src="https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold" /></a></p>
 <section id="os-climate-transformer-pre-steps-tool">
 <h2>OS-Climate Transformer Pre-Steps Tool<a class="headerlink" href="#os-climate-transformer-pre-steps-tool" title="Link to this heading">¶</a></h2>
 <p id="notes">This code provides you with a cli tool with the possibility to extract data from
@@ -53,13 +53,15 @@ to extract relevant information, but it can also be used independently.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install osc-transformer-presteps
 </pre></div>
 </div>
-<p>Afterwards you can use the tooling as a CLI tool by simply typing:</p>
+<p>Afterwards, you can use the tooling as a CLI tool by typing:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ osc-transformer-presteps
 </pre></div>
 </div>
-<p>We are using typer to have a nice CLI tool here. All details and help will be shown in the CLI
-tool itself and are not described here in more detail.</p>
-<p><strong>Example</strong>: Assume the folder structure is like that:</p>
+<p>We are using Typer to provide a user-friendly CLI. All details and help will be shown within the CLI itself and are not described here in more detail.</p>
+</section>
+<section id="example-1-extracting-data-from-pdfs">
+<h3>Example 1: Extracting Data from PDFs<a class="headerlink" href="#example-1-extracting-data-from-pdfs" title="Link to this heading">¶</a></h3>
+<p>Assume the folder structure is as follows:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>project/
 ├-input/
 │ ├-file_1.pdf
@@ -69,55 +71,148 @@ tool itself and are not described here in more detail.</p>
 └─output/
 </pre></div>
 </div>
-<p>Then you can now simply run (after installation of osc-transformer-presteps)
-the following command to extract the data from the pdfs to json:</p>
-<blockquote>
-<div><p>$ osc-transformer-presteps extraction run-local-extraction ‘input’ –output-folder=’output’ –logs-folder=’logs’ –force</p>
-</div></blockquote>
-<p><em>Note</em>: Here force overcomes encryption. Please check if that is a legal action for you.</p>
+<p>Now, after installing <code class="docutils literal notranslate"><span class="pre">osc-transformer-presteps</span></code>, run the following command to extract data from the PDFs to JSON:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ osc-transformer-presteps extraction run-local-extraction &#39;input&#39; --output-folder=&#39;output&#39; --logs-folder=&#39;logs&#39; --force
+</pre></div>
+</div>
+<p>Note: The <code class="docutils literal notranslate"><span class="pre">--force</span></code> flag overcomes encryption. Please check if this is a legal action in your jurisdiction.</p>
+</section>
+<section id="example-2-curating-a-new-training-data-set">
+<h3>Example 2: Curating a New Training Data Set<a class="headerlink" href="#example-2-curating-a-new-training-data-set" title="Link to this heading">¶</a></h3>
+<p>To perform curation, you will need a KPI mapping file and an annotations file. Here are examples of such files:</p>
+<p><strong>KPI Mapping File</strong>:</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">kpi_mapping.csv</span><a class="headerlink" href="#id3" title="Link to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>kpi_id</p></th>
+<th class="head"><p>question</p></th>
+<th class="head"><p>sectors</p></th>
+<th class="head"><p>add_year</p></th>
+<th class="head"><p>kpi_category</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>What is the company name?</p></td>
+<td><p>“OG, CM, CU”</p></td>
+<td><p>FALSE</p></td>
+<td><p>TEXT</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p><strong>kpi_id</strong>: The unique identifier for each KPI.</p></li>
+<li><p><strong>question</strong>: The specific question being asked to extract relevant information.</p></li>
+<li><p><strong>sectors</strong>: The industry sectors to which the KPI applies.</p></li>
+<li><p><strong>add_year</strong>: Indicates whether to include the year in the extracted data (TRUE/FALSE).</p></li>
+<li><p><strong>kpi_category</strong>: The category of the KPI, typically specifying the data type (e.g., TEXT).</p></li>
+</ul>
+<p><strong>Annotation File</strong>:</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">annotations_file.xlsx</span><a class="headerlink" href="#id4" title="Link to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>company</p></th>
+<th class="head"><p>source_file</p></th>
+<th class="head"><p>source_page</p></th>
+<th class="head"><p>kpi_id</p></th>
+<th class="head"><p>year</p></th>
+<th class="head"><p>answer</p></th>
+<th class="head"><p>data_type</p></th>
+<th class="head"><p>relevant_paragraphs</p></th>
+<th class="head"><p>annotator</p></th>
+<th class="head"><p>sector</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Royal Dutch Shell plc</p></td>
+<td><p>Test.pdf</p></td>
+<td><p>[1]</p></td>
+<td><p>1</p></td>
+<td><p>2019</p></td>
+<td><p>2019</p></td>
+<td><p>TEXT</p></td>
+<td><p>[“Sustainability Report 2019”]</p></td>
+<td><p>1qbit_edited_kpi_extraction_Carolin.xlsx</p></td>
+<td><p>OG</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p><strong>company</strong>: The name of the company being analyzed.</p></li>
+<li><p><strong>source_file</strong>: The document from which data is extracted.</p></li>
+<li><p><strong>source_page</strong>: The page number(s) containing the relevant information.</p></li>
+<li><p><strong>kpi_id</strong>: The ID of the KPI associated with the data.</p></li>
+<li><p><strong>year</strong>: The year to which the data refers.</p></li>
+<li><p><strong>answer</strong>: The specific data or text extracted as an answer.</p></li>
+<li><p><strong>data_type</strong>: The type of the extracted data (e.g., TEXT or TABLE).</p></li>
+<li><p><strong>relevant_paragraphs</strong>: The paragraph(s) or context where the data was found.</p></li>
+<li><p><strong>annotator</strong>: The person or tool that performed the annotation.</p></li>
+<li><p><strong>sector</strong>: The industry sector the company belongs to.</p></li>
+</ul>
+<p>You can find demo files in the <code class="docutils literal notranslate"><span class="pre">demo/curation/input</span></code> folder.</p>
+<p>Assume the folder structure is as follows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>project/
+├-input/
+│ ├-data_from_extraction/
+│ │ ├-file_1.json
+│ │ ├-file_2.json
+│ │ └─file_3.json
+│ ├-kpi_mapping/
+│ │ └─kpi_mapping.csv
+│ ├-annotations_file/
+│ │ └─annotations_file.xlsx
+├-logs/
+└─output/
+</pre></div>
+</div>
+<p>Now, you can run the following command to curate a new training data set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ osc-transformer-presteps curation run-local-curation &#39;input/-data_from_extraction/file_1.json&#39; &#39;input/annotations_file/annotations_file.xlsx&#39; &#39;input/kpi_mapping/kpi_mapping.csv&#39;
+</pre></div>
+</div>
+<p>Note: The previous comment may need some adjustment when running on different machine like windows due to the slash.</p>
+</section>
+<section id="important-note-on-annotations">
+<span id="id1"></span><h3>Important Note on Annotations<a class="headerlink" href="#important-note-on-annotations" title="Link to this heading">¶</a></h3>
+<p>When performing curation, it is crucial that all JSON files used for this process are listed in the <code class="docutils literal notranslate"><span class="pre">demo/curation/input/test_annotation.xlsx</span></code> file. Failure to include these files in the annotation file will result in corrupted output.</p>
+<p>Ensure that every JSON file involved in the curation process is mentioned in the annotation file to maintain the integrity of the resulting output.</p>
 </section>
 </section>
 <section id="developer-space">
 <h2>Developer space<a class="headerlink" href="#developer-space" title="Link to this heading">¶</a></h2>
 <section id="use-code-directly-without-cli-via-github-repository">
-<h3>Use code directly without CLI via Github Repository<a class="headerlink" href="#use-code-directly-without-cli-via-github-repository" title="Link to this heading">¶</a></h3>
-<p>First clone the repository to your local environment:</p>
+<h3>Use Code Directly Without CLI via Github Repository<a class="headerlink" href="#use-code-directly-without-cli-via-github-repository" title="Link to this heading">¶</a></h3>
+<p>First, clone the repository to your local environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/os-climate/osc-transformer-presteps
 </pre></div>
 </div>
-<p>We are using pdm to manage the packages and tox for a stable test framework.
-Hence, first install pdm (possibly in a virtual environment) via</p>
-<blockquote>
-<div><p>$ pip install pdm</p>
-</div></blockquote>
-<p>Afterwards sync you system via</p>
-<blockquote>
-<div><p>$ pdm sync</p>
-</div></blockquote>
-<p>Now you have multiple demos on how to go on. See folder
-[here](demo)</p>
+<p>We are using <code class="docutils literal notranslate"><span class="pre">pdm</span></code> to manage the packages and <code class="docutils literal notranslate"><span class="pre">tox</span></code> for a stable test framework.
+First, install <code class="docutils literal notranslate"><span class="pre">pdm</span></code> (possibly in a virtual environment) via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install pdm
+</pre></div>
+</div>
+<p>Afterwards, sync your system via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pdm sync
+</pre></div>
+</div>
+<p>You will find multiple demos on how to proceed in the <code class="docutils literal notranslate"><span class="pre">demo</span></code> folder.</p>
 </section>
 <section id="pdm">
 <h3>pdm<a class="headerlink" href="#pdm" title="Link to this heading">¶</a></h3>
-<p>For adding new dependencies use pdm. You could add new packages via pdm add.
-For example numpy via:</p>
+<p>To add new dependencies, use <code class="docutils literal notranslate"><span class="pre">pdm</span></code>. For example, you can add numpy via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pdm add numpy
 </pre></div>
 </div>
-<p>For a very detailed description check the homepage of the pdm project:</p>
-<p><a class="reference external" href="https://pdm-project.org/en/latest/">https://pdm-project.org/en/latest/</a></p>
+<p>For more detailed descriptions, check the <a class="reference external" href="https://pdm-project.org/en/latest/">PDM project homepage</a>.</p>
 </section>
 <section id="tox">
 <h3>tox<a class="headerlink" href="#tox" title="Link to this heading">¶</a></h3>
-<p>For running linting tools we use tox which you run outside of your virtual environment:</p>
+<p>For running linting tools, we use <code class="docutils literal notranslate"><span class="pre">tox</span></code>. You can run this outside of your virtual environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install tox
 $ tox -e lint
 $ tox -e test
 </pre></div>
 </div>
-<p>This will automatically apply some checks on your code and run the provided pytests. See
-more details on tox on the homepage of the tox project:</p>
-<p><a class="reference external" href="https://tox.wiki/en/4.16.0/">https://tox.wiki/en/4.16.0/</a></p>
+<p>This will automatically apply checks on your code and run the provided pytests. See more details on <a class="reference external" href="https://tox.wiki/en/4.16.0/">tox</a>.</p>
 </section>
 </section>
 </section>

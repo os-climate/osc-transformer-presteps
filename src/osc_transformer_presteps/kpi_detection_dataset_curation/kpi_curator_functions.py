@@ -141,7 +141,7 @@ def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
     return kpi_mapping, kpi_category, add_year
 
 
-def clean_annotation(df: pd.DataFrame, kpi_mapping_file: str, exclude: list[str] = None) -> pd.DataFrame:
+def clean_annotation(df: pd.DataFrame, kpi_mapping_file: str, exclude= None) -> pd.DataFrame:
     """
     Clean the given DataFrame and saves the cleaned data to a specified path.
 

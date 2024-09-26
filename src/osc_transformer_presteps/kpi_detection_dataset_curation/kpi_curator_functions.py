@@ -1,4 +1,5 @@
-""" Helper functions for curation of KPI Detection dataset."""
+"""Helper functions for curation of KPI Detection dataset."""
+
 import ast
 import json
 import logging
@@ -37,8 +38,7 @@ COL_ORDER = [
 
 
 def aggregate_annots(annotation_folder: str) -> pd.DataFrame:
-    """
-    Aggregate Excel files containing annotations from a specified folder.
+    """Aggregate Excel files containing annotations from a specified folder.
 
     This function looks for Excel files with 'annotation' in their names,
     reads them, ensures required columns are present, and aggregates the data
@@ -128,7 +128,10 @@ def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
         add_year = df[df["add_year"]].kpi_id.tolist()
 
         # Category where the answer to the question should originate from
-        kpi_category = {i[0]: [j.strip() for j in i[1].split(", ")] for i in df[["kpi_id", "kpi_category"]].values}
+        kpi_category = {
+            i[0]: [j.strip() for j in i[1].split(", ")]
+            for i in df[["kpi_id", "kpi_category"]].values
+        }
 
         _logger.info("KPI mapping loaded successfully.")
 
@@ -137,13 +140,14 @@ def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
         kpi_mapping = {}
         kpi_category = {}
         add_year = []
-    
+
     return kpi_mapping, kpi_category, add_year
 
 
-def clean_annotation(df: pd.DataFrame, kpi_mapping_file: str, exclude= None) -> pd.DataFrame:
-    """
-    Clean the given DataFrame and saves the cleaned data to a specified path.
+def clean_annotation(
+    df: pd.DataFrame, kpi_mapping_file: str, exclude: list[str] = None
+) -> pd.DataFrame:
+    """Clean the given DataFrame and saves the cleaned data to a specified path.
 
     The cleaning process involves:
         1. Dropping all rows with NaN values.
@@ -163,10 +167,9 @@ def clean_annotation(df: pd.DataFrame, kpi_mapping_file: str, exclude= None) -> 
         pd.DataFrame: The cleaned DataFrame.
 
     """
-
     if exclude is None:
         exclude = ["CEZ"]
-    
+
     # Drop all rows with NaN values
     df = df.dropna(axis=0, how="all").reset_index(drop=True)
 

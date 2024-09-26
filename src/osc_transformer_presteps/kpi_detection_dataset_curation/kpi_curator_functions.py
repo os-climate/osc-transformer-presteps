@@ -260,7 +260,8 @@ def clean_annotation(
 def read_agg(
     agg_annotation: str, annotation_folder: str, kpi_mapping_file: str
 ) -> pd.DataFrame:
-    """Read the aggregated annotation CSV file. If it doesn't exist, create it from
+    """
+    Read the aggregated annotation CSV file. If it doesn't exist, create it from
     the specified annotation folder.
 
     Args:
@@ -428,7 +429,8 @@ def split_multi_paragraph(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
-    """Clean the DataFrame by mapping KPI IDs to questions, dropping invalid entries,
+    """
+    Clean the DataFrame by mapping KPI IDs to questions, dropping invalid entries,
     and formatting relevant paragraphs.
 
     Args:
@@ -479,7 +481,8 @@ def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
 
 
 def clean_text(text: str) -> str:
-    """Clean the input text by removing unusual quotes, excessive whitespace,
+    """
+    Clean the input text by removing unusual quotes, excessive whitespace,
     special characters, and converting to lowercase.
 
     Args:
@@ -810,7 +813,8 @@ def create_answerable(
 def filter_relevant_examples(
     annotation_df: pd.DataFrame, relevant_df: pd.DataFrame
 ) -> pd.DataFrame:
-    """Filter relevant examples from the relevant dataframe that are mentioned in the annotation files.
+    """
+    Filter relevant examples from the relevant dataframe that are mentioned in the annotation files.
     For each source PDF, it excludes examples whose pages and questions are already annotated in the annotation file.
 
     Args:
@@ -880,7 +884,8 @@ def filter_relevant_examples(
 def create_unanswerable(
     annotation_df: pd.DataFrame, relevant_text_path: str
 ) -> pd.DataFrame:
-    """Create unanswerable examples by generating negative samples from pairs of KPI questions and paragraphs
+    """
+    Create unanswerable examples by generating negative samples from pairs of KPI questions and paragraphs
     that are classified as relevant by the relevance detector but are not present in the annotation files.
 
     Args:
@@ -950,7 +955,8 @@ def curate(
     find_new_answerable_flag: bool = True,
     create_unanswerable_flag: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Curate the dataset by combining answerable and unanswerable examples for training and validation.
+    """
+    Curate the dataset by combining answerable and unanswerable examples for training and validation.
     The function processes annotated data and relevant text, extracting answerable/unanswerable examples,
     and splits the final dataset into training and validation sets.
 

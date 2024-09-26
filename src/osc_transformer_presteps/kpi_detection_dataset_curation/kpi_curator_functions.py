@@ -1,10 +1,8 @@
-
 import ast
 import json
 import logging
 import os
 import re
-import pathlib
 import numpy as np
 import pandas as pd
 from fuzzywuzzy import fuzz
@@ -24,53 +22,60 @@ COLUMNS_TO_READ = [
 ]
 
 COL_ORDER = [
-            "company",
-            "source_file",
-            "source_page",
-            "kpi_id",
-            "year",
-            "answer",
-            "data_type",
-            "relevant_paragraphs",
-            "annotator",
-            "sector",
-        ]
+    "company",
+    "source_file",
+    "source_page",
+    "kpi_id",
+    "year",
+    "answer",
+    "data_type",
+    "relevant_paragraphs",
+    "annotator",
+    "sector",
+]
 
 
 def aggregate_annots(annotation_folder: str) -> pd.DataFrame:
-    """
-    Aggregates Excel files containing annotations from a specified folder.
+    """Aggregates Excel files containing annotations from a specified folder.
 
     This function looks for Excel files with 'annotation' in their names,
     reads them, ensures required columns are present, and aggregates the data
     into a single DataFrame.
 
     Args:
-        annotation_folder (str): Path to the folder containing the 
+        annotation_folder (str): Path to the folder containing the
         annotation Excel files.
 
     Returns:
-        pd.DataFrame: A DataFrame containing the aggregated data from 
-        the annotation files. Returns an empty DataFrame 
+        pd.DataFrame: A DataFrame containing the aggregated data from
+        the annotation files. Returns an empty DataFrame
         if no valid files are found.
+
     """
-    xlsxs = [f for f in os.listdir(annotation_folder) if f.endswith(".xlsx")
-            and "annotation" in f]
+    xlsxs = [
+        f
+        for f in os.listdir(annotation_folder)
+        if f.endswith(".xlsx") and "annotation" in f
+    ]
     dfs = []
 
     for f in xlsxs:
         fname = os.path.join(annotation_folder, f)
         try:
-            df = pd.read_excel(fname, sheet_name='data_ex_in_xls')
-            
+            df = pd.read_excel(fname, sheet_name="data_ex_in_xls")
+
             # Ensure required columns exist
             missing_columns = [col for col in COLUMNS_TO_READ if col not in df.columns]
-            assert not missing_columns, f"{f} is missing required columns: {missing_columns}"
+            assert (
+                not missing_columns
+            ), f"{f} is missing required columns: {missing_columns}"
 
             # Handle 'sector'/'Sector' columns
             if "Sector" in df.columns:
                 df.rename(columns={"Sector": "sector"}, inplace=True)
-            columns_to_read = COLUMNS_TO_READ + (["sector"] if "sector" in df.columns else [])
+            columns_to_read = COLUMNS_TO_READ + (
+                ["sector"] if "sector" in df.columns else []
+            )
 
             # Add 'annotator' column if it doesn't exist
             if "annotator" not in df.columns:
@@ -79,7 +84,7 @@ def aggregate_annots(annotation_folder: str) -> pd.DataFrame:
 
             # Append filtered DataFrame to list
             dfs.append(df[columns_to_read])
-        
+
         except Exception as e:
             _logger.error(f"Error processing file {f}: {str(e)}")
             continue  # Skip to the next file if there's an error
@@ -88,15 +93,16 @@ def aggregate_annots(annotation_folder: str) -> pd.DataFrame:
     if dfs:
         _logger.info(f"Aggregating {len(dfs)} files.")
         return pd.concat(dfs) if len(dfs) > 1 else dfs[0]
-    
-    _logger.warning(f"No valid annotation files found in {annotation_folder}. "
-                   "Make sure the names have 'annotation' in the file names.")
+
+    _logger.warning(
+        f"No valid annotation files found in {annotation_folder}. "
+        "Make sure the names have 'annotation' in the file names."
+    )
     return pd.DataFrame()  # Return empty DataFrame if no files are processed
 
 
 def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
-    """
-    Load the KPI mapping from a CSV file.
+    """Load the KPI mapping from a CSV file.
 
     This function reads the KPI mapping file and extracts mappings of KPI IDs to questions,
     identifies which KPIs should have their year added, and categorizes the KPIs.
@@ -109,6 +115,7 @@ def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
             - KPI_MAPPING (dict): A dictionary mapping KPI IDs to questions.
             - KPI_CATEGORY (dict): A dictionary mapping KPI IDs to their respective categories.
             - ADD_YEAR (list): A list of KPI IDs that should have their year added.
+
     """
     try:
         df = pd.read_csv(kpi_mapping_file)
@@ -119,7 +126,10 @@ def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
         ADD_YEAR = df[df["add_year"]].kpi_id.tolist()
 
         # Category where the answer to the question should originate from
-        KPI_CATEGORY = {i[0]: [j.strip() for j in i[1].split(", ")] for i in df[["kpi_id", "kpi_category"]].values}
+        KPI_CATEGORY = {
+            i[0]: [j.strip() for j in i[1].split(", ")]
+            for i in df[["kpi_id", "kpi_category"]].values
+        }
 
         _logger.info("KPI mapping loaded successfully.")
 
@@ -128,13 +138,14 @@ def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
         KPI_MAPPING = {}
         KPI_CATEGORY = {}
         ADD_YEAR = []
-    
+
     return KPI_MAPPING, KPI_CATEGORY, ADD_YEAR
 
 
-def clean_annotation(df: pd.DataFrame,  kpi_mapping_file: str, exclude: list[str] = ["CEZ"]) -> pd.DataFrame:
-    """
-    Cleans the given DataFrame and saves the cleaned data to a specified path.
+def clean_annotation(
+    df: pd.DataFrame, kpi_mapping_file: str, exclude: list[str] = ["CEZ"]
+) -> pd.DataFrame:
+    """Cleans the given DataFrame and saves the cleaned data to a specified path.
 
     The cleaning process involves:
         1. Dropping all rows with NaN values.
@@ -152,12 +163,17 @@ def clean_annotation(df: pd.DataFrame,  kpi_mapping_file: str, exclude: list[str
 
     Returns:
         pd.DataFrame: The cleaned DataFrame.
+
     """
     # Drop all rows with NaN values
     df = df.dropna(axis=0, how="all").reset_index(drop=True)
 
     # Drop rows with NaN for specific columns
-    df = df.dropna(axis=0, how="any", subset=["company", "source_file", "source_page", "kpi_id", "year"]).reset_index(drop=True)
+    df = df.dropna(
+        axis=0,
+        how="any",
+        subset=["company", "source_file", "source_page", "kpi_id", "year"],
+    ).reset_index(drop=True)
 
     # Remove specified companies
     if exclude:
@@ -220,21 +236,26 @@ def clean_annotation(df: pd.DataFrame,  kpi_mapping_file: str, exclude: list[str
     # Log the number of dropped examples
     diff = correct_id_bool.shape[0] - df.shape[0]
     if diff > 0:
-        _logger.debug("Dropped {} examples due to incorrect kpi-data_type pair".format(diff))
+        _logger.debug(
+            "Dropped {} examples due to incorrect kpi-data_type pair".format(diff)
+        )
 
-    save_path = 'aggregated_annotation.xlsx'
+    save_path = "aggregated_annotation.xlsx"
     # Save the cleaned DataFrame
     df.to_excel(save_path, index=False)
     _logger.info(
         "Aggregated annotation file is created and saved at location {}.".format(
-            save_path))
+            save_path
+        )
+    )
 
     return df
 
 
-def read_agg(agg_annotation: str, annotation_folder: str, kpi_mapping_file: str) -> pd.DataFrame:
-    """
-    Read the aggregated annotation CSV file. If it doesn't exist, create it from
+def read_agg(
+    agg_annotation: str, annotation_folder: str, kpi_mapping_file: str
+) -> pd.DataFrame:
+    """Read the aggregated annotation CSV file. If it doesn't exist, create it from
     the specified annotation folder.
 
     Args:
@@ -244,12 +265,18 @@ def read_agg(agg_annotation: str, annotation_folder: str, kpi_mapping_file: str)
 
     Returns:
         pd.DataFrame: The DataFrame containing aggregated annotation data.
+
     """
-    
     if not os.path.exists(agg_annotation):
-        _logger.info("{} not available, will create it from the annotation folder.".format(agg_annotation))
-        df = aggregate_annots(annotation_folder)  # Assuming this function is defined elsewhere
-        df = clean_annotation(df,  kpi_mapping_file)
+        _logger.info(
+            "{} not available, will create it from the annotation folder.".format(
+                agg_annotation
+            )
+        )
+        df = aggregate_annots(
+            annotation_folder
+        )  # Assuming this function is defined elsewhere
+        df = clean_annotation(df, kpi_mapping_file)
     else:
         _logger.info("{} found, loading the data.".format(agg_annotation))
         df = pd.read_excel(agg_annotation)
@@ -262,8 +289,7 @@ def read_agg(agg_annotation: str, annotation_folder: str, kpi_mapping_file: str)
 
 
 def clean_paragraph(r: pd.Series) -> list[str] | None:
-    """
-    Clean the relevant_paragraphs column.
+    """Clean the relevant_paragraphs column.
 
     This function takes a string representation of relevant paragraphs, fixes any issues with
     brackets or parentheses, and splits the paragraphs into a list.
@@ -273,6 +299,7 @@ def clean_paragraph(r: pd.Series) -> list[str] | None:
 
     Returns:
         list[str] | None: A list of cleaned paragraphs or None if the input is not valid.
+
     """
     # Remove any starting or trailing white spaces
     strp = r.strip()
@@ -304,14 +331,14 @@ def clean_paragraph(r: pd.Series) -> list[str] | None:
 
     if first_type and not second_type:
         for i in first_type:
-            temp.append(strp[start: i.start()])
+            temp.append(strp[start : i.start()])
             start = i.start() + 4
         temp.append(strp[start:])
         return temp
 
     if not first_type and second_type:
         for i in second_type:
-            temp.append(strp[start: i.start()])
+            temp.append(strp[start : i.start()])
             start = i.start() + 3
         temp.append(strp[start:])
         return temp
@@ -321,22 +348,22 @@ def clean_paragraph(r: pd.Series) -> list[str] | None:
     while track1 < len(first_type) or track2 < len(second_type):
         if track1 == len(first_type):
             for i in second_type[track2:]:
-                temp.append(strp[start: i.start()])
+                temp.append(strp[start : i.start()])
                 start = i.start() + 3
                 break
 
         if track2 == len(second_type):
             for i in first_type[track1:]:
-                temp.append(strp[start: i.start()])
+                temp.append(strp[start : i.start()])
                 start = i.start() + 4
                 break
 
         if first_type[track1].start() < second_type[track2].start():
-            temp.append(strp[start: first_type[track1].start()])
+            temp.append(strp[start : first_type[track1].start()])
             start = first_type[track1].start() + 4
             track1 += 1
         else:
-            temp.append(strp[start: second_type[track2].start()])
+            temp.append(strp[start : second_type[track2].start()])
             start = second_type[track2].start() + 3
             track2 += 1
 
@@ -344,21 +371,25 @@ def clean_paragraph(r: pd.Series) -> list[str] | None:
 
 
 def split_multi_paragraph(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Split DataFrame entries with multiple relevant paragraphs into separate rows.
+    """Split DataFrame entries with multiple relevant paragraphs into separate rows.
 
     Args:
         df (pd.DataFrame): DataFrame containing relevant paragraphs.
 
     Returns:
         pd.DataFrame: A new DataFrame with split relevant paragraphs.
+
     """
     _logger.debug("Starting to split multi-paragraph entries.")
-    
+
     # Selecting rows where "relevant_paragraphs" has exactly 1 paragraph
-    df_single = df[df["relevant_paragraphs"].apply(len) == 1].copy()  # Use .copy() to avoid modifying the slice
+    df_single = df[
+        df["relevant_paragraphs"].apply(len) == 1
+    ].copy()  # Use .copy() to avoid modifying the slice
     df_single.loc[:, "source_page"] = df_single["source_page"].apply(lambda x: x[0])
-    df_single.loc[:, "relevant_paragraphs"] = df_single["relevant_paragraphs"].apply(lambda x: x[0])
+    df_single.loc[:, "relevant_paragraphs"] = df_single["relevant_paragraphs"].apply(
+        lambda x: x[0]
+    )
 
     # Selecting rows where "relevant_paragraphs" has more than 1 paragraph
     df_multi = df[df["relevant_paragraphs"].apply(len) > 1].copy()
@@ -372,7 +403,9 @@ def split_multi_paragraph(df: pd.DataFrame) -> pd.DataFrame:
 
     # Iterate over the rows of df_multi
     for row in df_multi.itertuples():
-        paragraph_count = len(row[3])  # Number of paragraphs in the "relevant_paragraphs" column
+        paragraph_count = len(
+            row[3]
+        )  # Number of paragraphs in the "relevant_paragraphs" column
         for i in range(paragraph_count):
             new_row = list(row[1:])  # Convert row to a list for modification
             new_row[2] = row[3][i]  # Set the relevant paragraph
@@ -390,8 +423,7 @@ def split_multi_paragraph(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
-    """
-    Clean the DataFrame by mapping KPI IDs to questions, dropping invalid entries,
+    """Clean the DataFrame by mapping KPI IDs to questions, dropping invalid entries,
     and formatting relevant paragraphs.
 
     Args:
@@ -400,6 +432,7 @@ def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
 
     Returns:
         pd.DataFrame: The cleaned DataFrame.
+
     """
     _logger.debug("Starting to clean the DataFrame.")
 
@@ -411,7 +444,7 @@ def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
             question = KPI_MAPPING[float(r["kpi_id"])]
         except (KeyError, ValueError):
             question = None
-            
+
         if question:
             try:
                 year = int(float(r["year"]))
@@ -429,11 +462,11 @@ def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
 
     # Clean answer format
     df["answer"] = df["answer"].apply(lambda x: " ".join(str(x).split("\n")).strip())
-    
+
     # Clean relevant paragraphs
     df["relevant_paragraphs"] = df["relevant_paragraphs"].apply(clean_paragraph)
     df = df.dropna(subset=["relevant_paragraphs"]).reset_index(drop=True)
-    
+
     df = split_multi_paragraph(df)
 
     _logger.debug("DataFrame cleaning completed.")
@@ -441,8 +474,7 @@ def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
 
 
 def clean_text(text: str) -> str:
-    """
-    Clean the input text by removing unusual quotes, excessive whitespace,
+    """Clean the input text by removing unusual quotes, excessive whitespace,
     special characters, and converting to lowercase.
 
     Args:
@@ -450,6 +482,7 @@ def clean_text(text: str) -> str:
 
     Returns:
         str: The cleaned text.
+
     """
     _logger.debug("Cleaning text.")
 
@@ -462,7 +495,21 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\s{2,}", " ", text)
 
     # Replace special regex characters
-    special_regex_char = ["(", ")", "^", "+", "*", "$", "|", "\\", "?", "[", "]", "{", "}"]
+    special_regex_char = [
+        "(",
+        ")",
+        "^",
+        "+",
+        "*",
+        "$",
+        "|",
+        "\\",
+        "?",
+        "[",
+        "]",
+        "{",
+        "}",
+    ]
     text = "".join(["" if c in special_regex_char else c for c in text])
 
     text = text.lower()
@@ -476,8 +523,7 @@ def clean_text(text: str) -> str:
 
 
 def find_answer_start(answer: str, par: str) -> list[int]:
-    """
-    Find the starting indices of the answer in the provided paragraph.
+    """Find the starting indices of the answer in the provided paragraph.
 
     Args:
         answer (str): The answer to search for.
@@ -485,9 +531,10 @@ def find_answer_start(answer: str, par: str) -> list[int]:
 
     Returns:
         list[int]: A list of starting indices where the answer is found in the paragraph.
+
     """
     _logger.debug("Finding answer start indices.")
-    
+
     answer = "".join(["\." if c == "." else c for c in answer])
 
     # Avoid matching numeric values like '0' to '2016'
@@ -508,11 +555,12 @@ def find_answer_start(answer: str, par: str) -> list[int]:
     return ans_start
 
 
-def find_closest_paragraph(pars: list[str], clean_rel_par: str, clean_answer: str) -> str:
-    """
-    Find the closest matching paragraph to the annotated relevant paragraph.
-    
-    If the exact paragraph match is not found, use fuzzy matching to find the closest 
+def find_closest_paragraph(
+    pars: list[str], clean_rel_par: str, clean_answer: str
+) -> str:
+    """Find the closest matching paragraph to the annotated relevant paragraph.
+
+    If the exact paragraph match is not found, use fuzzy matching to find the closest
     paragraph that contains the answer.
 
     Args:
@@ -522,9 +570,10 @@ def find_closest_paragraph(pars: list[str], clean_rel_par: str, clean_answer: st
 
     Returns:
         str: The closest full paragraph or the original annotated relevant paragraph if no better match is found.
+
     """
     _logger.info("Finding closest paragraph.")
-    
+
     clean_pars = [clean_text(p) for p in pars]
     found = False
 
@@ -545,16 +594,19 @@ def find_closest_paragraph(pars: list[str], clean_rel_par: str, clean_answer: st
         ans_start = find_answer_start(clean_answer, max_par)
 
         if len(ans_start) != 0:
-            _logger.info("Closest paragraph with the answer found using fuzzy matching.")
+            _logger.info(
+                "Closest paragraph with the answer found using fuzzy matching."
+            )
             clean_rel_par = max_par
 
     return clean_rel_par
 
 
-def return_full_paragraph(r: pd.Series, json_dict: dict[str, dict[str, list[str]]]) -> tuple[str, str, list[int]]:
-    """
-    Find the closest full paragraph to the annotated relevant paragraph using the parsed JSON dictionary.
-    
+def return_full_paragraph(
+    r: pd.Series, json_dict: dict[str, dict[str, list[str]]]
+) -> tuple[str, str, list[int]]:
+    """Find the closest full paragraph to the annotated relevant paragraph using the parsed JSON dictionary.
+
     If the full paragraph cannot be found, return the annotated relevant paragraph instead.
 
     Args:
@@ -567,27 +619,28 @@ def return_full_paragraph(r: pd.Series, json_dict: dict[str, dict[str, list[str]
             clean_rel_par (str): The closest or annotated relevant paragraph.
             clean_answer (str): The cleaned answer text.
             ans_start (list[int]): A list of starting indices of the answer in the paragraph.
+
     """
-    #_logger.debug(f"Returning full paragraph for file {r['source_file']} on page {r['source_page']}.")
-    
+    # _logger.debug(f"Returning full paragraph for file {r['source_file']} on page {r['source_page']}.")
+
     clean_answer = clean_text(r["answer"])
     clean_rel_par = clean_text(r["relevant_paragraphs"])
 
     # Check if the JSON for the source file is available
     if r["source_file"] not in json_dict:
         # _logger.warning(f"{r['source_file']} JSON file not found. Using annotated relevant text.")
-        #_logger.debug(f"{r['source_file']} JSON file not found. Using annotated relevant text.")
+        # _logger.debug(f"{r['source_file']} JSON file not found. Using annotated relevant text.")
         pass
     else:
         d = json_dict[r["source_file"]]
-        
+
         # Get paragraphs from the JSON dictionary for the corresponding page (PDF pages start from 1, but JSON starts from 0)
         page_number = str(int(r["source_page"]) - 1)
         pars = d.get(page_number, [])
-        
+
         if len(pars) == 0:
-            #_logger.warning(f"{r['source_file']} has no paragraphs on page {r['source_page']}. Using annotated relevant text.")
-            #_logger.debug(f"{r['source_file']} has no paragraphs on page {r['source_page']}. Using annotated relevant text.")
+            # _logger.warning(f"{r['source_file']} has no paragraphs on page {r['source_page']}. Using annotated relevant text.")
+            # _logger.debug(f"{r['source_file']} has no paragraphs on page {r['source_page']}. Using annotated relevant text.")
             pass
         else:
             # Try to find the closest paragraph to the annotated relevant paragraph
@@ -605,9 +658,10 @@ def return_full_paragraph(r: pd.Series, json_dict: dict[str, dict[str, list[str]
     return clean_rel_par, clean_answer, ans_start
 
 
-def find_extra_answerable(df: pd.DataFrame, json_dict: dict[str, dict[str, list[str]]]) -> pd.DataFrame:
-    """
-    Find extra answerable samples by searching for paragraphs in pages other than the annotated one.
+def find_extra_answerable(
+    df: pd.DataFrame, json_dict: dict[str, dict[str, list[str]]]
+) -> pd.DataFrame:
+    """Find extra answerable samples by searching for paragraphs in pages other than the annotated one.
 
     Args:
         df (pd.DataFrame): The original dataframe containing the annotated data.
@@ -616,9 +670,10 @@ def find_extra_answerable(df: pd.DataFrame, json_dict: dict[str, dict[str, list[
 
     Returns:
         pd.DataFrame: A dataframe containing additional answerable samples with new paragraphs from other pages.
+
     """
     _logger.info("Finding extra answerable samples in the dataset.")
-    
+
     new_positive = []
 
     for t in df.itertuples():
@@ -658,21 +713,33 @@ def find_extra_answerable(df: pd.DataFrame, json_dict: dict[str, dict[str, list[
                 if len(ans_start) != 0:
                     # Create a new example
                     example = [
-                        t[1], t[2], p, kpi_id, t[5],
-                        clean_answer, t[7], clean_rel_par, 
-                        "1QBit", t[10], t[11], ans_start
+                        t[1],
+                        t[2],
+                        p,
+                        kpi_id,
+                        t[5],
+                        clean_answer,
+                        t[7],
+                        clean_rel_par,
+                        "1QBit",
+                        t[10],
+                        t[11],
+                        ans_start,
                     ]
                     new_positive.append(example)
 
     new_positive_df = pd.DataFrame(new_positive, columns=df.columns)
-    
+
     _logger.info(f"Found {len(new_positive_df)} extra answerable samples.")
     return new_positive_df
 
 
-def create_answerable(df: pd.DataFrame, json_dict: dict[str, dict[str, list[str]]], find_new_answerable: bool) -> pd.DataFrame:
-    """
-    Create answerable samples by finding full paragraphs and optionally searching for additional answerable samples.
+def create_answerable(
+    df: pd.DataFrame,
+    json_dict: dict[str, dict[str, list[str]]],
+    find_new_answerable: bool,
+) -> pd.DataFrame:
+    """Create answerable samples by finding full paragraphs and optionally searching for additional answerable samples.
 
     Args:
         df (pd.DataFrame): The original dataframe containing the annotated data.
@@ -682,8 +749,8 @@ def create_answerable(df: pd.DataFrame, json_dict: dict[str, dict[str, list[str]
 
     Returns:
         pd.DataFrame: A dataframe with answerable samples, including both original and optionally new answerable samples.
-    """
 
+    """
     # Apply return_full_paragraph to find closest full paragraphs
     results = df.apply(return_full_paragraph, axis=1, json_dict=json_dict)
 
@@ -692,10 +759,10 @@ def create_answerable(df: pd.DataFrame, json_dict: dict[str, dict[str, list[str]
     df["relevant_paragraphs"] = temp[0]
     df["answer"] = temp[1]
     df["answer_start"] = temp[2]
-    
+
     # Drop rows where the answer is NaN
     df = df[~df["answer"].isna()]
-    
+
     _logger.info(f"Processed {len(df)} rows for answerable samples.")
 
     # Find additional answerable samples if the flag is set
@@ -706,23 +773,23 @@ def create_answerable(df: pd.DataFrame, json_dict: dict[str, dict[str, list[str]
         synthetic_pos = pd.DataFrame([])
 
     # Concatenate original and synthetic answerable samples
-    '''pos_df = pd.concat([df, synthetic_pos]).drop_duplicates(
+    """pos_df = pd.concat([df, synthetic_pos]).drop_duplicates(
         subset=["answer", "relevant_paragraphs", "question"]).reset_index(
-            drop=True)'''
-    
+            drop=True)"""
+
     # Drop columns that are entirely NA from both DataFrames before concatenation
-    df_filtered = df.dropna(axis=1, how='all')
-    synthetic_pos_filtered = synthetic_pos.dropna(axis=1, how='all')
+    df_filtered = df.dropna(axis=1, how="all")
+    synthetic_pos_filtered = synthetic_pos.dropna(axis=1, how="all")
 
     # Concatenate and drop duplicates based on specific columns
-    pos_df = pd.concat([df_filtered, synthetic_pos_filtered]).drop_duplicates(
-        subset=["answer", "relevant_paragraphs", "question"]
-    ).reset_index(drop=True)
-
+    pos_df = (
+        pd.concat([df_filtered, synthetic_pos_filtered])
+        .drop_duplicates(subset=["answer", "relevant_paragraphs", "question"])
+        .reset_index(drop=True)
+    )
 
     # Filter out rows where answer_start is empty
-    pos_df = pos_df[pos_df["answer_start"].apply(len) != 0].reset_index(
-        drop=True)
+    pos_df = pos_df[pos_df["answer_start"].apply(len) != 0].reset_index(drop=True)
 
     # Rename the relevant_paragraphs column to paragraph
     pos_df.rename({"relevant_paragraphs": "paragraph"}, axis=1, inplace=True)
@@ -731,13 +798,14 @@ def create_answerable(df: pd.DataFrame, json_dict: dict[str, dict[str, list[str]
     pos_df = pos_df[["source_file", "paragraph", "question", "answer", "answer_start"]]
 
     _logger.info(f"Created {len(pos_df)} final answerable samples.")
-    
+
     return pos_df
 
 
-def filter_relevant_examples(annotation_df: pd.DataFrame, relevant_df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Filters relevant examples from the relevant dataframe that are mentioned in the annotation files.
+def filter_relevant_examples(
+    annotation_df: pd.DataFrame, relevant_df: pd.DataFrame
+) -> pd.DataFrame:
+    """Filters relevant examples from the relevant dataframe that are mentioned in the annotation files.
     For each source PDF, it excludes examples whose pages and questions are already annotated in the annotation file.
 
     Args:
@@ -746,9 +814,10 @@ def filter_relevant_examples(annotation_df: pd.DataFrame, relevant_df: pd.DataFr
 
     Returns:
         pd.DataFrame: A subset of `relevant_df` considered as negative examples (examples not in the annotation file).
+
     """
     _logger.debug("Filtering relevant examples based on annotations.")
-    
+
     # Get the list of PDFs mentioned in the relevant DataFrame
     target_pdfs = list(relevant_df["pdf_name"].unique())
 
@@ -756,13 +825,15 @@ def filter_relevant_examples(annotation_df: pd.DataFrame, relevant_df: pd.DataFr
 
     formatted_relevant_df = relevant_df[relevant_df["paragraph_relevance_flag"] == 1]
 
-    relevant_df = formatted_relevant_df.merge(annotation_df[['kpi_id', 'relevant_paragraph', 'answer']],
-                              left_on=['kpi_id', 'paragraph'],
-                              right_on=['kpi_id', 'relevant_paragraph'],
-                              how='inner')
+    relevant_df = formatted_relevant_df.merge(
+        annotation_df[["kpi_id", "relevant_paragraph", "answer"]],
+        left_on=["kpi_id", "paragraph"],
+        right_on=["kpi_id", "relevant_paragraph"],
+        how="inner",
+    )
 
     # Drop the 'relevant_paragraph' column as it's no longer needed
-    relevant_df = relevant_df.drop(columns=['relevant_paragraph'])
+    relevant_df = relevant_df.drop(columns=["relevant_paragraph"])
 
     for pdf_file in target_pdfs:
         # Filter annotations for the current PDF
@@ -786,8 +857,8 @@ def filter_relevant_examples(annotation_df: pd.DataFrame, relevant_df: pd.DataFr
         for q, a in zip(questions, answers):
             neg_examples_df = neg_examples_df[
                 ~(
-                    (neg_examples_df["question"] == q) &
-                    (neg_examples_df["answer"].map(lambda x: clean_text(a) in x))
+                    (neg_examples_df["question"] == q)
+                    & (neg_examples_df["answer"].map(lambda x: clean_text(a) in x))
                 )
             ]
 
@@ -797,13 +868,14 @@ def filter_relevant_examples(annotation_df: pd.DataFrame, relevant_df: pd.DataFr
     merged_neg_examples_df = pd.concat(neg_examples_df_list, ignore_index=True)
 
     _logger.info(f"Filtered {len(merged_neg_examples_df)} negative examples.")
-    
+
     return merged_neg_examples_df
 
 
-def create_unanswerable(annotation_df: pd.DataFrame, relevant_text_path: str) -> pd.DataFrame:
-    """
-    Creates unanswerable examples by generating negative samples from pairs of KPI questions and paragraphs
+def create_unanswerable(
+    annotation_df: pd.DataFrame, relevant_text_path: str
+) -> pd.DataFrame:
+    """Creates unanswerable examples by generating negative samples from pairs of KPI questions and paragraphs
     that are classified as relevant by the relevance detector but are not present in the annotation files.
 
     Args:
@@ -812,6 +884,7 @@ def create_unanswerable(annotation_df: pd.DataFrame, relevant_text_path: str) ->
 
     Returns:
         pd.DataFrame: A DataFrame of unanswerable examples in the same format as the SQuAD dataset.
+
     """
     _logger.debug("Creating unanswerable examples from relevant and annotation data.")
 
@@ -820,12 +893,18 @@ def create_unanswerable(annotation_df: pd.DataFrame, relevant_text_path: str) ->
 
     # Ensure that the necessary columns are present in the relevant DataFrame
     required_columns = [
-        "page", "pdf_name", "unique_paragraph_id", "paragraph", "kpi_id", 
-        "question",  "paragraph_relevance_flag",
-        "paragraph_relevance_score(for_label=1)"
+        "page",
+        "pdf_name",
+        "unique_paragraph_id",
+        "paragraph",
+        "kpi_id",
+        "question",
+        "paragraph_relevance_flag",
+        "paragraph_relevance_score(for_label=1)",
     ]
-    assert all([col in relevant_df.columns for col in required_columns]), \
-        "The relevant DataFrame is missing one or more required columns."
+    assert all(
+        [col in relevant_df.columns for col in required_columns]
+    ), "The relevant DataFrame is missing one or more required columns."
 
     # Select only the relevant columns in the expected order
     relevant_df = relevant_df[required_columns]
@@ -844,23 +923,29 @@ def create_unanswerable(annotation_df: pd.DataFrame, relevant_text_path: str) ->
     neg_df["answer"] = ""
 
     # Remove any duplicate examples based on answer, paragraph, and question
-    neg_df = neg_df.drop_duplicates(subset=["answer", "paragraph", "question"]).reset_index(drop=True)
+    neg_df = neg_df.drop_duplicates(
+        subset=["answer", "paragraph", "question"]
+    ).reset_index(drop=True)
 
     # Select the relevant columns for the final DataFrame
     neg_df = neg_df[["source_file", "paragraph", "question", "answer", "answer_start"]]
 
     _logger.info(f"Created {len(neg_df)} unanswerable examples.")
-    
+
     return neg_df
 
 
-def curate(annotation_folder: str, agg_annotation: str, 
-           extracted_text_json_folder: str, 
-           kpi_mapping_file: str, relevance_file_path: str, val_ratio: float, 
-           find_new_answerable_flag: bool = True, create_unanswerable_flag: bool = True
-           ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """
-    Curates the dataset by combining answerable and unanswerable examples for training and validation.
+def curate(
+    annotation_folder: str,
+    agg_annotation: str,
+    extracted_text_json_folder: str,
+    kpi_mapping_file: str,
+    relevance_file_path: str,
+    val_ratio: float,
+    find_new_answerable_flag: bool = True,
+    create_unanswerable_flag: bool = True,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Curates the dataset by combining answerable and unanswerable examples for training and validation.
     The function processes annotated data and relevant text, extracting answerable/unanswerable examples,
     and splits the final dataset into training and validation sets.
 
@@ -876,17 +961,19 @@ def curate(annotation_folder: str, agg_annotation: str,
 
     Returns:
         tuple[pd.DataFrame, pd.DataFrame]: A tuple containing the training DataFrame and validation DataFrame.
+
     """
- 
     # Read and clean the aggregated annotation data
     df = read_agg(agg_annotation, annotation_folder, kpi_mapping_file)
-    df = df[df["data_type"] == 'TEXT']
+    df = df[df["data_type"] == "TEXT"]
     df = clean(df, kpi_mapping_file)
 
     _logger.debug("Aggregated annotation data has been cleaned and filtered.")
 
     # Get all available JSON files from the extraction phase
-    all_json = [i for i in os.listdir(extracted_text_json_folder) if i.endswith(".json")]
+    all_json = [
+        i for i in os.listdir(extracted_text_json_folder) if i.endswith(".json")
+    ]
     json_dict = {}
 
     _logger.info(f"Loading extracted text JSONs from {extracted_text_json_folder}.")
@@ -908,9 +995,11 @@ def curate(annotation_folder: str, agg_annotation: str,
         _logger.info("Creating unanswerable examples.")
         unanswerable_df = create_unanswerable(df, relevance_file_path)
         # Concatenate answerable and unanswerable data
-        all_df = pd.concat([answerable_df, unanswerable_df]).drop_duplicates(
-            subset=["answer", "paragraph", "question"]
-        ).reset_index(drop=True)
+        all_df = (
+            pd.concat([answerable_df, unanswerable_df])
+            .drop_duplicates(subset=["answer", "paragraph", "question"])
+            .reset_index(drop=True)
+        )
 
         _logger.info(f"Combined {len(all_df)} answerable and unanswerable examples.")
     else:
@@ -918,19 +1007,23 @@ def curate(annotation_folder: str, agg_annotation: str,
         _logger.info(f"Using only answerable examples: {len(all_df)} examples.")
 
     # Split the data into training and validation sets based on the provided ratio
-    _logger.info(f"Splitting data into training and validation sets with validation ratio {val_ratio}.")
-    
+    _logger.info(
+        f"Splitting data into training and validation sets with validation ratio {val_ratio}."
+    )
+
     # Set a seed for reproducibility
     seed = 42
     all_df = all_df.sample(frac=1).reset_index(drop=True)
 
-    train_df = all_df.sample(frac=1-val_ratio, random_state=seed)
+    train_df = all_df.sample(frac=1 - val_ratio, random_state=seed)
     val_df = all_df.drop(train_df.index)
 
     # Reset index for both dataframes
     train_df.reset_index(drop=True, inplace=True)
     val_df.reset_index(drop=True, inplace=True)
 
-    _logger.info(f"Training set size: {len(train_df)}, Validation set size: {len(val_df)}.")
+    _logger.info(
+        f"Training set size: {len(train_df)}, Validation set size: {len(val_df)}."
+    )
 
     return train_df, val_df

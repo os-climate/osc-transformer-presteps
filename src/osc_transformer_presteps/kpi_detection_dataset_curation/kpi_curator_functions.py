@@ -1,4 +1,4 @@
-
+""" Helper functions for curation of KPI Detection dataset."""
 import ast
 import json
 import logging
@@ -39,7 +39,7 @@ COL_ORDER = [
 
 def aggregate_annots(annotation_folder: str) -> pd.DataFrame:
     """
-    Aggregates Excel files containing annotations from a specified folder.
+    Aggregate Excel files containing annotations from a specified folder.
 
     This function looks for Excel files with 'annotation' in their names,
     reads them, ensures required columns are present, and aggregates the data
@@ -112,29 +112,29 @@ def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
     """
     try:
         df = pd.read_csv(kpi_mapping_file)
-        _KPI_MAPPING = {str(i[0]): i[1] for i in df[["kpi_id", "question"]].values}
-        KPI_MAPPING = {float(key): value for key, value in _KPI_MAPPING.items()}
+        _kpi_mapping = {str(i[0]): i[1] for i in df[["kpi_id", "question"]].values}
+        kpi_mapping = {float(key): value for key, value in _kpi_mapping.items()}
 
         # Which questions should have the year added
-        ADD_YEAR = df[df["add_year"]].kpi_id.tolist()
+        add_year = df[df["add_year"]].kpi_id.tolist()
 
         # Category where the answer to the question should originate from
-        KPI_CATEGORY = {i[0]: [j.strip() for j in i[1].split(", ")] for i in df[["kpi_id", "kpi_category"]].values}
+        kpi_category = {i[0]: [j.strip() for j in i[1].split(", ")] for i in df[["kpi_id", "kpi_category"]].values}
 
         _logger.info("KPI mapping loaded successfully.")
 
     except Exception as e:
         _logger.error(f"Error loading KPI mapping file: {e}")
-        KPI_MAPPING = {}
-        KPI_CATEGORY = {}
-        ADD_YEAR = []
+        kpi_mapping = {}
+        kpi_category = {}
+        add_year = []
     
-    return KPI_MAPPING, KPI_CATEGORY, ADD_YEAR
+    return kpi_mapping, kpi_category, add_year
 
 
-def clean_annotation(df: pd.DataFrame,  kpi_mapping_file: str, exclude: list[str] = ["CEZ"]) -> pd.DataFrame:
+def clean_annotation(df: pd.DataFrame, kpi_mapping_file: str, exclude: list[str] = None) -> pd.DataFrame:
     """
-    Cleans the given DataFrame and saves the cleaned data to a specified path.
+    Clean the given DataFrame and saves the cleaned data to a specified path.
 
     The cleaning process involves:
         1. Dropping all rows with NaN values.
@@ -153,6 +153,10 @@ def clean_annotation(df: pd.DataFrame,  kpi_mapping_file: str, exclude: list[str
     Returns:
         pd.DataFrame: The cleaned DataFrame.
     """
+
+    if exclude is None:
+        exclude = ["CEZ"]
+    
     # Drop all rows with NaN values
     df = df.dropna(axis=0, how="all").reset_index(drop=True)
 
@@ -200,7 +204,7 @@ def clean_annotation(df: pd.DataFrame,  kpi_mapping_file: str, exclude: list[str
     df = df.dropna(axis=0, subset=["source_page"]).reset_index(drop=True)
 
     # Load KPI mapping
-    _, KPI_CATEGORY, _ = load_kpi_mapping(kpi_mapping_file)
+    _, kpi_category, _ = load_kpi_mapping(kpi_mapping_file)
 
     # Remove examples with incorrect (kpi, data_type) pairs
     def clean_id(r: pd.Series) -> bool:
@@ -210,7 +214,7 @@ def clean_annotation(df: pd.DataFrame,  kpi_mapping_file: str, exclude: list[str
             kpi_id = r["kpi_id"]
 
         try:
-            return r["data_type"] in KPI_CATEGORY.get(kpi_id, [])
+            return r["data_type"] in kpi_category.get(kpi_id, [])
         except KeyError:
             return True
 

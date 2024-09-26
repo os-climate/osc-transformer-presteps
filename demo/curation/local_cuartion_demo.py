@@ -4,7 +4,9 @@ from pathlib import Path
 
 from pydantic import BaseModel, FilePath, ValidationError
 
-from src.osc_transformer_presteps.dataset_creation_curation.curator import Curator
+from src.osc_transformer_presteps.relevance_detection_dataset_curation.curator import (
+    Curator,
+)
 
 
 class AnnotationData(BaseModel):

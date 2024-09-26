@@ -487,8 +487,8 @@ def clean_text(text: str) -> str:
 
     Returns:
         str: The cleaned text.
-
     """
+    
     _logger.debug("Cleaning text.")
 
     # Substitute unusual quotes at the start and end of the string

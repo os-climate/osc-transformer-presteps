@@ -38,7 +38,8 @@ COL_ORDER = [
 
 
 def aggregate_annots(annotation_folder: str) -> pd.DataFrame:
-    """Aggregate Excel files containing annotations from a specified folder.
+    """
+    Aggregate Excel files containing annotations from a specified folder.
 
     This function looks for Excel files with 'annotation' in their names,
     reads them, ensures required columns are present, and aggregates the data
@@ -104,7 +105,8 @@ def aggregate_annots(annotation_folder: str) -> pd.DataFrame:
 
 
 def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
-    """Load the KPI mapping from a CSV file.
+    """
+    Load the KPI mapping from a CSV file.
 
     This function reads the KPI mapping file and extracts mappings of KPI IDs to questions,
     identifies which KPIs should have their year added, and categorizes the KPIs.
@@ -145,9 +147,10 @@ def load_kpi_mapping(kpi_mapping_file: str) -> tuple:
 
 
 def clean_annotation(
-    df: pd.DataFrame, kpi_mapping_file: str, exclude=None
+    df: pd.DataFrame, kpi_mapping_file: str, exclude= None
 ) -> pd.DataFrame:
-    """Clean the given DataFrame and saves the cleaned data to a specified path.
+    """
+    Clean the given DataFrame and saves the cleaned data to a specified path.
 
     The cleaning process involves:
         1. Dropping all rows with NaN values.
@@ -260,7 +263,8 @@ def clean_annotation(
 def read_agg(
     agg_annotation: str, annotation_folder: str, kpi_mapping_file: str
 ) -> pd.DataFrame:
-    """Read the aggregated annotation CSV file. If it doesn't exist, create it from
+    """
+    Read the aggregated annotation CSV file. If it doesn't exist, create it from
     the specified annotation folder.
 
     Args:
@@ -294,7 +298,8 @@ def read_agg(
 
 
 def clean_paragraph(r: pd.Series) -> list[str] | None:
-    """Clean the relevant_paragraphs column.
+    """
+    Clean the relevant_paragraphs column.
 
     This function takes a string representation of relevant paragraphs, fixes any issues with
     brackets or parentheses, and splits the paragraphs into a list.
@@ -376,7 +381,8 @@ def clean_paragraph(r: pd.Series) -> list[str] | None:
 
 
 def split_multi_paragraph(df: pd.DataFrame) -> pd.DataFrame:
-    """Split DataFrame entries with multiple relevant paragraphs into separate rows.
+    """
+    Split DataFrame entries with multiple relevant paragraphs into separate rows.
 
     Args:
         df (pd.DataFrame): DataFrame containing relevant paragraphs.
@@ -428,7 +434,8 @@ def split_multi_paragraph(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
-    """Clean the DataFrame by mapping KPI IDs to questions, dropping invalid entries,
+    """
+    Clean the DataFrame by mapping KPI IDs to questions, dropping invalid entries,
     and formatting relevant paragraphs.
 
     Args:
@@ -479,7 +486,8 @@ def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
 
 
 def clean_text(text: str) -> str:
-    """Clean the input text by removing unusual quotes, excessive whitespace,
+    """
+    Clean the input text by removing unusual quotes, excessive whitespace,
     special characters, and converting to lowercase.
 
     Args:
@@ -528,7 +536,8 @@ def clean_text(text: str) -> str:
 
 
 def find_answer_start(answer: str, par: str) -> list[int]:
-    """Find the starting indices of the answer in the provided paragraph.
+    """
+    Find the starting indices of the answer in the provided paragraph.
 
     Args:
         answer (str): The answer to search for.
@@ -563,7 +572,8 @@ def find_answer_start(answer: str, par: str) -> list[int]:
 def find_closest_paragraph(
     pars: list[str], clean_rel_par: str, clean_answer: str
 ) -> str:
-    """Find the closest matching paragraph to the annotated relevant paragraph.
+    """
+    Find the closest matching paragraph to the annotated relevant paragraph.
 
     If the exact paragraph match is not found, use fuzzy matching to find the closest
     paragraph that contains the answer.
@@ -610,7 +620,8 @@ def find_closest_paragraph(
 def return_full_paragraph(
     r: pd.Series, json_dict: dict[str, dict[str, list[str]]]
 ) -> tuple[str, str, list[int]]:
-    """Find the closest full paragraph to the annotated relevant paragraph using the parsed JSON dictionary.
+    """
+    Find the closest full paragraph to the annotated relevant paragraph using the parsed JSON dictionary.
 
     If the full paragraph cannot be found, return the annotated relevant paragraph instead.
 
@@ -666,7 +677,8 @@ def return_full_paragraph(
 def find_extra_answerable(
     df: pd.DataFrame, json_dict: dict[str, dict[str, list[str]]]
 ) -> pd.DataFrame:
-    """Find extra answerable samples by searching for paragraphs in pages other than the annotated one.
+    """
+    Find extra answerable samples by searching for paragraphs in pages other than the annotated one.
 
     Args:
         df (pd.DataFrame): The original dataframe containing the annotated data.
@@ -744,7 +756,8 @@ def create_answerable(
     json_dict: dict[str, dict[str, list[str]]],
     find_new_answerable: bool,
 ) -> pd.DataFrame:
-    """Create answerable samples by finding full paragraphs and optionally searching for additional answerable samples.
+    """
+    Create answerable samples by finding full paragraphs and optionally searching for additional answerable samples.
 
     Args:
         df (pd.DataFrame): The original dataframe containing the annotated data.
@@ -810,7 +823,8 @@ def create_answerable(
 def filter_relevant_examples(
     annotation_df: pd.DataFrame, relevant_df: pd.DataFrame
 ) -> pd.DataFrame:
-    """Filter relevant examples from the relevant dataframe that are mentioned in the annotation files.
+    """
+    Filter relevant examples from the relevant dataframe that are mentioned in the annotation files.
     For each source PDF, it excludes examples whose pages and questions are already annotated in the annotation file.
 
     Args:
@@ -880,7 +894,8 @@ def filter_relevant_examples(
 def create_unanswerable(
     annotation_df: pd.DataFrame, relevant_text_path: str
 ) -> pd.DataFrame:
-    """Create unanswerable examples by generating negative samples from pairs of KPI questions and paragraphs
+    """
+    Create unanswerable examples by generating negative samples from pairs of KPI questions and paragraphs
     that are classified as relevant by the relevance detector but are not present in the annotation files.
 
     Args:
@@ -950,7 +965,8 @@ def curate(
     find_new_answerable_flag: bool = True,
     create_unanswerable_flag: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Curate the dataset by combining answerable and unanswerable examples for training and validation.
+    """
+    Curate the dataset by combining answerable and unanswerable examples for training and validation.
     The function processes annotated data and relevant text, extracting answerable/unanswerable examples,
     and splits the final dataset into training and validation sets.
 

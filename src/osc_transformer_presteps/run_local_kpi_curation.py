@@ -29,28 +29,34 @@ def kpi_curation(
         ..., help="Folder containing extracted text data in JSON format."
     ),
     output_folder: str = typer.Argument(
-        ..., help="Folder where the resulting train and validation CSV files will be saved."
+        ...,
+        help="Folder where the resulting train and validation CSV files will be saved.",
     ),
-    kpi_mapping_file: str = typer.Argument(
-        ..., help="Path to the KPI mapping file."
-    ),
+    kpi_mapping_file: str = typer.Argument(..., help="Path to the KPI mapping file."),
     relevance_file_path: str = typer.Argument(
         ..., help="Path to the relevance Excel file."
     ),
     val_ratio: float = typer.Option(
-        0.2, help="Ratio of validation data (e.g., 0.2 for a 20% validation split).", show_default=True
+        0.2,
+        help="Ratio of validation data (e.g., 0.2 for a 20% validation split).",
+        show_default=True,
     ),
     agg_annotation: str = typer.Option(
-        " ", help="File path for the aggregated annotation data. (if available)", show_default=True
+        " ",
+        help="File path for the aggregated annotation data. (if available)",
+        show_default=True,
     ),
     find_new_answerable: bool = typer.Option(
-        True, help="Whether to find new answerable KPIs (Yes or No). Yes by default.", show_default=True
+        True,
+        help="Whether to find new answerable KPIs (Yes or No). Yes by default.",
+        show_default=True,
     ),
     create_unanswerable: bool = typer.Option(
-        True, help="Whether to create unanswerable KPIs (Yes or No). Yes by default.", show_default=True
+        True,
+        help="Whether to create unanswerable KPIs (Yes or No). Yes by default.",
+        show_default=True,
     ),
 ):
-
     """Curates KPI data and splits it into training and validation sets."""
     try:
         # Call the KPI curator function

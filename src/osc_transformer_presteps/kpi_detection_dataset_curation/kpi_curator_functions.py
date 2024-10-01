@@ -924,7 +924,7 @@ def create_unanswerable(
     neg_df.rename({"pdf_name": "source_file"}, axis=1, inplace=True)
 
     # Assign empty answers and empty answer start lists for unanswerable examples
-    neg_df["answer_start"] = [[]] * neg_df.shape[0]
+    neg_df["answer_start"] = [[-1]] * neg_df.shape[0]
     neg_df["answer"] = ""
 
     # Remove any duplicate examples based on answer, paragraph, and question

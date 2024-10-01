@@ -831,14 +831,14 @@ def filter_relevant_examples(
     formatted_relevant_df = relevant_df[relevant_df["paragraph_relevance_flag"] == 1]
 
     relevant_df = formatted_relevant_df.merge(
-        annotation_df[["kpi_id", "relevant_paragraph", "answer"]],
+        annotation_df[["kpi_id", "relevant_paragraphs", "answer"]],
         left_on=["kpi_id", "paragraph"],
-        right_on=["kpi_id", "relevant_paragraph"],
+        right_on=["kpi_id", "relevant_paragraphs"],
         how="inner",
     )
 
     # Drop the 'relevant_paragraph' column as it's no longer needed
-    relevant_df = relevant_df.drop(columns=["relevant_paragraph"])
+    relevant_df = relevant_df.drop(columns=["relevant_paragraphs"])
 
     for pdf_file in target_pdfs:
         # Filter annotations for the current PDF

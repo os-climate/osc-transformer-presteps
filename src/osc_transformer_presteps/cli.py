@@ -5,9 +5,9 @@
 import typer
 
 # Bundled modules
-from src.osc_transformer_presteps.run_local_extraction import app as extraction
-from src.osc_transformer_presteps.run_local_relevance_curation import app as curation
-from src.osc_transformer_presteps.run_local_kpi_curation import kpi_curator_app
+from osc_transformer_presteps.run_local_extraction import app as extraction
+from osc_transformer_presteps.run_local_relevance_curation import app as curation
+from osc_transformer_presteps.run_local_kpi_curation import kpi_curator_app
 
 # Define command structure with typer module
 app = typer.Typer(no_args_is_help=True)

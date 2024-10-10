@@ -1,4 +1,5 @@
-'''File to locally run KPI-DETECTION module.'''
+"""File to locally run KPI-DETECTION module."""
+
 import typer
 from osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_main import (
     run_kpi_curator,

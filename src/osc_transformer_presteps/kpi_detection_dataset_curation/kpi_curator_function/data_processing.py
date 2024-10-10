@@ -501,7 +501,7 @@ def find_answer_start(answer: str, par: str) -> list[int]:
     """
     _logger.debug("Finding answer start indices.")
 
-    answer = "".join(["\." if c == "." else c for c in answer])
+    answer = "".join([r"\." if c == "." else c for c in answer])
 
     # Avoid matching numeric values like '0' to '2016'
     if answer.isnumeric():

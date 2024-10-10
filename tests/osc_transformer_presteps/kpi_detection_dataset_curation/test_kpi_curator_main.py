@@ -1,7 +1,8 @@
 import pytest
 from unittest.mock import patch
-from src.osc_transformer_presteps.kpi_curator_main import run_kpi_curator
+from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_main import run_kpi_curator
 import os
+from datetime import date
 import pandas as pd
 
 

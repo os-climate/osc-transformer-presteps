@@ -251,7 +251,7 @@ def filter_relevant_examples(
             neg_examples_df = neg_examples_df[
                 ~(
                     (neg_examples_df["question"] == q)
-                    & (neg_examples_df["answer"].map(lambda x: clean_text(a) in x))
+                    & (neg_examples_df["answer"].map(lambda x, a=a: clean_text(a) in x))
                 )
             ]
 

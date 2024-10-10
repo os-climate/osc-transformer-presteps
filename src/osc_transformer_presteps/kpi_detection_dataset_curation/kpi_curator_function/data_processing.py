@@ -1,4 +1,5 @@
-'''Functions for Data Processing.'''
+"""Functions for Data Processing."""
+
 import os
 import re
 import ast
@@ -384,7 +385,7 @@ def split_multi_paragraph(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
-    """ Clean the DF.
+    """Clean the DF.
 
     Clean the DataFrame by mapping KPI IDs to questions, dropping invalid entries,
     and formatting relevant paragraphs.
@@ -438,7 +439,7 @@ def clean(df: pd.DataFrame, kpi_mapping_file: str) -> pd.DataFrame:
 
 def clean_text(text: str) -> str:
     """Clean the Text.
-    
+
     Clean the input text by removing unusual quotes, excessive whitespace,
     special characters, and converting to lowercase.
 

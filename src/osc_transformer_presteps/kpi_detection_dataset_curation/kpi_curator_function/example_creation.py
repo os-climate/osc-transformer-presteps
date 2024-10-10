@@ -1,4 +1,5 @@
-''' Functions to make examples.'''
+"""Functions to make examples."""
+
 import logging
 import pandas as pd
 from data_processing import clean_text, find_answer_start, find_closest_paragraph
@@ -198,8 +199,8 @@ def create_answerable(
 def filter_relevant_examples(
     annotation_df: pd.DataFrame, relevant_df: pd.DataFrame
 ) -> pd.DataFrame:
-    """ Filter relevant examples.
-    
+    """Filter relevant examples.
+
     Filter relevant examples from the relevant dataframe that are mentioned in the annotation files.
     For each source PDF, it excludes examples whose pages and questions are already annotated in the annotation file.
 
@@ -268,7 +269,7 @@ def create_unanswerable(
     annotation_df: pd.DataFrame, relevant_text_path: str
 ) -> pd.DataFrame:
     """Create unanswerable examples.
-    
+
     Create unanswerable examples by generating negative samples from pairs of KPI questions and paragraphs
     that are classified as relevant by the relevance detector but are not present in the annotation files.
 

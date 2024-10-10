@@ -1,6 +1,8 @@
 import pandas as pd
 from unittest.mock import patch
-from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.curation import curate
+from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.curation import (
+    curate,
+)
 
 
 @patch(

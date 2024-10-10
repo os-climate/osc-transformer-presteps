@@ -1,4 +1,5 @@
 """Curator code for KPI Detection Module"""
+
 import logging
 import json
 import os
@@ -20,7 +21,7 @@ def curate(
     create_unanswerable_flag: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Curate the dataset by combining answerable and unanswerable examples for training and validation.
-    
+
     The function processes annotated data and relevant text, extracting answerable/unanswerable examples,
     and splits the final dataset into training and validation sets.
 

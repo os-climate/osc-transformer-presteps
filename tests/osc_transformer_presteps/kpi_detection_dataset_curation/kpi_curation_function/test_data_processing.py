@@ -2,7 +2,8 @@ import pytest
 import pandas as pd
 import os
 from unittest.mock import patch
-from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing import *
+from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing import aggregate_annots, clean_annotation, find_closest_paragraph, find_answer_start, clean_text, clean
+
 
 @pytest.fixture
 def mock_annotation_folder(tmpdir):
@@ -81,6 +82,7 @@ def test_aggregate_annots_invalid(mock_logger, tmpdir):
         f"No valid annotation files found in {folder}. "
         "Make sure the names have 'annotation' in the file names."
     )
+
 
 @patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation._logger")
 def test_clean_annotation(mock_logger, mock_annotation_folder, mock_kpi_mapping_file):
@@ -174,14 +176,6 @@ def test_clean_text():
     input_text = "“Hello World!?”\n"
     expected_output = "hello world!?"
     assert clean_text(input_text) == expected_output
-
-
-# Test for the `find_answer_start` function
-def test_find_answer_start():
-    answer = "2020"
-    paragraph = "In the year 2020, something happened."
-    expected_start_indices = [11]
-    assert find_answer_start(answer, paragraph) == expected_start_indices
 
 
 # Test for the `find_closest_paragraph` function

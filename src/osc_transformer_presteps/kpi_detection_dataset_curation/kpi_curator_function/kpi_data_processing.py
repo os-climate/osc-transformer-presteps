@@ -7,7 +7,9 @@ import logging
 import pandas as pd
 import numpy as np
 from fuzzywuzzy import fuzz
-from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_utils import load_kpi_mapping
+from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_utils import (
+    load_kpi_mapping,
+)
 
 _logger = logging.getLogger(__name__)
 

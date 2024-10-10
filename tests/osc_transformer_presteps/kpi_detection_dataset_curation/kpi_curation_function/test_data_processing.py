@@ -204,6 +204,7 @@ def test_find_closest_paragraph():
 
     assert closest_paragraph == "Paragraph 1 about KPI"
 
+
 # Test for the `find_answer_start` function
 def test_find_answer_start():
     answer = "2020"

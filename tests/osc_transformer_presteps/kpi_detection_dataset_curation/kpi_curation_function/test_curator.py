@@ -1,14 +1,20 @@
-import pytest
 import pandas as pd
-import os
 from unittest.mock import patch
 from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.curator import *
 
 
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.read_agg")
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.clean")
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation.create_answerable")
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation.create_unanswerable")
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.read_agg"
+)
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.clean"
+)
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation.create_answerable"
+)
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation.create_unanswerable"
+)
 def test_curate(
     mock_json_load,
     mock_listdir,

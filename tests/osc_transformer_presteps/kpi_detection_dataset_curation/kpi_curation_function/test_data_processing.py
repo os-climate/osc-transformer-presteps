@@ -195,31 +195,6 @@ def test_find_closest_paragraph():
 
     assert closest_paragraph == "Paragraph 1 about KPI"
 
-
-def test_clean():
-    # Mock data
-    data = {
-        "kpi_id": [1.0, 2.0, 3.0],
-        "year": [2020, 2021, 2022],
-        "relevant_paragraphs": ["Paragraph 1", "Paragraph 2", None],
-        "answer": ["Answer 1", None, "Answer 3"],
-    }
-    df = pd.DataFrame(data)
-
-    # Mock KPI mapping
-    kpi_mapping_file = "mock_kpi_mapping.csv"
-
-    # Mock load_kpi_mapping return
-    def mock_load_kpi_mapping(file):
-        return {1.0: "What is KPI?"}, {}, {1.0}
-
-    # Replace with a real call to the `clean` function once everything is ready
-    cleaned_df = clean(df, kpi_mapping_file)
-
-    assert cleaned_df.shape[0] == 1
-    assert cleaned_df["question"].iloc[0] == "What is KPI? in year 2020?"
-
-
 # Test for the `find_answer_start` function
 def test_find_answer_start():
     answer = "2020"

@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 import os
 from unittest.mock import patch
-from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing import (
+from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing import (
     aggregate_annots,
     clean_annotation,
     find_closest_paragraph,

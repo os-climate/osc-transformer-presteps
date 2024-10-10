@@ -4,7 +4,7 @@ import logging
 import json
 import os
 import pandas as pd
-from data_processing import read_agg, clean
+from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing import read_agg, clean
 from example_creation import create_answerable, create_unanswerable
 
 _logger = logging.getLogger(__name__)

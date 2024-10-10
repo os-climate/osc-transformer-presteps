@@ -3,7 +3,7 @@
 import os
 import logging
 from datetime import date, datetime
-from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.curation import (
+from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_curation import (
     curate,
 )
 

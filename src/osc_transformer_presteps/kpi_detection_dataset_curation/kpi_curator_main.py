@@ -1,3 +1,4 @@
+'''KPI-CURATOR-MAIN file.'''
 import os
 import logging
 from datetime import date, datetime

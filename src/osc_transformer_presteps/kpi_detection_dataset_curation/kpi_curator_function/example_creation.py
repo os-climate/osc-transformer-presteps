@@ -1,6 +1,5 @@
 import logging
 import pandas as pd
-import numpy as np
 from data_processing import clean_text, find_answer_start, find_closest_paragraph
 
 _logger = logging.getLogger(__name__)

@@ -1,13 +1,17 @@
-import pytest
 import pandas as pd
-import os
 from unittest.mock import patch
 from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.example_creation import *
 
 
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.clean_text")
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.find_closest_paragraph")
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.find_answer_start")
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.clean_text"
+)
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.find_closest_paragraph"
+)
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.find_answer_start"
+)
 def test_return_full_paragraph(
     mock_find_answer_start, mock_find_closest_paragraph, mock_clean_text
 ):
@@ -37,8 +41,12 @@ def test_return_full_paragraph(
     assert ans_start == [10]
 
 
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.clean_text")
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.example_creation.find_answer_start")
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.clean_text"
+)
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.example_creation.find_answer_start"
+)
 def test_find_extra_answerable(mock_find_answer_start, mock_clean_text):
     # Mocking the clean_text function
     mock_clean_text.side_effect = lambda x: x
@@ -65,8 +73,12 @@ def test_find_extra_answerable(mock_find_answer_start, mock_clean_text):
     assert new_positive_df.iloc[0]["source_file"] == "sample_file"
 
 
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.example_creation.return_full_paragraph")
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.example_creation.find_extra_answerable")
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.example_creation.return_full_paragraph"
+)
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.example_creation.find_extra_answerable"
+)
 def test_create_answerable(mock_find_extra_answerable, mock_return_full_paragraph):
     # Mocking return_full_paragraph function
     mock_return_full_paragraph.side_effect = lambda r, json_dict: (
@@ -104,6 +116,7 @@ def test_create_answerable(mock_find_extra_answerable, mock_return_full_paragrap
     assert len(pos_df) == 2
     assert "extra paragraph" in pos_df["paragraph"].values
 
+
 def test_filter_relevant_examples():
     # Input data
     annotation_df = pd.DataFrame(
@@ -135,8 +148,12 @@ def test_filter_relevant_examples():
     assert filtered_df.iloc[0]["paragraph"] == "relevant paragraph"
 
 
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.clean_text")
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.example_creation.filter_relevant_examples")
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.clean_text"
+)
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.example_creation.filter_relevant_examples"
+)
 def test_create_unanswerable(
     mock_filter_relevant_examples, mock_clean_text, mock_read_excel
 ):

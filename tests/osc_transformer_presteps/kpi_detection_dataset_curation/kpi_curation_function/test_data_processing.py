@@ -46,7 +46,9 @@ def mock_kpi_mapping_file(tmpdir):
     return str(file)
 
 
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation._logger")
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation._logger"
+)
 def test_aggregate_annots(mock_logger, mock_annotation_folder):
     """Test the aggregate_annots function with a valid annotation folder."""
 
@@ -64,7 +66,9 @@ def test_aggregate_annots(mock_logger, mock_annotation_folder):
     mock_logger.info.assert_called_with("Aggregating 1 files.")
 
 
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation._logger")
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation._logger"
+)
 def test_aggregate_annots_invalid(mock_logger, tmpdir):
     """Test aggregate_annots with no valid files."""
 
@@ -114,7 +118,9 @@ def test_clean_annotation(mock_logger, mock_annotation_folder, mock_kpi_mapping_
     os.remove("aggregated_annotation.xlsx")
 
 
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation._logger")
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.data_processing.example_creation._logger"
+)
 def test_clean_annotation_invalid(
     mock_logger, mock_annotation_folder, mock_kpi_mapping_file
 ):
@@ -189,6 +195,7 @@ def test_find_closest_paragraph():
 
     assert closest_paragraph == "Paragraph 1 about KPI"
 
+
 def test_clean():
     # Mock data
     data = {
@@ -211,6 +218,7 @@ def test_clean():
 
     assert cleaned_df.shape[0] == 1
     assert cleaned_df["question"].iloc[0] == "What is KPI? in year 2020?"
+
 
 # Test for the `find_answer_start` function
 def test_find_answer_start():

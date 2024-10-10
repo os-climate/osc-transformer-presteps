@@ -1,10 +1,10 @@
-import pytest
-import pandas as pd
-import os
 from unittest.mock import patch
 from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.utils import *
 
-@patch("src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.utils._logger")
+
+@patch(
+    "src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.utils._logger"
+)
 def test_load_kpi_mapping(mock_logger, mock_kpi_mapping_file):
     """Test the load_kpi_mapping function with a valid KPI mapping file."""
 

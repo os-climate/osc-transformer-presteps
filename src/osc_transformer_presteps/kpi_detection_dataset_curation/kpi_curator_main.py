@@ -1,7 +1,7 @@
 import os
 import logging
 from datetime import date, datetime
-from .kpi_curator_functions import curate
+from kpi_curator_function.curator import curate
 
 log_dir = "logs"
 if not os.path.exists(log_dir):

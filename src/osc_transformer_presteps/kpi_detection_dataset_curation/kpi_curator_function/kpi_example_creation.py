@@ -2,7 +2,11 @@
 
 import logging
 import pandas as pd
-from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing import clean_text, find_answer_start, find_closest_paragraph
+from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing import (
+    clean_text,
+    find_answer_start,
+    find_closest_paragraph,
+)
 
 _logger = logging.getLogger(__name__)
 

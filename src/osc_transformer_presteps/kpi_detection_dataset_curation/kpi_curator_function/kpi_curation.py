@@ -4,11 +4,11 @@ import logging
 import json
 import os
 import pandas as pd
-from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing import (
+from osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing import (
     read_agg,
     clean,
 )
-from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_example_creation import (
+from osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_example_creation import (
     create_answerable,
     create_unanswerable,
 )

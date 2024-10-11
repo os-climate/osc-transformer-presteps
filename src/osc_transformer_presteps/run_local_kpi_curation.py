@@ -50,12 +50,14 @@ def kpi_curation(
     ),
     find_new_answerable: bool = typer.Option(
         True,
-        help="Whether to find new answerable KPIs (Yes or No). Yes by default.",
+        "--find-new-answerable/--no-find-new-answerable",
+        help="Whether to find new answerable KPIs. Default is True.",
         show_default=True,
     ),
     create_unanswerable: bool = typer.Option(
         True,
-        help="Whether to create unanswerable KPIs (Yes or No). Yes by default.",
+        "--create-unanswerable/--no-create-unanswerable",
+        help="Whether to create unanswerable KPIs. Default is True.",
         show_default=True,
     ),
 ):

@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "lint", "test", "tox"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:3ff4c426e627901c175ff71c30876af49e18a03c6a3274e458d755b01a50f5b7"
+content_hash = "sha256:596456538c873a20b32a9019941b8828f804ae0159c176381ff2c99bddded8f6"
 
 [[metadata.targets]]
 requires_python = ">=3.9,<3.9.7||>3.9.7"
@@ -531,6 +531,16 @@ dependencies = [
 files = [
     {file = "findpython-0.6.1-py3-none-any.whl", hash = "sha256:1fb4d709205de185b0561900267dfff64a841c910fe28d6038b2394ff925a81a"},
     {file = "findpython-0.6.1.tar.gz", hash = "sha256:56e52b409a92bcbd495cf981c85acf137f3b3e51cc769b46eba219bb1ab7533c"},
+]
+
+[[package]]
+name = "fuzzywuzzy"
+version = "0.18.0"
+summary = "Fuzzy string matching in python"
+groups = ["default"]
+files = [
+    {file = "fuzzywuzzy-0.18.0-py2.py3-none-any.whl", hash = "sha256:928244b28db720d1e0ee7587acf660ea49d7e4c632569cad4f1cd7e68a5f0993"},
+    {file = "fuzzywuzzy-0.18.0.tar.gz", hash = "sha256:45016e92264780e58972dca1b3d939ac864b78437422beecebb3095f8efd00e8"},
 ]
 
 [[package]]

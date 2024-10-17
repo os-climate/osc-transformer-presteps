@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing &#8212; osc-transformer-presteps unknown documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=0ca6144b" />
+    <script src="../../../../_static/documentation_options.js?v=3f1b9271"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Functions for Data Processing.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="kn">import</span> <span class="n">fuzz</span>
+<span class="kn">from</span> <span class="nn">osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">load_kpi_mapping</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">COLUMNS_TO_READ</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;company&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;source_file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;source_page&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;year&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;answer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data_type&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">COL_ORDER</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;company&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;source_file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;source_page&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;year&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;answer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data_type&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;annotator&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sector&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="aggregate_annots">
+<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.html#osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing.aggregate_annots">[docs]</a>
+<span class="k">def</span> <span class="nf">aggregate_annots</span><span class="p">(</span><span class="n">annotation_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aggregate Excel files containing annotations from a specified folder.</span>
+
+<span class="sd">    This function looks for Excel files with &#39;annotation&#39; in their names,</span>
+<span class="sd">    reads them, ensures required columns are present, and aggregates the data</span>
+<span class="sd">    into a single DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        annotation_folder (str): Path to the folder containing the</span>
+<span class="sd">        annotation Excel files.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A DataFrame containing the aggregated data from</span>
+<span class="sd">        the annotation files. Returns an empty DataFrame</span>
+<span class="sd">        if no valid files are found.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xlsxs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">f</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">annotation_folder</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xlsx&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;annotation&quot;</span> <span class="ow">in</span> <span class="n">f</span>
+    <span class="p">]</span>
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">xlsxs</span><span class="p">:</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">annotation_folder</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;data_ex_in_xls&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Ensure required columns exist</span>
+            <span class="n">missing_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">COLUMNS_TO_READ</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">missing_columns</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> is missing required columns: </span><span class="si">{</span><span class="n">missing_columns</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="c1"># Handle &#39;sector&#39;/&#39;Sector&#39; columns</span>
+            <span class="k">if</span> <span class="s2">&quot;Sector&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Sector&quot;</span><span class="p">:</span> <span class="s2">&quot;sector&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">columns_to_read</span> <span class="o">=</span> <span class="n">COLUMNS_TO_READ</span> <span class="o">+</span> <span class="p">(</span>
+                <span class="p">[</span><span class="s2">&quot;sector&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;sector&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="p">[]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Add &#39;annotator&#39; column if it doesn&#39;t exist</span>
+            <span class="k">if</span> <span class="s2">&quot;annotator&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="s2">&quot;annotator&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+            <span class="n">columns_to_read</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;annotator&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Append filtered DataFrame to list</span>
+            <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">columns_to_read</span><span class="p">])</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing file </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>  <span class="c1"># Skip to the next file if there&#39;s an error</span>
+
+    <span class="c1"># Log information about the aggregation process</span>
+    <span class="k">if</span> <span class="n">dfs</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Aggregating </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span><span class="si">}</span><span class="s2"> files.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;No valid annotation files found in </span><span class="si">{</span><span class="n">annotation_folder</span><span class="si">}</span><span class="s2">. &quot;</span>
+        <span class="s2">&quot;Make sure the names have &#39;annotation&#39; in the file names.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>  <span class="c1"># Return empty DataFrame if no files are processed</span></div>
+
+
+
+<div class="viewcode-block" id="read_agg">
+<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.html#osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing.read_agg">[docs]</a>
+<span class="k">def</span> <span class="nf">read_agg</span><span class="p">(</span>
+    <span class="n">agg_annotation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">annotation_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kpi_mapping_file</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an annotation file.</span>
+
+<span class="sd">    Read the aggregated annotation file. If it doesn&#39;t exist, create it from the specified annotation folder.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        agg_annotation (str): Path to the aggregated annotation file.</span>
+<span class="sd">        annotation_folder (str): Path to the folder containing the annotation files.</span>
+<span class="sd">        kpi_mapping_file (str): Path to the KPI mapping CSV file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The DataFrame containing aggregated annotation data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">agg_annotation</span><span class="p">):</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> not available, will create it from the annotation folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">agg_annotation</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">aggregate_annots</span><span class="p">(</span><span class="n">annotation_folder</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">clean_annotation</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">kpi_mapping_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> found, loading the data.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">agg_annotation</span><span class="p">))</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">agg_annotation</span><span class="p">)</span>
+
+        <span class="c1"># Ensure columns are ordered according to COL_ORDER</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">COL_ORDER</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="clean_annotation">
+<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.html#osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing.clean_annotation">[docs]</a>
+<span class="k">def</span> <span class="nf">clean_annotation</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">kpi_mapping_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean the given DataFrame and saves the cleaned data to a specified path.</span>
+
+<span class="sd">    The cleaning process involves:</span>
+<span class="sd">        1. Dropping all rows with NaN values.</span>
+<span class="sd">        2. Dropping rows with NaN values in specified columns.</span>
+<span class="sd">        3. Removing specified companies.</span>
+<span class="sd">        4. Cleaning the &#39;source_file&#39; column.</span>
+<span class="sd">        5. Cleaning the &#39;data_type&#39; column.</span>
+<span class="sd">        6. Cleaning the &#39;source_page&#39; column.</span>
+<span class="sd">        7. Removing examples with incorrect (kpi, data_type) pairs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pd.DataFrame): The DataFrame to clean.</span>
+<span class="sd">        kpi_mapping_file (str): Path to the KPI mapping CSV file.</span>
+<span class="sd">        exclude (list[str], optional): List of companies to exclude from the DataFrame. Defaults to [&quot;CEZ&quot;].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The cleaned DataFrame.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CEZ&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Drop all rows with NaN values</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Drop rows with NaN for specific columns</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">how</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">,</span>
+        <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;company&quot;</span><span class="p">,</span> <span class="s2">&quot;source_file&quot;</span><span class="p">,</span> <span class="s2">&quot;source_page&quot;</span><span class="p">,</span> <span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">],</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Remove specified companies</span>
+    <span class="k">if</span> <span class="n">exclude</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">exclude</span><span class="p">)]</span>
+
+    <span class="c1"># Clean &#39;source_file&#39; column</span>
+    <span class="k">def</span> <span class="nf">get_pdf_name_right</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;,pdf&quot;</span><span class="p">):</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,pdf&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span>
+
+        <span class="k">return</span> <span class="n">filename</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_file&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">get_pdf_name_right</span><span class="p">)</span>
+
+    <span class="c1"># Clean &#39;data_type&#39; column</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">)</span>
+
+    <span class="c1"># Clean &#39;source_page&#39; column</span>
+    <span class="k">def</span> <span class="nf">clean_page</span><span class="p">(</span><span class="n">sp</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;[&quot;</span> <span class="ow">or</span> <span class="n">sp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;]&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sp</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">clean_page</span><span class="p">)</span>
+    <span class="n">invalid_source_page</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">][</span><span class="n">temp</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">invalid_source_page</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;Has invalid source_page format: </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2"> such examples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">invalid_source_page</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_source_page</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Load KPI mapping</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">kpi_category</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_kpi_mapping</span><span class="p">(</span><span class="n">kpi_mapping_file</span><span class="p">)</span>
+
+    <span class="c1"># Remove examples with incorrect (kpi, data_type) pairs</span>
+    <span class="k">def</span> <span class="nf">clean_id</span><span class="p">(</span><span class="n">r</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">kpi_id</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">kpi_id</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">kpi_category</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">kpi_id</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="n">correct_id_bool</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span> <span class="s2">&quot;data_type&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">clean_id</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">correct_id_bool</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Log the number of dropped examples</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">correct_id_bool</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Dropped </span><span class="si">{}</span><span class="s2"> examples due to incorrect kpi-data_type pair&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">save_path</span> <span class="o">=</span> <span class="s2">&quot;aggregated_annotation.xlsx&quot;</span>
+    <span class="c1"># Save the cleaned DataFrame</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Aggregated annotation file is created and saved at location </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">save_path</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="clean_paragraph">
+<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.html#osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing.clean_paragraph">[docs]</a>
+<span class="k">def</span> <span class="nf">clean_paragraph</span><span class="p">(</span><span class="n">r</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean the relevant_paragraphs column.</span>
+
+<span class="sd">    This function takes a string representation of relevant paragraphs, fixes any issues with</span>
+<span class="sd">    brackets or parentheses, and splits the paragraphs into a list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        r (pd.Series): A pandas Series row containing the relevant paragraphs as a string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[str] | None: A list of cleaned paragraphs or None if the input is not valid.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Remove any starting or trailing white spaces</span>
+    <span class="n">strp</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="c1"># Attempt to fix issues with brackets and parentheses</span>
+    <span class="k">if</span> <span class="n">strp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;{&quot;</span> <span class="ow">or</span> <span class="n">strp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;]&quot;</span><span class="p">:</span>
+        <span class="n">strp</span> <span class="o">=</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="n">strp</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">elif</span> <span class="n">strp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;}&quot;</span> <span class="ow">or</span> <span class="n">strp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;[&quot;</span><span class="p">:</span>
+        <span class="n">strp</span> <span class="o">=</span> <span class="n">strp</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">strp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">strp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="s2">&quot;[&quot;</span> <span class="ow">or</span> <span class="n">e</span> <span class="o">!=</span> <span class="s2">&quot;]&quot;</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Input string is not a valid list format: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">strp</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Return None if unable to fix</span>
+
+    <span class="c1"># Deal with multiple paragraphs</span>
+    <span class="n">strp</span> <span class="o">=</span> <span class="n">strp</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># Remove the outer brackets</span>
+    <span class="n">first_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="s1">&#39;&quot;, &quot;&#39;</span><span class="p">,</span> <span class="n">strp</span><span class="p">))</span>
+    <span class="n">second_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="s1">&#39;&quot;,&quot;&#39;</span><span class="p">,</span> <span class="n">strp</span><span class="p">))</span>
+
+    <span class="c1"># Determine how to split the paragraphs based on the types found</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">first_type</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">second_type</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">strp</span><span class="p">]</span>  <span class="c1"># Return as a single paragraph</span>
+
+    <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">first_type</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">second_type</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">first_type</span><span class="p">:</span>
+            <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strp</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()])</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">+</span> <span class="mi">4</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strp</span><span class="p">[</span><span class="n">start</span><span class="p">:])</span>
+        <span class="k">return</span> <span class="n">temp</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">first_type</span> <span class="ow">and</span> <span class="n">second_type</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">second_type</span><span class="p">:</span>
+            <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strp</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()])</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">+</span> <span class="mi">3</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strp</span><span class="p">[</span><span class="n">start</span><span class="p">:])</span>
+        <span class="k">return</span> <span class="n">temp</span>
+
+    <span class="c1"># Handle a combination of both types</span>
+    <span class="n">track1</span><span class="p">,</span> <span class="n">track2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">track1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_type</span><span class="p">)</span> <span class="ow">or</span> <span class="n">track2</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">second_type</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">track1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_type</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">second_type</span><span class="p">[</span><span class="n">track2</span><span class="p">:]:</span>
+                <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strp</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()])</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">+</span> <span class="mi">3</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">track2</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">second_type</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">first_type</span><span class="p">[</span><span class="n">track1</span><span class="p">:]:</span>
+                <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strp</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()])</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">+</span> <span class="mi">4</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">first_type</span><span class="p">[</span><span class="n">track1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">second_type</span><span class="p">[</span><span class="n">track2</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">():</span>
+            <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strp</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">first_type</span><span class="p">[</span><span class="n">track1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()])</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">first_type</span><span class="p">[</span><span class="n">track1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">+</span> <span class="mi">4</span>
+            <span class="n">track1</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strp</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">second_type</span><span class="p">[</span><span class="n">track2</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()])</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">second_type</span><span class="p">[</span><span class="n">track2</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">+</span> <span class="mi">3</span>
+            <span class="n">track2</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">temp</span></div>
+
+
+
+<div class="viewcode-block" id="split_multi_paragraph">
+<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.html#osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing.split_multi_paragraph">[docs]</a>
+<span class="k">def</span> <span class="nf">split_multi_paragraph</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split DataFrame entries with multiple relevant paragraphs into separate rows.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pd.DataFrame): DataFrame containing relevant paragraphs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A new DataFrame with split relevant paragraphs.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting to split multi-paragraph entries.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Selecting rows where &quot;relevant_paragraphs&quot; has exactly 1 paragraph</span>
+    <span class="n">df_single</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># Use .copy() to avoid modifying the slice</span>
+    <span class="n">df_single</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;source_page&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_single</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">df_single</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_single</span><span class="p">[</span><span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Selecting rows where &quot;relevant_paragraphs&quot; has more than 1 paragraph</span>
+    <span class="n">df_multi</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Create an empty list to store the new rows</span>
+    <span class="n">new_multi</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Ensure col_order contains the necessary columns</span>
+    <span class="n">col_order</span> <span class="o">=</span> <span class="n">COL_ORDER</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]</span>
+    <span class="n">df_multi</span> <span class="o">=</span> <span class="n">df_multi</span><span class="p">[</span><span class="n">col_order</span><span class="p">]</span>
+
+    <span class="c1"># Iterate over the rows of df_multi</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_multi</span><span class="o">.</span><span class="n">itertuples</span><span class="p">():</span>
+        <span class="n">paragraph_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># Number of paragraphs in the &quot;relevant_paragraphs&quot; column</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">paragraph_count</span><span class="p">):</span>
+            <span class="n">new_row</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>  <span class="c1"># Convert row to a list for modification</span>
+            <span class="n">new_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># Set the relevant paragraph</span>
+            <span class="n">new_row</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">8</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># Set the source page</span>
+            <span class="n">new_multi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_row</span><span class="p">)</span>
+
+    <span class="c1"># Convert the new_multi list to a DataFrame with the same columns as df_multi</span>
+    <span class="n">df_multi</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">new_multi</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">df_multi</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="c1"># Concatenate df_single and df_multi and reset the index</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_single</span><span class="p">,</span> <span class="n">df_multi</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Completed splitting multi-paragraph entries.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="clean">
+<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.html#osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing.clean">[docs]</a>
+<span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">kpi_mapping_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean the DF.</span>
+
+<span class="sd">    Clean the DataFrame by mapping KPI IDs to questions, dropping invalid entries,</span>
+<span class="sd">    and formatting relevant paragraphs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pd.DataFrame): The DataFrame to clean.</span>
+<span class="sd">        kpi_mapping_file (str): Path to the KPI mapping CSV file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The cleaned DataFrame.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting to clean the DataFrame.&quot;</span><span class="p">)</span>
+
+    <span class="n">kpi_mapping</span><span class="p">,</span> <span class="n">kpi_category</span><span class="p">,</span> <span class="n">add_year</span> <span class="o">=</span> <span class="n">load_kpi_mapping</span><span class="p">(</span><span class="n">kpi_mapping_file</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">map_kpi</span><span class="p">(</span><span class="n">r</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map KPI ID to question.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">question</span> <span class="o">=</span> <span class="n">kpi_mapping</span><span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">])]</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">question</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">question</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]))</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">year</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">])</span> <span class="ow">in</span> <span class="n">add_year</span><span class="p">:</span>
+                <span class="n">front</span> <span class="o">=</span> <span class="n">question</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">question</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">front</span><span class="si">}</span><span class="s2"> in year </span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">?&quot;</span>
+        <span class="k">return</span> <span class="n">question</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">map_kpi</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span>
+
+    <span class="c1"># Clean answer format</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+    <span class="c1"># Clean relevant paragraphs</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">clean_paragraph</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">split_multi_paragraph</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;DataFrame cleaning completed.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="clean_text">
+<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.html#osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing.clean_text">[docs]</a>
+<span class="k">def</span> <span class="nf">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean the Text.</span>
+
+<span class="sd">    Clean the input text by removing unusual quotes, excessive whitespace,</span>
+<span class="sd">    special characters, and converting to lowercase.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text (str): The text to be cleaned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The cleaned text.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cleaning text.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Substitute unusual quotes at the start and end of the string</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?&lt;=\[)“&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;”(?=\])&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;“|”&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\n&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s{2,}&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+    <span class="c1"># Replace special regex characters</span>
+    <span class="n">special_regex_char</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;(&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;^&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;$&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;[&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;]&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;{&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;}&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">special_regex_char</span> <span class="k">else</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="p">])</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="c1"># Remove consecutive dots</span>
+    <span class="n">consecutive_dots</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\.{2,}&quot;</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">consecutive_dots</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Text cleaning completed.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+
+<div class="viewcode-block" id="find_answer_start">
+<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.html#osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing.find_answer_start">[docs]</a>
+<span class="k">def</span> <span class="nf">find_answer_start</span><span class="p">(</span><span class="n">answer</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the starting indices of the answer in the provided paragraph.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        answer (str): The answer to search for.</span>
+<span class="sd">        par (str): The paragraph in which to search for the answer.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[int]: A list of starting indices where the answer is found in the paragraph.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Finding answer start indices.&quot;</span><span class="p">)</span>
+
+    <span class="n">answer</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">r</span><span class="s2">&quot;\.&quot;</span> <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span> <span class="k">else</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">answer</span><span class="p">])</span>
+
+    <span class="c1"># Avoid matching numeric values like &#39;0&#39; to &#39;2016&#39;</span>
+    <span class="k">if</span> <span class="n">answer</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
+        <span class="n">pat1</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[^0-9]</span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">pat2</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">[^0-9]&quot;</span>
+        <span class="n">matches1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+        <span class="n">matches2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">pat2</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+        <span class="n">ans_start_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">matches1</span><span class="p">]</span>
+        <span class="n">ans_start_2</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">matches2</span><span class="p">]</span>
+        <span class="n">ans_start</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ans_start_1</span> <span class="o">+</span> <span class="n">ans_start_2</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pat</span> <span class="o">=</span> <span class="n">answer</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">pat</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+        <span class="n">ans_start</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">]</span>
+
+    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found starting indices: </span><span class="si">{</span><span class="n">ans_start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ans_start</span></div>
+
+
+
+<div class="viewcode-block" id="find_closest_paragraph">
+<a class="viewcode-back" href="../../../../api/osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.html#osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing.find_closest_paragraph">[docs]</a>
+<span class="k">def</span> <span class="nf">find_closest_paragraph</span><span class="p">(</span>
+    <span class="n">pars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">clean_rel_par</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">clean_answer</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the closest matching paragraph to the annotated relevant paragraph.</span>
+
+<span class="sd">    If the exact paragraph match is not found, use fuzzy matching to find the closest</span>
+<span class="sd">    paragraph that contains the answer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pars (list[str]): A list of paragraphs to search within.</span>
+<span class="sd">        clean_rel_par (str): Annotated clean relevant paragraph.</span>
+<span class="sd">        clean_answer (str): The clean answer to search for.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The closest full paragraph or the original annotated relevant paragraph if no better match is found.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding closest paragraph.&quot;</span><span class="p">)</span>
+
+    <span class="n">clean_pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">clean_text</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pars</span><span class="p">]</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Try to find an exact match with the annotated relevant paragraph</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">clean_pars</span><span class="p">:</span>
+        <span class="n">sentence_start</span> <span class="o">=</span> <span class="n">find_answer_start</span><span class="p">(</span><span class="n">clean_rel_par</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence_start</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">clean_rel_par</span> <span class="o">=</span> <span class="n">p</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Exact match found for relevant paragraph.&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+
+    <span class="c1"># If no exact match, use fuzzy matching to find the closest paragraph</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Exact match not found, performing fuzzy matching.&quot;</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">fuzz</span><span class="o">.</span><span class="n">partial_ratio</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">clean_rel_par</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">clean_pars</span><span class="p">]</span>
+        <span class="n">max_par</span> <span class="o">=</span> <span class="n">clean_pars</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)]</span>
+        <span class="n">ans_start</span> <span class="o">=</span> <span class="n">find_answer_start</span><span class="p">(</span><span class="n">clean_answer</span><span class="p">,</span> <span class="n">max_par</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ans_start</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Closest paragraph with the answer found using fuzzy matching.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">clean_rel_par</span> <span class="o">=</span> <span class="n">max_par</span>
+
+    <span class="k">return</span> <span class="n">clean_rel_par</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">osc-transformer-presteps</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/modules.html">Module Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023, Matthew Watkins.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

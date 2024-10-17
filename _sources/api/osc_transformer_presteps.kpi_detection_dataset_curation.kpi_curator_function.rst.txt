@@ -1,0 +1,45 @@
+osc\_transformer\_presteps.kpi\_detection\_dataset\_curation.kpi\_curator\_function package
+===========================================================================================
+
+Submodules
+----------
+
+osc\_transformer\_presteps.kpi\_detection\_dataset\_curation.kpi\_curator\_function.kpi\_curation module
+--------------------------------------------------------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_curation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+osc\_transformer\_presteps.kpi\_detection\_dataset\_curation.kpi\_curator\_function.kpi\_data\_processing module
+----------------------------------------------------------------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+osc\_transformer\_presteps.kpi\_detection\_dataset\_curation.kpi\_curator\_function.kpi\_example\_creation module
+-----------------------------------------------------------------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_example_creation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+osc\_transformer\_presteps.kpi\_detection\_dataset\_curation.kpi\_curator\_function.kpi\_utils module
+-----------------------------------------------------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function
+   :members:
+   :undoc-members:
+   :show-inheritance:

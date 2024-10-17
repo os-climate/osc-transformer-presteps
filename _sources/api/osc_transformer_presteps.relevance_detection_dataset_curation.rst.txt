@@ -1,0 +1,21 @@
+osc\_transformer\_presteps.relevance\_detection\_dataset\_curation package
+==========================================================================
+
+Submodules
+----------
+
+osc\_transformer\_presteps.relevance\_detection\_dataset\_curation.curator module
+---------------------------------------------------------------------------------
+
+.. automodule:: osc_transformer_presteps.relevance_detection_dataset_curation.curator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: osc_transformer_presteps.relevance_detection_dataset_curation
+   :members:
+   :undoc-members:
+   :show-inheritance:

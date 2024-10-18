@@ -1,52 +1,17 @@
 """KPI-CURATOR-MAIN file."""
 
-import os
+from datetime import date
+from pathlib import Path
 import logging
-from datetime import date, datetime
+from osc_transformer_presteps.utils import (
+    specify_root_logger,
+    set_log_folder,
+    log_dict,
+    LogLevel,
+)
 from osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_curation import (
     curate,
 )
-
-log_dir = "logs"
-if not os.path.exists(log_dir):
-    os.makedirs(log_dir)
-
-# Define log file name
-log_file = os.path.join(
-    log_dir, f"app_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
-)
-
-
-# Set up logging configuration
-logging.basicConfig(
-    filename=log_file,
-    level=logging.DEBUG,  # Set to DEBUG to capture all messages
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    encoding="utf-8",
-)
-
-# Create logger
-_logger = logging.getLogger()
-
-# Create console handler for info messages
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)  # Log only info messages to console
-console_handler.setFormatter(
-    logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-)
-
-# Add console handler to the logger
-_logger.addHandler(console_handler)
-
-# Optional: If you want to add a file handler for debug and warning messages
-file_handler = logging.FileHandler(log_file)
-file_handler.setLevel(logging.DEBUG)  # Log all messages to file
-file_handler.setFormatter(
-    logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-)
-
-# Add file handler to the logger
-_logger.addHandler(file_handler)
 
 
 def run_kpi_curator(
@@ -78,6 +43,15 @@ def run_kpi_curator(
 
     """
     try:
+        # Set up log folder and initialize logger
+        cwd = Path.cwd()
+        logs_folder_path = set_log_folder(cwd, "logs")
+        log_level = "info"
+        specify_root_logger(
+            log_level=log_dict[LogLevel(log_level)], logs_folder=logs_folder_path
+        )
+        _logger = logging.getLogger(__name__)
+
         # Log the start of the process
         _logger.info("Starting KPI curation process")
 
@@ -93,11 +67,12 @@ def run_kpi_curator(
             create_unanswerable,
         )
 
+        # Format current date for file naming
         da = date.today().strftime("%d-%m-%Y")
 
-        # Save DataFrames to CSV files
-        train_output_path = output_folder + f"/train_kpi_data_{da}.xlsx"
-        val_output_path = output_folder + f"/val_kpi_data_{da}.xlsx"
+        # Save DataFrames to Excel files
+        train_output_path = Path(output_folder) / f"train_kpi_data_{da}.xlsx"
+        val_output_path = Path(output_folder) / f"val_kpi_data_{da}.xlsx"
 
         train_df.to_excel(train_output_path, index=False)
         val_df.to_excel(val_output_path, index=False)
@@ -105,10 +80,9 @@ def run_kpi_curator(
         # Log the successful completion of the process
         _logger.info(f"Train data saved to: {train_output_path}")
         _logger.info(f"Validation data saved to: {val_output_path}")
-
         _logger.info("KPI curation completed successfully.")
 
     except Exception as e:
         # Log any exceptions that occur during the process
-        _logger.error(f"Error during KPI curation: {str(e)}")
+        _logger.error(f"Error during KPI curation: {str(e)}", exc_info=True)
         raise

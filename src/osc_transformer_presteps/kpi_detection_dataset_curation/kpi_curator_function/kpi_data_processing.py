@@ -6,7 +6,7 @@ import ast
 import logging
 import pandas as pd
 import numpy as np
-from fuzzywuzzy import fuzz
+import Levenshtein
 from osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_utils import (
     load_kpi_mapping,
 )
@@ -528,7 +528,7 @@ def find_closest_paragraph(
 ) -> str:
     """Find the closest matching paragraph to the annotated relevant paragraph.
 
-    If the exact paragraph match is not found, use fuzzy matching to find the closest
+    If the exact paragraph match is not found, use Levenshtein distance to find the closest
     paragraph that contains the answer.
 
     Args:
@@ -542,6 +542,7 @@ def find_closest_paragraph(
     """
     _logger.info("Finding closest paragraph.")
 
+    # Clean all paragraphs using the `clean_text` function
     clean_pars = [clean_text(p) for p in pars]
     found = False
 
@@ -554,16 +555,22 @@ def find_closest_paragraph(
             _logger.info("Exact match found for relevant paragraph.")
             break
 
-    # If no exact match, use fuzzy matching to find the closest paragraph
+    # If no exact match, use Levenshtein distance to find the closest paragraph
     if not found:
-        _logger.info("Exact match not found, performing fuzzy matching.")
-        scores = [fuzz.partial_ratio(p, clean_rel_par) for p in clean_pars]
-        max_par = clean_pars[np.argmax(scores)]
+        _logger.info(
+            "Exact match not found, performing fuzzy matching with Levenshtein distance."
+        )
+
+        # Calculate Levenshtein distances between the annotated paragraph and the list of paragraphs
+        distances = [Levenshtein.distance(clean_rel_par, p) for p in clean_pars]
+        min_index = np.argmin(distances)  # Find the index of the closest paragraph
+        max_par = clean_pars[min_index]
+
         ans_start = find_answer_start(clean_answer, max_par)
 
         if len(ans_start) != 0:
             _logger.info(
-                "Closest paragraph with the answer found using fuzzy matching."
+                "Closest paragraph with the answer found using Levenshtein distance."
             )
             clean_rel_par = max_par
 

@@ -70,17 +70,20 @@ def run_local_curation(
     kpi_mapping_file_path: str = typer.Argument(
         help="This is the path to kpi_mapping.csv file"
     ),
+    output_path: str = typer.Argument(
+        help="Path to directory to save the output curated file.",
+    ),
     create_neg_samples: bool = typer.Option(
         False,
         "--create_neg_samples",
         show_default=True,
         help="Boolean to declare if you want to include negative samples in your dataset.",
     ),
-    neg_pos_ratio: int = typer.Option(
+    neg_sample_rate: int = typer.Option(
         1,
-        "--neg_pos_ratio",
+        "--neg_sample_rate",
         show_default=True,
-        help="Ratio of number of negative samples you want per positive samples.",
+        help="Number of negative samples you want per positive samples.",
     ),
     logs_folder: str = typer.Option(
         default=None,
@@ -152,7 +155,7 @@ def run_local_curation(
             annotation_file_path=annotation_temp,
             kpi_mapping_file_path=kpi_mapping_temp,
             create_neg_samples=create_neg_samples,
-            neg_pos_ratio=neg_pos_ratio,
+            neg_sample_rate=neg_sample_rate,
         )
         curated_data.to_csv("Curated_dataset.csv", index=False)
         _logger.info(
@@ -160,7 +163,11 @@ def run_local_curation(
         )
 
     elif extracted_json_temp.is_dir():
-        files = [f for f in extracted_json_temp.iterdir() if f.is_file()]
+        files = [
+            f
+            for f in extracted_json_temp.iterdir()
+            if f.is_file() and f.name.endswith(".json")
+        ]
         curator_df = pd.DataFrame()
 
         for file in files:
@@ -170,13 +177,13 @@ def run_local_curation(
                 annotation_file_path=annotation_temp,
                 kpi_mapping_file_path=kpi_mapping_temp,
                 create_neg_samples=create_neg_samples,
-                neg_pos_ratio=neg_pos_ratio,
+                neg_sample_rate=neg_sample_rate,
             )
             curator_df = pd.concat([curator_df, temp_df], ignore_index=True)
             _logger.info(f"Added info from file {file.stem}.json to the curation file.")
 
         timestamp = datetime.now().strftime("%d%m%Y_%H%M")
-        csv_filename = f"Curated_dataset_{timestamp}.csv"
+        csv_filename = Path(output_path) / f"Curated_dataset_{timestamp}.csv"
         curator_df.to_csv(csv_filename, index=False)
 
     _logger.info("Curation ended.")
@@ -187,7 +194,7 @@ def curate_one_file(
     annotation_file_path: Path,
     kpi_mapping_file_path: Path,
     create_neg_samples: bool,
-    neg_pos_ratio: int,
+    neg_sample_rate: int,
 ):
     """Curate data for a given file to a given folder for a specific setting.
 
@@ -198,7 +205,7 @@ def curate_one_file(
         extract_json=dir_extracted_json_name,
         kpi_mapping_path=kpi_mapping_file_path,
         create_neg_samples=create_neg_samples,
-        neg_pos_ratio=neg_pos_ratio,
+        neg_sample_rate=neg_sample_rate,
     ).create_curator_df()
 
 

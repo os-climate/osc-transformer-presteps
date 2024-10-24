@@ -150,20 +150,27 @@ class Curator:
                 return matching_sentences, True
 
             # If no exact match found, find the closest paragraph and its ID
-            closest_para, para_id = self._get_closest_paragraph(sentences, page_number)
+            closest_para, para_id, sent = self._get_closest_paragraph(
+                sentences, page_number
+            )
 
-            if closest_para:
+            if closest_para and row["answer"] in closest_para:
                 return [(para_id, closest_para)], True
+            else:
+                return [(None, sent if sent else "")], False
 
         # If no relevant paragraph found, return with in_json_flag as False
         return ([(None, "")], False)
 
     def _get_closest_paragraph(
         self, sentences: List[str], page_number: str
-    ) -> Tuple[Optional[str], Optional[str]]:
-        """Find the closest paragraph on the given page and return it with its ID."""
+    ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+        """Find the closest paragraph on the given page and return it with its ID and the matched sentence."""
         closest_para = None
         closest_para_id = None
+        closest_sentence = (
+            None  # Initialize to store the sentence with the closest match
+        )
         min_distance = float("inf")
 
         # Iterate over paragraphs on the page and compute Levenshtein distance
@@ -177,8 +184,9 @@ class Curator:
                     min_distance = dist
                     closest_para = para
                     closest_para_id = key_inner  # Store the unique paragraph ID
+                    closest_sentence = sentence  # Store the closest matching sentence
 
-        return closest_para, closest_para_id
+        return closest_para, closest_para_id, closest_sentence
 
     def create_neg_examples(self, row: pd.Series) -> List[str]:
         """Create negative examples excluding relevant paragraphs or close ones.

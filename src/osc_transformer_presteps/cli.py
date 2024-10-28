@@ -29,7 +29,7 @@ app.add_typer(
 
 app.add_typer(
     kpi_curator_app,
-    name="kpi-curator",
+    name="kpi-curation",
     help="If you want to run local creation of dataset for kpi-detection task, then this is the subcommand to use.",
 )
 

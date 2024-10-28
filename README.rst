@@ -55,8 +55,8 @@ Now, after installing ``osc-transformer-presteps``, run the following command to
 
 Note: The ``--force`` flag overcomes encryption. Please check if this is a legal action in your jurisdiction.
 
-Example 2: Curating a New Training Data Set
--------------------------------------------
+Example 2: Curating a New Training Data Set for Relevance Detector
+---------------------------------------------------------------------------
 
 To perform curation, you will need a KPI mapping file and an annotations file. Here are examples of such files:
 
@@ -141,7 +141,37 @@ Assume the folder structure is as follows:
 
 Now, you can run the following command to curate a new training data set::
 
-    $ osc-transformer-presteps curation run-local-curation 'input/-data_from_extraction/file_1.json' 'input/annotations_file/annotations_file.xlsx' 'input/kpi_mapping/kpi_mapping.csv'
+    $ osc-transformer-presteps relevance-curation run-local-curation 'input/-data_from_extraction/file_1.json' 'input/annotations_file/annotations_file.xlsx' 'input/kpi_mapping/kpi_mapping.csv'
+
+Note: The previous comment may need some adjustment when running on different machine like windows due to the slash.
+
+
+Example 3: Curating a New Training Data Set for KPI Detector
+---------------------------------------------------------------------------
+To perform curation, you will need the extracted json files and kpi mappinf file and annotations file (the same as described above).
+
+Assume the folder structure is as follows:
+
+.. code-block:: text
+
+    project/
+    ├-input/
+    │ ├-data_from_extraction/
+    │ │ ├-file_1.json
+    │ │ ├-file_2.json
+    │ │ └─file_3.json
+    │ ├-kpi_mapping/
+    │ │ └─kpi_mapping.csv
+    │ ├-annotations_file/
+    │ │ └─annotations_file.xlsx
+    │ ├-relevance_detection_file/
+    │ │ └─relevance_detection.csv
+    ├-logs/
+    └─output/
+
+Now, you can run the following command to curate a new training data set::
+
+    $ osc-transformer-presteps kpi-curation run-local-kpi-curation  'input/annotations_file/' 'input/data_from_extraction/' 'output/' 'kpi_mapping/kpi_mapping_file.csv' 'relevance_detection_file/relevance_file.xlsx'  --val-ratio 0.2 --agg-annotation "" --find-new-answerable --create-unanswerable
 
 Note: The previous comment may need some adjustment when running on different machine like windows due to the slash.
 

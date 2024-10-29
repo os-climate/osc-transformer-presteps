@@ -41,6 +41,7 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">Levenshtein</span> <span class="kn">import</span> <span class="n">distance</span> <span class="k">as</span> <span class="n">levenshtein_distance</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">FilePath</span>
 
@@ -66,7 +67,8 @@
 <span class="sd">        annotation_folder (str): path to the folder containing annotation files</span>
 <span class="sd">        extract_json (str): path to the JSON file containing extracted content</span>
 <span class="sd">        kpi_mapping_path (str): path to KPI Mapping csv</span>
-<span class="sd">        neg_pos_ratio (int): ratio of negative to positive examples</span>
+
+<span class="sd">        neg_sample_rate (int): number of negative samples to positive examples</span>
 <span class="sd">        create_neg_samples (bool): whether to create negative samples</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -76,7 +78,7 @@
         <span class="n">annotation_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">extract_json</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">kpi_mapping_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">neg_pos_ratio</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">neg_sample_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">create_neg_samples</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the constructor for Curator object.&quot;&quot;&quot;</span>
@@ -84,7 +86,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">extract_json</span> <span class="o">=</span> <span class="n">extract_json</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">json_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">extract_json</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_output&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kpi_mapping_path</span> <span class="o">=</span> <span class="n">kpi_mapping_path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">neg_pos_ratio</span> <span class="o">=</span> <span class="n">neg_pos_ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neg_sample_rate</span> <span class="o">=</span> <span class="n">neg_sample_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_neg_samples</span> <span class="o">=</span> <span class="n">create_neg_samples</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_pdf_content</span><span class="p">()</span>
@@ -151,7 +153,8 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">bool</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create positive examples based on the provided row from a DataFrame.</span>
 
-<span class="sd">        Returns a list of matching sentences or an empty list, along with a flag indicating if sentences were found in the JSON.</span>
+<span class="sd">        Returns a list of matching sentences or an empty list, along with a flag</span>
+<span class="sd">        indicating if sentences were found in the JSON.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">]</span>
         <span class="n">cleaned_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean_text</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -174,9 +177,11 @@
             <span class="k">return</span> <span class="p">([(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)],</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># Return with in_json_flag as False</span>
 
         <span class="n">source_page</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;source_page&quot;</span><span class="p">])</span>
-
         <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+&quot;</span><span class="p">,</span> <span class="n">source_page</span><span class="p">)</span>
-        <span class="n">page_number</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span> <span class="k">if</span> <span class="n">match</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">page_number</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">([(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)],</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">page_number</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">:</span>
             <span class="n">matching_sentences</span> <span class="o">=</span> <span class="p">[</span>
@@ -186,22 +191,54 @@
                 <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">sentence</span> <span class="ow">in</span> <span class="n">para</span> <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">)</span>
             <span class="p">]</span>
 
-            <span class="c1"># Flag to know if sentence is available in json or not</span>
-            <span class="n">in_json_flag</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">matching_sentences</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="n">matching_sentences</span>
-                <span class="k">if</span> <span class="n">matching_sentences</span>
-                <span class="k">else</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span> <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">],</span>
-                <span class="n">in_json_flag</span><span class="p">,</span>
+            <span class="k">if</span> <span class="n">matching_sentences</span><span class="p">:</span>
+                <span class="c1"># If matching sentences found, return them with in_json_flag as True</span>
+                <span class="k">return</span> <span class="n">matching_sentences</span><span class="p">,</span> <span class="kc">True</span>
+
+            <span class="c1"># If no exact match found, find the closest paragraph and its ID</span>
+            <span class="n">closest_para</span><span class="p">,</span> <span class="n">para_id</span><span class="p">,</span> <span class="n">sent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_closest_paragraph</span><span class="p">(</span>
+                <span class="n">sentences</span><span class="p">,</span> <span class="n">page_number</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">([(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)],</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># Return with in_json_flag as False</span></div>
+            <span class="k">if</span> <span class="n">closest_para</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">closest_para</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[(</span><span class="n">para_id</span><span class="p">,</span> <span class="n">closest_para</span><span class="p">)],</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="n">sent</span> <span class="k">if</span> <span class="n">sent</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)],</span> <span class="kc">False</span>
 
+        <span class="c1"># If no relevant paragraph found, return with in_json_flag as False</span>
+        <span class="k">return</span> <span class="p">([(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)],</span> <span class="kc">False</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_closest_paragraph</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">sentences</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">page_number</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the closest paragraph on the given page and return it with its ID and the matched sentence.&quot;&quot;&quot;</span>
+        <span class="n">closest_para</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">closest_para_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">closest_sentence</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="kc">None</span>  <span class="c1"># Initialize to store the sentence with the closest match</span>
+        <span class="p">)</span>
+        <span class="n">min_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Iterate over paragraphs on the page and compute Levenshtein distance</span>
+        <span class="k">for</span> <span class="n">key_inner</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">[</span><span class="n">page_number</span><span class="p">]:</span>
+            <span class="n">para</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">[</span><span class="n">page_number</span><span class="p">][</span><span class="n">key_inner</span><span class="p">][</span><span class="s2">&quot;paragraph&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Compute the minimum distance between the target sentences and this paragraph</span>
+            <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">levenshtein_distance</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">para</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">min_distance</span><span class="p">:</span>
+                    <span class="n">min_distance</span> <span class="o">=</span> <span class="n">dist</span>
+                    <span class="n">closest_para</span> <span class="o">=</span> <span class="n">para</span>
+                    <span class="n">closest_para_id</span> <span class="o">=</span> <span class="n">key_inner</span>  <span class="c1"># Store the unique paragraph ID</span>
+                    <span class="n">closest_sentence</span> <span class="o">=</span> <span class="n">sentence</span>  <span class="c1"># Store the closest matching sentence</span>
+
+        <span class="k">return</span> <span class="n">closest_para</span><span class="p">,</span> <span class="n">closest_para_id</span><span class="p">,</span> <span class="n">closest_sentence</span>
 
 <div class="viewcode-block" id="Curator.create_neg_examples">
 <a class="viewcode-back" href="../../../api/osc_transformer_presteps.relevance_detection_dataset_curation.html#osc_transformer_presteps.relevance_detection_dataset_curation.curator.Curator.create_neg_examples">[docs]</a>
     <span class="k">def</span> <span class="nf">create_neg_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create negative examples based on the provided row from a DataFrame.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create negative examples excluding relevant paragraphs or close ones.</span>
 
 <span class="sd">        Returns a list of context paragraphs or an empty list.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -213,13 +250,32 @@
         <span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
 
+        <span class="c1"># Flatten all paragraphs from the PDF content</span>
         <span class="n">paragraphs</span> <span class="o">=</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">[</span><span class="n">key_outer</span><span class="p">][</span><span class="n">key_inner</span><span class="p">][</span><span class="s2">&quot;paragraph&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">key_outer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span>
             <span class="k">for</span> <span class="n">key_inner</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_content</span><span class="p">[</span><span class="n">key_outer</span><span class="p">]</span>
         <span class="p">]</span>
 
-        <span class="n">context</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">paragraphs</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">neg_pos_ratio</span><span class="p">)</span>
+        <span class="n">relevant_paragraphs</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;relevant_paragraphs&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Filter out paragraphs that are identical or too similar</span>
+        <span class="k">def</span> <span class="nf">is_similar</span><span class="p">(</span><span class="n">paragraph</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">levenshtein_distance</span><span class="p">(</span><span class="n">paragraph</span><span class="p">,</span> <span class="n">rel_para</span><span class="p">)</span>
+                <span class="o">&lt;=</span> <span class="mi">5</span>  <span class="c1"># Adjust threshold if needed</span>
+                <span class="k">for</span> <span class="n">rel_para</span> <span class="ow">in</span> <span class="n">relevant_paragraphs</span>
+            <span class="p">)</span>
+
+        <span class="n">negative_paragraphs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paragraphs</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_similar</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+
+        <span class="c1"># Randomly select `neg_sample_rate` paragraphs from the filtered list</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">negative_paragraphs</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">neg_sample_rate</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">negative_paragraphs</span>
+            <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">context</span></div>
 
 
@@ -261,18 +317,21 @@
                     <span class="p">(</span><span class="n">para</span><span class="p">,</span> <span class="n">unique_para_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">unique_para_id</span><span class="p">,</span> <span class="n">para</span> <span class="ow">in</span> <span class="n">pos_examples</span>
                 <span class="p">]</span>
 
-                <span class="n">contexts</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="p">(</span><span class="n">pos_contexts</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-                    <span class="p">(</span>
-                        <span class="p">[</span>
-                            <span class="p">(</span><span class="n">neg_example</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                            <span class="k">for</span> <span class="n">neg_example</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_neg_examples</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
-                        <span class="p">]</span>
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_neg_samples</span>
-                        <span class="k">else</span> <span class="p">[(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)],</span>
-                        <span class="mi">0</span><span class="p">,</span>
-                    <span class="p">),</span>
-                <span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_neg_samples</span><span class="p">:</span>
+                    <span class="n">contexts</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="p">(</span><span class="n">pos_contexts</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                        <span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="p">(</span><span class="n">neg_example</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">neg_example</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_neg_examples</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                            <span class="p">]</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_neg_samples</span>
+                            <span class="k">else</span> <span class="p">[(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)],</span>
+                            <span class="mi">0</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">contexts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">pos_contexts</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
 
                 <span class="k">for</span> <span class="n">context</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">contexts</span><span class="p">:</span>
                     <span class="k">if</span> <span class="p">(</span>
@@ -333,17 +392,23 @@
                 <span class="n">kpi_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">kpi_mapping_path</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span> <span class="s2">&quot;question&quot;</span><span class="p">]</span>
                 <span class="p">)</span>
+
                 <span class="n">merged_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">new_df</span><span class="p">,</span> <span class="n">kpi_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;kpi_id&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
 
                 <span class="n">result_df</span> <span class="o">=</span> <span class="n">merged_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="s2">&quot;annotation_answer&quot;</span><span class="p">})</span>
 
-                <span class="n">result_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">result_df</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;in_extraction_data_flag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="nb">bool</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="c1"># result_df.loc[result_df[&quot;label&quot;] == 0, &quot;in_extraction_data_flag&quot;] = (</span>
+                <span class="c1">#    bool(0)</span>
+                <span class="c1"># )</span>
                 <span class="n">result_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
                     <span class="n">result_df</span><span class="p">[</span><span class="s2">&quot;in_extraction_data_flag&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;unique_paragraph_id&quot;</span>
                 <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
                 <span class="n">result_df</span><span class="p">[</span><span class="s2">&quot;annotation_file_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_folder</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+                <span class="n">result_df</span><span class="p">[</span><span class="s2">&quot;annotation_file_row&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span>
+                <span class="n">result_df</span> <span class="o">=</span> <span class="n">result_df</span><span class="p">[</span>
+                    <span class="n">result_df</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">result_df</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="p">]</span>
 
                 <span class="c1"># Reorder columns as specified in columns_order</span>
                 <span class="n">result_df</span> <span class="o">=</span> <span class="n">result_df</span><span class="p">[</span><span class="n">columns_order</span><span class="p">]</span>

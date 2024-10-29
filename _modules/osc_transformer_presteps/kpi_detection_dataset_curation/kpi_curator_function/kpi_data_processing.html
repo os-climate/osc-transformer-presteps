@@ -39,7 +39,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="kn">import</span> <span class="n">fuzz</span>
+<span class="kn">import</span> <span class="nn">Levenshtein</span>
 <span class="kn">from</span> <span class="nn">osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">load_kpi_mapping</span><span class="p">,</span>
 <span class="p">)</span>
@@ -587,7 +587,7 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the closest matching paragraph to the annotated relevant paragraph.</span>
 
-<span class="sd">    If the exact paragraph match is not found, use fuzzy matching to find the closest</span>
+<span class="sd">    If the exact paragraph match is not found, use Levenshtein distance to find the closest</span>
 <span class="sd">    paragraph that contains the answer.</span>
 
 <span class="sd">    Args:</span>
@@ -601,6 +601,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding closest paragraph.&quot;</span><span class="p">)</span>
 
+    <span class="c1"># Clean all paragraphs using the `clean_text` function</span>
     <span class="n">clean_pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">clean_text</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pars</span><span class="p">]</span>
     <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -613,16 +614,22 @@
             <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Exact match found for relevant paragraph.&quot;</span><span class="p">)</span>
             <span class="k">break</span>
 
-    <span class="c1"># If no exact match, use fuzzy matching to find the closest paragraph</span>
+    <span class="c1"># If no exact match, use Levenshtein distance to find the closest paragraph</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Exact match not found, performing fuzzy matching.&quot;</span><span class="p">)</span>
-        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">fuzz</span><span class="o">.</span><span class="n">partial_ratio</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">clean_rel_par</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">clean_pars</span><span class="p">]</span>
-        <span class="n">max_par</span> <span class="o">=</span> <span class="n">clean_pars</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)]</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Exact match not found, performing fuzzy matching with Levenshtein distance.&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Calculate Levenshtein distances between the annotated paragraph and the list of paragraphs</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">Levenshtein</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">clean_rel_par</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">clean_pars</span><span class="p">]</span>
+        <span class="n">min_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>  <span class="c1"># Find the index of the closest paragraph</span>
+        <span class="n">max_par</span> <span class="o">=</span> <span class="n">clean_pars</span><span class="p">[</span><span class="n">min_index</span><span class="p">]</span>
+
         <span class="n">ans_start</span> <span class="o">=</span> <span class="n">find_answer_start</span><span class="p">(</span><span class="n">clean_answer</span><span class="p">,</span> <span class="n">max_par</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ans_start</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Closest paragraph with the answer found using fuzzy matching.&quot;</span>
+                <span class="s2">&quot;Closest paragraph with the answer found using Levenshtein distance.&quot;</span>
             <span class="p">)</span>
             <span class="n">clean_rel_par</span> <span class="o">=</span> <span class="n">max_par</span>
 

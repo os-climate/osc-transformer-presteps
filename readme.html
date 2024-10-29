@@ -77,8 +77,8 @@ to extract relevant information, but it can also be used independently.</p>
 </div>
 <p>Note: The <code class="docutils literal notranslate"><span class="pre">--force</span></code> flag overcomes encryption. Please check if this is a legal action in your jurisdiction.</p>
 </section>
-<section id="example-2-curating-a-new-training-data-set">
-<h3>Example 2: Curating a New Training Data Set<a class="headerlink" href="#example-2-curating-a-new-training-data-set" title="Link to this heading">¶</a></h3>
+<section id="example-2-curating-a-new-training-data-set-for-relevance-detector">
+<h3>Example 2: Curating a New Training Data Set for Relevance Detector<a class="headerlink" href="#example-2-curating-a-new-training-data-set-for-relevance-detector" title="Link to this heading">¶</a></h3>
 <p>To perform curation, you will need a KPI mapping file and an annotations file. Here are examples of such files:</p>
 <p><strong>KPI Mapping File</strong>:</p>
 <table class="docutils align-default" id="id3">
@@ -166,7 +166,33 @@ to extract relevant information, but it can also be used independently.</p>
 </pre></div>
 </div>
 <p>Now, you can run the following command to curate a new training data set:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ osc-transformer-presteps curation run-local-curation &#39;input/-data_from_extraction/file_1.json&#39; &#39;input/annotations_file/annotations_file.xlsx&#39; &#39;input/kpi_mapping/kpi_mapping.csv&#39;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ osc-transformer-presteps relevance-curation run-local-curation &#39;input/-data_from_extraction/file_1.json&#39; &#39;input/annotations_file/annotations_file.xlsx&#39; &#39;input/kpi_mapping/kpi_mapping.csv&#39;
+</pre></div>
+</div>
+<p>Note: The previous comment may need some adjustment when running on different machine like windows due to the slash.</p>
+</section>
+<section id="example-3-curating-a-new-training-data-set-for-kpi-detector">
+<h3>Example 3: Curating a New Training Data Set for KPI Detector<a class="headerlink" href="#example-3-curating-a-new-training-data-set-for-kpi-detector" title="Link to this heading">¶</a></h3>
+<p>To perform curation, you will need the extracted json files and kpi mappinf file and annotations file (the same as described above).</p>
+<p>Assume the folder structure is as follows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>project/
+├-input/
+│ ├-data_from_extraction/
+│ │ ├-file_1.json
+│ │ ├-file_2.json
+│ │ └─file_3.json
+│ ├-kpi_mapping/
+│ │ └─kpi_mapping.csv
+│ ├-annotations_file/
+│ │ └─annotations_file.xlsx
+│ ├-relevance_detection_file/
+│ │ └─relevance_detection.csv
+├-logs/
+└─output/
+</pre></div>
+</div>
+<p>Now, you can run the following command to curate a new training data set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ osc-transformer-presteps kpi-curation run-local-kpi-curation  &#39;input/annotations_file/&#39; &#39;input/data_from_extraction/&#39; &#39;output/&#39; &#39;kpi_mapping/kpi_mapping_file.csv&#39; &#39;relevance_detection_file/relevance_file.xlsx&#39;  --val-ratio 0.2 --agg-annotation &quot;&quot; --find-new-answerable --create-unanswerable
 </pre></div>
 </div>
 <p>Note: The previous comment may need some adjustment when running on different machine like windows due to the slash.</p>

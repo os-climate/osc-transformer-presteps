@@ -1,15 +1,38 @@
 ---
-name: "♻️ Update dependencies"
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2024 The Linux Foundation <https://linuxfoundation.org>
+
+name: "♻️ Update Dependencies"
 
 # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
   schedule:
     - cron: "0 8 1 * *"
+  # push:
+  #   branches:
+  #     - "**"
+  #     - "!update-devops-tooling"
+  #     - "!**/update-pdm-lock"
+
+env:
+  python-version: 3.11
 
 jobs:
-  update-dependencies:
-    name: "Update dependencies"
+  repository:
+    name: "Repository Checks"
+    uses: os-climate/osc-github-devops/.github/workflows/repository.yaml@main
+    permissions:
+      # Required for action that creates labels: github-mandatory-labels
+      contents: write
+
+  python-dependencies:
+    name: "Update Python Dependencies"
+    needs:
+      - repository
+    # Only run if Python code is present in repository
+    if: needs.repository.outputs.python_project  == 'true' ||
+      needs.repository.outputs.jupyter_notebooks  == 'true'
     runs-on: ubuntu-latest
     permissions:
       # IMPORTANT: mandatory to raise the PR
@@ -17,32 +40,23 @@ jobs:
       pull-requests: write
       repository-projects: write
       contents: write
-
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: "Set up Python"
         uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.python-version }}
 
       - name: "Update Python dependencies"
-        uses: pdm-project/update-deps-action@v1
+        uses: pdm-project/update-deps-action@v1.9
         with:
           sign-off-commit: "true"
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ github.token }}
           commit-message: "Chore: Update dependencies and pdm.lock [skip ci]"
           pr-title: "Update Python module dependencies"
           update-strategy: eager
           # Whether to install PDM plugins before update
           install-plugins: "false"
-
-      - name: "Export dependencies"
-        run: |
-          pdm export --without-hashes -o requirements.txt
-
-      # Ideally, we should export requirements.txt then amend the earlier PR
-      # update-deps-action could be modified to export PR number as as output
-      # Or we add the option to export the requirements.txt in that action

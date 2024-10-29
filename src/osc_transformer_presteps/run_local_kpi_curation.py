@@ -22,7 +22,7 @@ def kpi_curator(ctx: typer.Context):
         raise typer.Exit()
 
 
-@kpi_curator_app.command("kpi-curation")
+@kpi_curator_app.command("run-local-kpi-curation")
 def kpi_curation(
     annotation_folder: str = typer.Argument(
         ..., help="Path to the folder containing Annotations file."

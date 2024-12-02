@@ -165,16 +165,21 @@ class Curator:
         return ([(None, "")], False)
 
     def _get_closest_paragraph(
-            self, sentences: List[str], page_number: str
-        ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+        self, sentences: List[str], page_number: str
+    ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
         """Find the closest paragraph on the given page and return it with its ID and the matched sentence."""
         closest_para = None
         closest_para_id = None
-        closest_sentence = None  # Initialize to store the sentence with the closest match
+        closest_sentence = (
+            None  # Initialize to store the sentence with the closest match
+        )
         max_combined_score = -1  # Start with the lowest score
 
         # Precompute TF-IDF vectors for all paragraphs on the page
-        paragraphs = [self.pdf_content[page_number][key]["paragraph"] for key in self.pdf_content[page_number]]
+        paragraphs = [
+            self.pdf_content[page_number][key]["paragraph"]
+            for key in self.pdf_content[page_number]
+        ]
         tfidf_vectorizer = TfidfVectorizer()
 
         if isinstance(sentences, str):
@@ -184,17 +189,21 @@ class Curator:
         # Iterate over paragraphs on the page and compute similarity scores
         for idx, key_inner in enumerate(self.pdf_content[page_number]):
             para = self.pdf_content[page_number][key_inner]["paragraph"]
-            
+
             # TF-IDF cosine similarity between the current paragraph and all sentences
-            para_vector = tfidf_matrix[idx:idx+1]
-            sentence_vectors = tfidf_matrix[len(paragraphs):]
-            tfidf_similarities = cosine_similarity(para_vector, sentence_vectors).flatten()
+            para_vector = tfidf_matrix[idx : idx + 1]
+            sentence_vectors = tfidf_matrix[len(paragraphs) :]
+            tfidf_similarities = cosine_similarity(
+                para_vector, sentence_vectors
+            ).flatten()
 
             # Combine cosine similarity and fuzzy matching for each sentence
             for sentence_idx, sentence in enumerate(sentences):
                 cosine_score = tfidf_similarities[sentence_idx]
-                fuzzy_score = ratio(para, sentence) / 100  # Normalize fuzzy score to [0, 1]
-                
+                fuzzy_score = (
+                    ratio(para, sentence) / 100
+                )  # Normalize fuzzy score to [0, 1]
+
                 # Weighted combination of scores (adjust weights as needed)
                 combined_score = 0.7 * cosine_score + 0.3 * fuzzy_score
 
@@ -420,4 +429,3 @@ class Curator:
             )
 
         return result_df
-

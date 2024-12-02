@@ -9,22 +9,26 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 8 1 * *"
-  # push:
-  #   branches:
-  #     - "**"
-  #     - "!update-devops-tooling"
-  #     - "!**/update-pdm-lock"
+  push:
+    branches:
+      - "main"
+      - "master"
+    paths:
+      - "!pdm.lock"
 
 env:
   python-version: 3.11
 
+permissions: {}
+
 jobs:
   repository:
     name: "Repository Checks"
+    if: startsWith(github.ref, 'dep/update-pdm-lock') != true
     uses: os-climate/osc-github-devops/.github/workflows/repository.yaml@main
     permissions:
       # Required for action that creates labels: github-mandatory-labels
-      contents: write
+      contents: read
 
   python-dependencies:
     name: "Update Python Dependencies"

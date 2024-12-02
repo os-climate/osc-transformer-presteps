@@ -8,9 +8,11 @@ import random
 import re
 from typing import List, Tuple, Optional
 import pandas as pd
-from Levenshtein import distance as levenshtein_distance
 from pathlib import Path
 from pydantic import BaseModel, FilePath
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from rapidfuzz.fuzz import ratio
 
 
 class AnnotationData(BaseModel):
@@ -154,7 +156,7 @@ class Curator:
                 sentences, page_number
             )
 
-            if closest_para and row["answer"] in closest_para:
+            if closest_para and str(row["answer"]) in closest_para:
                 return [(para_id, closest_para)], True
             else:
                 return [(None, sent if sent else "")], False
@@ -163,25 +165,41 @@ class Curator:
         return ([(None, "")], False)
 
     def _get_closest_paragraph(
-        self, sentences: List[str], page_number: str
-    ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+            self, sentences: List[str], page_number: str
+        ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
         """Find the closest paragraph on the given page and return it with its ID and the matched sentence."""
         closest_para = None
         closest_para_id = None
-        closest_sentence = (
-            None  # Initialize to store the sentence with the closest match
-        )
-        min_distance = float("inf")
+        closest_sentence = None  # Initialize to store the sentence with the closest match
+        max_combined_score = -1  # Start with the lowest score
 
-        # Iterate over paragraphs on the page and compute Levenshtein distance
-        for key_inner in self.pdf_content[page_number]:
+        # Precompute TF-IDF vectors for all paragraphs on the page
+        paragraphs = [self.pdf_content[page_number][key]["paragraph"] for key in self.pdf_content[page_number]]
+        tfidf_vectorizer = TfidfVectorizer()
+
+        if isinstance(sentences, str):
+            sentences = [sentences]
+        tfidf_matrix = tfidf_vectorizer.fit_transform(paragraphs + sentences)
+
+        # Iterate over paragraphs on the page and compute similarity scores
+        for idx, key_inner in enumerate(self.pdf_content[page_number]):
             para = self.pdf_content[page_number][key_inner]["paragraph"]
+            
+            # TF-IDF cosine similarity between the current paragraph and all sentences
+            para_vector = tfidf_matrix[idx:idx+1]
+            sentence_vectors = tfidf_matrix[len(paragraphs):]
+            tfidf_similarities = cosine_similarity(para_vector, sentence_vectors).flatten()
 
-            # Compute the minimum distance between the target sentences and this paragraph
-            for sentence in sentences:
-                dist = levenshtein_distance(sentence, para)
-                if dist < min_distance:
-                    min_distance = dist
+            # Combine cosine similarity and fuzzy matching for each sentence
+            for sentence_idx, sentence in enumerate(sentences):
+                cosine_score = tfidf_similarities[sentence_idx]
+                fuzzy_score = ratio(para, sentence) / 100  # Normalize fuzzy score to [0, 1]
+                
+                # Weighted combination of scores (adjust weights as needed)
+                combined_score = 0.7 * cosine_score + 0.3 * fuzzy_score
+
+                if combined_score > max_combined_score:
+                    max_combined_score = combined_score
                     closest_para = para
                     closest_para_id = key_inner  # Store the unique paragraph ID
                     closest_sentence = sentence  # Store the closest matching sentence
@@ -210,23 +228,46 @@ class Curator:
 
         relevant_paragraphs = row["relevant_paragraphs"]
 
-        # Filter out paragraphs that are identical or too similar
-        def is_similar(paragraph):
-            return any(
-                levenshtein_distance(paragraph, rel_para)
-                <= 5  # Adjust threshold if needed
-                for rel_para in relevant_paragraphs
-            )
+        # Step 1: Compute TF-IDF representations for all paragraphs and relevant paragraphs
+        tfidf_vectorizer = TfidfVectorizer()
+        if isinstance(paragraphs, str):
+            paragraphs = [paragraphs]
+        if isinstance(relevant_paragraphs, str):
+            relevant_paragraphs = [relevant_paragraphs]
 
-        negative_paragraphs = [p for p in paragraphs if not is_similar(p)]
+        tfidf_matrix = tfidf_vectorizer.fit_transform(paragraphs + relevant_paragraphs)
+        paragraph_vectors = tfidf_matrix[: len(paragraphs)]
+        relevant_vectors = tfidf_matrix[len(paragraphs) :]
 
-        # Randomly select `neg_sample_rate` paragraphs from the filtered list
+        # Step 2: Define similarity filter function
+        def is_similar(paragraph, paragraph_idx):
+            # Compute TF-IDF cosine similarity
+            cosine_similarities = cosine_similarity(
+                paragraph_vectors[paragraph_idx], relevant_vectors
+            ).flatten()
+            max_cosine_score = max(cosine_similarities)
+
+            # Compute fuzzy matching scores
+            fuzzy_scores = [
+                ratio(paragraph, rel_para) / 100 for rel_para in relevant_paragraphs
+            ]
+            max_fuzzy_score = max(fuzzy_scores)
+
+            # Combine scores and set threshold
+            combined_score = 0.7 * max_cosine_score + 0.3 * max_fuzzy_score
+            return combined_score >= 0.7  # Adjust threshold if needed
+
+        # Step 3: Filter out similar paragraphs
+        negative_paragraphs = [
+            p for idx, p in enumerate(paragraphs) if not is_similar(p, idx)
+        ]
+
+        # Step 4: Randomly select `neg_sample_rate` paragraphs from the filtered list
         context = (
             random.choices(negative_paragraphs, k=self.neg_sample_rate)
             if negative_paragraphs
             else [""]
         )
-
         return context
 
     def create_examples_annotate(self) -> List[pd.DataFrame]:
@@ -307,11 +348,7 @@ class Curator:
         return new_dfs
 
     def create_curator_df(self) -> pd.DataFrame:
-        """Create a DataFrame containing the examples to be annotated by the curator.
-
-        The DataFrame is saved as a CSV file in the output directory.
-        """
-        # Define the order of columns for the final DataFrame
+        # Define the column order
         columns_order = [
             "company",
             "year",
@@ -328,6 +365,9 @@ class Curator:
             "annotation_answer",
         ]
 
+        # Initialize result_df as an empty DataFrame with the correct column order
+        result_df = pd.DataFrame(columns=columns_order)
+
         if self.pdf_content:  # Check if pdf_content is not empty
             new_dfs = self.create_examples_annotate()
             if new_dfs:
@@ -342,15 +382,16 @@ class Curator:
 
                 result_df = merged_df.rename(columns={"answer": "annotation_answer"})
 
-                # result_df.loc[result_df["label"] == 0, "in_extraction_data_flag"] = (
-                #    bool(0)
-                # )
+                # Set unique_paragraph_id to None where in_extraction_data_flag is 0
                 result_df.loc[
                     result_df["in_extraction_data_flag"] == 0, "unique_paragraph_id"
                 ] = None
 
+                # Add annotation_file_name and increment annotation_file_row
                 result_df["annotation_file_name"] = Path(self.annotation_folder).name
                 result_df["annotation_file_row"] += 2
+
+                # Filter out rows where context is empty or NA
                 result_df = result_df[
                     result_df["context"].notna() & (result_df["context"] != "")
                 ]
@@ -358,5 +399,25 @@ class Curator:
                 # Reorder columns as specified in columns_order
                 result_df = result_df[columns_order]
                 result_df = result_df.reset_index(drop=True)
+        else:
+            # Ensure the empty DataFrame has all columns pre-set
+            result_df = pd.DataFrame(
+                {
+                    "company": [],
+                    "year": [],
+                    "source_file": [],
+                    "source_page": [],
+                    "context": [],
+                    "question": [],
+                    "kpi_id": [],
+                    "label": [],
+                    "in_extraction_data_flag": [],
+                    "unique_paragraph_id": [],
+                    "annotation_file_name": [],
+                    "annotation_file_row": [],
+                    "annotation_answer": [],
+                }
+            )
 
         return result_df
+

@@ -37,7 +37,7 @@ jobs:
     # Only run if Python code is present in repository
     if: needs.repository.outputs.python_project  == 'true' ||
       needs.repository.outputs.jupyter_notebooks  == 'true'
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-24.04"
     permissions:
       # IMPORTANT: mandatory to raise the PR
       id-token: write

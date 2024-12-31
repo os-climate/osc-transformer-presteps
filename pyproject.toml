@@ -5,7 +5,7 @@ description = "OS-Climate Data Extraction Tool"
 authors = [
     {name = "David Besslich", email = "90916810+DaBeIDS@users.noreply.github.com"},
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.10, <3.12"
 readme = "README.rst"
 license = {file = "LICENSE.txt"}
 classifiers = [
@@ -20,7 +20,6 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.9",
   "Topic :: Office/Business :: Financial",
   "Topic :: Scientific/Engineering",
   "Topic :: Software Development",

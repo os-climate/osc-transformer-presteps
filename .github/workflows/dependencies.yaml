@@ -47,18 +47,20 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: "Set up Python"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: ${{ env.python-version }}
 
       - name: "Update Python dependencies"
-        uses: pdm-project/update-deps-action@v1.9
+        uses: pdm-project/update-deps-action@be7ffca4b5580391152c609398ec3324728f7fc3 # v1.9
         with:
           sign-off-commit: "true"
-          token: ${{ github.token }}
+          # The personal access token, default: ${{ github.token }}
+          # token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Chore: Update dependencies and pdm.lock [skip ci]"
           pr-title: "Update Python module dependencies"
           update-strategy: eager

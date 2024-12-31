@@ -251,7 +251,7 @@ def filter_relevant_examples(
         answers = annotation_for_pdf["answer"].astype(str).tolist()
 
         # Ensure that negative examples do not contain the answer of any annotated question
-        for q, a in zip(questions, answers):
+        for q, a in zip(questions, answers, strict=False):
             neg_examples_df = neg_examples_df[
                 ~(
                     (neg_examples_df["question"] == q)

@@ -1,11 +1,11 @@
 [project]
 name = "osc-transformer-presteps"
-version = "0.1.4"
+version = "0.1.6"
 description = "OS-Climate Data Extraction Tool"
 authors = [
     {name = "David Besslich", email = "90916810+DaBeIDS@users.noreply.github.com"},
 ]
-requires-python = ">=3.9, !=3.9.7"
+requires-python = ">=3.10"
 readme = "README.rst"
 license = {file = "LICENSE.txt"}
 classifiers = [

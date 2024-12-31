@@ -228,7 +228,9 @@ class PDFExtractor(BaseExtractor):
                             "last_index_page": idx + len(paragraphs_data) - 1,
                         }
                         for (x, y) in zip(
-                            range(idx, idx + len(paragraphs_data)), paragraphs_data
+                            range(idx, idx + len(paragraphs_data)),
+                            paragraphs_data,
+                            strict=False,
                         )
                     }
                 }

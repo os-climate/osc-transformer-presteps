@@ -180,7 +180,7 @@ Note: The previous comment may need some adjustment when running on different ma
 Important Note on Annotations
 -------------------------------
 
-When performing curation, it is crucial that all JSON files used for this process are listed in the ``demo/curation/input/test_annotation.xlsx`` file. Failure to include these files in the annotation file will result in corrupted output. 
+When performing curation, it is crucial that all JSON files used for this process are listed in the ``demo/curation/input/test_annotation.xlsx`` file. Failure to include these files in the annotation file will result in corrupted output.
 
 Ensure that every JSON file involved in the curation process is mentioned in the annotation file to maintain the integrity of the resulting output.
 

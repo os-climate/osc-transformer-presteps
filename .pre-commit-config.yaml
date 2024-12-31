@@ -5,7 +5,11 @@
 ci:
   autofix_commit_msg: "Chore: pre-commit autoupdate"
 
-exclude: ^tests/resources/
+exclude: |
+  (?x)^(
+      docs\/conf.py|
+      dco-signoffs/$
+  )$
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

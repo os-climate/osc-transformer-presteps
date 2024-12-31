@@ -27,6 +27,8 @@ jobs:
     permissions:
       # IMPORTANT: mandatory for documentation updates; used in final step
       contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: "Checkout Repository"

@@ -26,10 +26,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     permissions:
       # IMPORTANT: mandatory for documentation updates; used in final step
-      id-token: write
-      pull-requests: write
       contents: write
-      repository-projects: write
 
     steps:
       - name: "Checkout Repository"
@@ -78,7 +75,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
         with:
           publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           publish_dir: docs/_build/html/
           keep_files: true
-          commit_message: ${{ github.event.head_commit.message }}

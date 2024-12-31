@@ -1,5 +1,8 @@
 ---
-name: "📘 Documentation build/publish"
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2024 The Linux Foundation <https://linuxfoundation.org>
+
+name: "📰 Publish Documentation"
 
 # yamllint disable-line rule:truthy
 on:
@@ -7,17 +10,20 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - "*"
+      - "main"
+      - "master"
       - "!update-devops-tooling"
+
+permissions: {}
 
 jobs:
   build_and_deploy:
     # Only run when pull request is merged
     if: github.event.pull_request.merged == true
     name: "Rebuild documentation"
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
+    runs-on: "ubuntu-24.04"
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     permissions:
       # IMPORTANT: mandatory for documentation updates; used in final step
       id-token: write
@@ -26,33 +32,50 @@ jobs:
       repository-projects: write
 
     steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
+      - name: "Checkout Repository"
+        # yamllint disable-line rule:line-length
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: "Set up Python"
-        uses: actions/setup-python@v5
+      # yamllint disable-line rule:line-length
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: "3.11"
 
-      - name: "Setup PDM for build commands"
-        uses: pdm-project/setup-pdm@v4
+      - name: "Check documentation dependencies"
+        id: docs-requirements
+        # yamllint disable-line rule:line-length
+        uses: os-climate/osc-github-devops/.github/actions/path-check@a15d0c7f2037d57e40b1eaf883694c251379faec # 2024-12-31
+        with:
+          check-path: "docs/requirements.txt"
 
-      - name: "Install dependencies"
-        run: |
-          python -m pip install --upgrade pip
-          pdm lock
-          pdm export -o requirements.txt
-          if [ -f docs/requirements.txt ]; then
-          pip install -r docs/requirements.txt; fi
+      - name: "Check for TOX configuration"
+        id: tox-ini
+        # yamllint disable-line rule:line-length
+        uses: os-climate/osc-github-devops/.github/actions/path-check@a15d0c7f2037d57e40b1eaf883694c251379faec # 2024-12-31
+        with:
+          check-path: "tox.ini"
 
-      - name: "Build documentation: (tox/sphinx)"
+      - name: "Install documentation dependencies"
+        if: steps.docs-requirements.outputs.type == 'file'
         run: |
-          pip install --upgrade tox
+          # Install documentation dependencies
+          echo "Installing documentation dependencies"
+          pip --disable-pip-version-check install -r docs/requirements.txt
+          echo "Documentation dependencies installed ✅"
+
+      - name: "Build documentation (tox/sphinx)"
+        if: steps.tox-ini.outputs.type == 'file'
+        run: |
+          # Build documentation (tox/sphinx)
+          pip --disable-pip-version-check install --upgrade tox
           tox -e docs
+          echo "Tox documentation build ✅"
 
       - name: "Publish documentation"
         if: success()
-        uses: peaceiris/actions-gh-pages@v4
+        # yamllint disable-line rule:line-length
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}

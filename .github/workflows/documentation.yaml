@@ -47,7 +47,7 @@ jobs:
         # yamllint disable-line rule:line-length
         uses: os-climate/osc-github-devops/.github/actions/path-check-action@7dd0d1b53f92fc5eab62c8799562557f765692a8 # 2024-12-31
         with:
-          check-path: "docs/requirements.txt"
+          path: "docs/requirements.txt"
 
       - name: "Check for TOX configuration"
         id: tox-ini
@@ -81,3 +81,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/_build/html/
           keep_files: true
+          commit_message: ${{ github.event.head_commit.message }}

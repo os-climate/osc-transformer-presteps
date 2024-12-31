@@ -19,9 +19,9 @@ on:
   workflow_dispatch:
   push:
     branches: ["main", "master"]
-  paths:
-    - "!.github/**"
-    - "!.docs/**"
+    paths:
+      - "!.github/**"
+      - "!.docs/**"
   schedule:
     - cron: "39 20 * * 6"
 

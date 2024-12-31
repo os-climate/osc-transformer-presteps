@@ -15,6 +15,7 @@ on:
       - "master"
     paths:
       - "!pdm.lock"
+      - "!.github/**"
 
 env:
   python-version: 3.11
@@ -27,7 +28,6 @@ jobs:
     if: startsWith(github.ref, 'dep/update-pdm-lock') != true
     uses: os-climate/osc-github-devops/.github/workflows/repository.yaml@main
     permissions:
-      # Required for action that creates labels: github-mandatory-labels
       contents: read
 
   python-dependencies:
@@ -46,6 +46,7 @@ jobs:
       contents: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -60,7 +61,7 @@ jobs:
           sign-off-commit: "true"
           # The personal access token, default: ${{ github.token }}
           # token: ${{ github.token }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           commit-message: "Chore: Update dependencies and pdm.lock [skip ci]"
           pr-title: "Update Python module dependencies"
           update-strategy: eager

@@ -27,7 +27,8 @@ permissions: {}
 jobs:
   analysis:
     name: Analysis
-    runs-on: ubuntu-22.04
+    # yamllint disable-line rule:line-length
+    uses: os-climate/osc-github-devops/.github/workflows/reuse-ossf-scorecard.yaml@fd61fbee11e3040b470b3fae30911f8a0df577a6 # 2025-01-02
     permissions:
       # Needed to upload the results to code-scanning dashboard.
       security-events: write
@@ -35,6 +36,3 @@ jobs:
       id-token: write
       contents: read
       actions: read
-    steps:
-      - name: Scorecard Action
-        uses: os-climate/osc-github-devops/.github/actions/ossf-scorecard-action@main

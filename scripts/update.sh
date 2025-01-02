@@ -6,6 +6,7 @@ CURL_CMD=$(which curl)
 MKTEMP_CMD=$(which mktemp)
 if [ ! -x "$CURL_CMD" ]; then echo "curl binary not found"; exit 1; fi
 if [ ! -x "$MKTEMP_CMD" ]; then echo "mktemp binary not found"; exit 1; fi
+
 TMPFILE=$(mktemp -p /tmp --suffix ".download")
 echo "Downloading action from: $SOURCE"
 curl -sS -o "$TMPFILE" "$SOURCE"

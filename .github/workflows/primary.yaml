@@ -30,62 +30,28 @@ jobs:
       contents: read
 
   python-project:
-    name: "Python project"
-    needs: repository
-    if: needs.repository.outputs.python_project  == 'true'
-    runs-on: ubuntu-24.04
-    outputs:
-      # Gather Python project metadata
-      python_project_name: ${{ steps.python_metadata.outputs.python_project_name }}
-      python_build_name: ${{ steps.python_metadata.outputs.python_build_name }}
-      versioning_type: ${{ steps.python_metadata.outputs.versioning_type }}
-      matrix_json: ${{ steps.python_metadata.outputs.matrix_json }}
-      build_python_version: ${{ steps.python_metadata.outputs.build_python_version }}
-    permissions:
-      contents: read
-    steps:
-      - name: "Extract project metadata"
-        id: python_metadata
-        # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/python-project-setup@5fa9a143af43c6c541fcabf6b86e90a4ae4a5c53 # v0.1.11
-
-      - name: "Check pushed tag [CONDITIONAL/tag push]"
-        id: check-project
-        if: startsWith(github.ref, 'refs/tags/')
-        # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/python-project-version-vs-tag@5fa9a143af43c6c541fcabf6b86e90a4ae4a5c53 # v0.1.11
-
-      - name: "Report pushed tag mismatch [CONDITIONAL/tag push]"
-        if: startsWith(github.ref, 'refs/tags/') && steps.check-project.outputs.match == 'false'
-        run: |
-          # Pushed tag != project metadata
-          echo "Result: ${{ steps.check-project.outputs.match }}"
-          echo "## Pushed tag does not match pyproject.toml version ❌" >> "$GITHUB_STEP_SUMMARY"
-          exit 1
-
-  python-build:
-    name: "Build"
-    # yamllint disable-line rule:line-length
-    needs:
-      - repository
-      - python-project
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-      # Required by SigStore signing action
-      id-token: write
-      # Required for attestations
-      attestations: write
-    steps:
-      # Checkout needed when calling local actions from own repository
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: "Build Python project"
-        id: python-build
-        # yamllint disable-line rule:line-length
-        uses: .github/actions/python-project-build
-        with:
-          build_python_version: ${{ needs.python-project.outputs.build_python_version }}
-          build_tag: ${{ needs.repository.outputs.build_tag }}
+      name: "Python project"
+      needs: repository
+      if: needs.repository.outputs.python_project  == 'true'
+      runs-on: ubuntu-24.04
+      outputs:
+        matrix_json: ${{ steps.python-project.outputs.matrix_json }}
+        artefact_path: ${{ steps.python-project.outputs.artefact_path }}
+      permissions:
+        contents: write
+        # Required by SigStore signing action
+        id-token: write
+        # Required for attestations
+        attestations: write
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      steps:
+        - name: "Build Python project"
+          id: python-project
+          # yamllint disable-line rule:line-length
+          uses: os-climate/osc-github-devops/.github/actions/python-project-build@987f5cbdd25a0b8b5772893e20cda277bfef708f # 2025-01-02
+          with:
+            build_tag: ${{ needs.repository.outputs.build_tag }}
 
   python-test:
     name: "Test"
@@ -93,7 +59,6 @@ jobs:
     uses: os-climate/osc-github-devops/.github/workflows/python-tests.yaml@5fa9a143af43c6c541fcabf6b86e90a4ae4a5c53 # v0.1.11
     needs:
       - python-project
-      - python-build
     # Matrix job
     strategy:
       fail-fast: false
@@ -109,7 +74,6 @@ jobs:
     uses: os-climate/osc-github-devops/.github/workflows/python-security.yaml@5fa9a143af43c6c541fcabf6b86e90a4ae4a5c53 # v0.1.11
     needs:
       - python-project
-      - python-build
     # Matrix job
     strategy:
       fail-fast: false
@@ -127,7 +91,6 @@ jobs:
     needs:
       - repository
       - python-project
-      - python-build
     # Matrix job
     strategy:
       fail-fast: false
@@ -144,7 +107,6 @@ jobs:
     needs:
       - repository
       - python-project
-      - python-build
       - python-test
       - python-security
     runs-on: "ubuntu-24.04"
@@ -185,7 +147,7 @@ jobs:
     uses: os-climate/osc-github-devops/.github/workflows/pypi-publish.yaml@5fa9a143af43c6c541fcabf6b86e90a4ae4a5c53 # v0.1.11
     needs:
       - repository
-      - python-build
+      - python-project
       - python-test
       - python-security
     with:
@@ -208,7 +170,7 @@ jobs:
     uses: os-climate/osc-github-devops/.github/workflows/pypi-publish.yaml@5fa9a143af43c6c541fcabf6b86e90a4ae4a5c53 # v0.1.11
     needs:
       - repository
-      - python-build
+      - python-project
       - python-test
       - python-security
       - pypi-test

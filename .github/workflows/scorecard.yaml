@@ -6,7 +6,7 @@
 # by a third-party and are governed by separate terms of service, privacy
 # policy, and support documentation.
 
-name: 🔐 Scorecard Auditing
+name: 🔐 OSSF Scorecard
 on:
   workflow_dispatch:
   # For Branch-Protection check. Only the default branch is supported. See
@@ -26,7 +26,7 @@ permissions: {}
 
 jobs:
   analysis:
-    name: Scorecard Analysis
+    name: Analysis
     runs-on: ubuntu-22.04
     permissions:
       # Needed to upload the results to code-scanning dashboard.

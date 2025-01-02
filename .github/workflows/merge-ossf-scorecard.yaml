@@ -27,6 +27,7 @@ permissions: {}
 jobs:
   analysis:
     name: Analysis
+    # yamllint disable-line rule:line-length
     uses: os-climate/osc-github-devops/.github/workflows/reuse-ossf-scorecard.yaml@fd61fbee11e3040b470b3fae30911f8a0df577a6 # 2025-01-02
     permissions:
       # Needed to upload the results to code-scanning dashboard.

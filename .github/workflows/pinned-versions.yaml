@@ -3,9 +3,8 @@
 # SPDX-FileCopyrightText: 2024 The Linux Foundation
 
 # Verifies action/workflow calls are pinned to SHA commits
-name: "📌 Check Actions/Workflows"
+name: 📌 GitHub Actions
 
-  # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
   pull_request:
@@ -22,10 +21,10 @@ concurrency:
 
 jobs:
   check-actions:
-    name: Check Actions/Workflows
+    name: Pinned Versions
     runs-on: ubuntu-22.04
     permissions:
       contents: read
     steps:
-      - name: Scorecard Action
-        uses: os-climate/osc-github-devops/.github/actions/ossf-scorecard-action@main
+      - name: Check Pinned Versions
+        uses: os-climate/osc-github-devops/.github/actions/pinned-versions-action@main

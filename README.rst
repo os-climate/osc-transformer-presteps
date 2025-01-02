@@ -6,7 +6,7 @@ On June 26 2024, Linux Foundation announced the merger of its financial services
 OSC Transformer Pre-Steps
 =========================
 
-|osc-climate-project| |osc-climate-slack| |osc-climate-github| |pypi| |build-status| |pdm| |PyScaffold|
+|osc-climate-project| |osc-climate-slack| |osc-climate-github| |pypi| |pdm| |PyScaffold|
 
 OS-Climate Transformer Pre-Steps Tool
 =====================================
@@ -241,10 +241,6 @@ This will automatically apply checks on your code and run the provided pytests. 
 .. |pypi| image:: https://img.shields.io/pypi/v/osc-transformer-presteps.svg
   :alt: PyPI package
   :target: https://pypi.org/project/osc-transformer-presteps/
-
-.. |build-status| image:: https://api.cirrus-ci.com/github/os-climate/osc-transformer-presteps.svg?branch=main
-  :alt: Build Status
-  :target: https://cirrus-ci.com/github/os-climate/osc-transformer-presteps
 
 .. |pdm| image:: https://img.shields.io/badge/PDM-Project-purple
   :alt: Built using PDM

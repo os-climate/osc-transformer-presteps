@@ -301,9 +301,9 @@ def create_unanswerable(
         "paragraph_relevance_flag",
         "paragraph_relevance_score(for_label=1)",
     ]
-    assert all(
-        [col in relevant_df.columns for col in required_columns]
-    ), "The relevant DataFrame is missing one or more required columns."
+    assert all([col in relevant_df.columns for col in required_columns]), (
+        "The relevant DataFrame is missing one or more required columns."
+    )
 
     # Select only the relevant columns in the expected order
     relevant_df = relevant_df[required_columns]

@@ -107,9 +107,9 @@ def set_log_folder(cwd: Path, logs_folder: Optional[str] = None) -> Path:
     if logs_folder is not None:
         log_path_1 = Path(logs_folder)
         log_path_2 = cwd / logs_folder
-        assert (
-            log_path_1.exists() or log_path_2.exists()
-        ), "Neither logs_folder nor cwd / logs_folder is a valid path."
+        assert log_path_1.exists() or log_path_2.exists(), (
+            "Neither logs_folder nor cwd / logs_folder is a valid path."
+        )
         return log_path_1 if log_path_1.exists() else log_path_2
     else:
         return cwd

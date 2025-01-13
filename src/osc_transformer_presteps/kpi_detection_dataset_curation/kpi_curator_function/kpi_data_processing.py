@@ -69,9 +69,9 @@ def aggregate_annots(annotation_folder: str) -> pd.DataFrame:
 
             # Ensure required columns exist
             missing_columns = [col for col in COLUMNS_TO_READ if col not in df.columns]
-            assert (
-                not missing_columns
-            ), f"{f} is missing required columns: {missing_columns}"
+            assert not missing_columns, (
+                f"{f} is missing required columns: {missing_columns}"
+            )
 
             # Handle 'sector'/'Sector' columns
             if "Sector" in df.columns:

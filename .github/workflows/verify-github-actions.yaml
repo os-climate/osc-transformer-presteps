@@ -2,9 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: 2024 The Linux Foundation
 
-# Verifies action/workflow calls are pinned to SHA commits
+# Verifies action/workflow calls are pinned to SHA commit values
 name: 📌 Audit GitHub Actions
 
+# yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
   pull_request:
@@ -23,6 +24,6 @@ jobs:
   verify:
     name: Verify
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/reuse-verify-github-actions.yaml@ea8bbd5f4f817abe64b2498e0f1393ca15b86c0e # 2025-01-14
+    uses: os-climate/osc-github-devops/.github/workflows/reuse-verify-github-actions.yaml@2d122a5a8b4b45757774f469d61e26e1d66c94ad # 2025-01-14
     permissions:
       contents: read

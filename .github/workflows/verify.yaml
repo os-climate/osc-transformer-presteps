@@ -32,18 +32,14 @@ jobs:
         matrix_json: ${{ steps.python-project.outputs.matrix_json }}
         artefact_path: ${{ steps.python-project.outputs.artefact_path }}
       permissions:
-        contents: write
-        # Required by SigStore signing action
-        id-token: write
-        # Required for attestations
-        attestations: write
+        contents: read
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       steps:
         - name: "Build Python project"
           id: python-project
           # yamllint disable-line rule:line-length
-          uses: os-climate/osc-github-devops/.github/actions/python-project-build@265e5bb372374a016d668235e25ba443f579d2d2 # 2024-01-14
+          uses: os-climate/osc-github-devops/.github/actions/python-project-build@1cc4e4a286ca57f407d88e1fad41070844d378c2 # 2024-01-14
           with:
             build_tag: ${{ needs.repository.outputs.build_tag }}
 

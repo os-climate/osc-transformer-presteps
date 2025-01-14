@@ -1,0 +1,95 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2024 The Linux Foundation
+
+name: "🤖 DevOps Automation [Verify]"
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+    branches:
+      - main
+      - master
+
+permissions: {}
+
+jobs:
+  repository:
+    name: "Repository"
+    # yamllint disable-line rule:line-length
+    uses: os-climate/osc-github-devops/.github/workflows/repository.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    permissions:
+      contents: read
+
+  python-project:
+      name: "Python project"
+      needs: repository
+      if: needs.repository.outputs.python_project  == 'true'
+      runs-on: ubuntu-24.04
+      outputs:
+        matrix_json: ${{ steps.python-project.outputs.matrix_json }}
+        artefact_path: ${{ steps.python-project.outputs.artefact_path }}
+      permissions:
+        contents: write
+        # Required by SigStore signing action
+        id-token: write
+        # Required for attestations
+        attestations: write
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      steps:
+        - name: "Build Python project"
+          id: python-project
+          # yamllint disable-line rule:line-length
+          uses: os-climate/osc-github-devops/.github/actions/python-project-build@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+          with:
+            build_tag: ${{ needs.repository.outputs.build_tag }}
+
+  python-test:
+    name: "Test"
+    # yamllint disable-line rule:line-length
+    uses: os-climate/osc-github-devops/.github/workflows/python-tests.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    needs:
+      - python-project
+    # Matrix job
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.python-project.outputs.matrix_json) }}
+    with:
+      python_version: ${{ matrix.python-version }}
+    permissions:
+      contents: read
+
+  python-security:
+    name: "Security"
+    # yamllint disable-line rule:line-length
+    uses: os-climate/osc-github-devops/.github/workflows/python-security.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    needs:
+      - python-project
+    # Matrix job
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.python-project.outputs.matrix_json) }}
+    with:
+      python_version: ${{ matrix.python-version }}
+    permissions:
+      contents: read
+
+  notebooks:
+    name: "Jupyter notebooks"
+    if: needs.repository.outputs.jupyter_notebooks  == 'true'
+    # yamllint disable-line rule:line-length
+    uses: os-climate/osc-github-devops/.github/workflows/jupyter-notebooks.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    needs:
+      - repository
+      - python-project
+    # Matrix job
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.python-project.outputs.matrix_json) }}
+    with:
+      python_version: ${{ matrix.python-version }}
+    permissions:
+      contents: read

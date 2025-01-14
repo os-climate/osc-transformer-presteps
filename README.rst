@@ -236,7 +236,7 @@ This will automatically apply checks on your code and run the provided pytests. 
 
 .. |osc-climate-github| image:: https://img.shields.io/badge/GitHub-100000?logo=github&logoColor=white
   :alt: Source code on GitHub
-  :target: https://github.com/ModeSevenIndustrialSolutions/osc-transformer-presteps
+  :target: https://github.com/os-climate/osc-transformer-presteps
 
 .. |pypi| image:: https://img.shields.io/pypi/v/osc-transformer-presteps.svg
   :alt: PyPI package

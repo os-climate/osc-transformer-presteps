@@ -23,6 +23,6 @@ jobs:
   verify:
     name: Verify
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/reuse-pinned-versions.yaml@15a1cf7cf13703d08d15a1c4793bc4e84e29e5a6 # 2025-01-02
+    uses: os-climate/osc-github-devops/.github/workflows/reuse-verify-github-actions.yaml@ea8bbd5f4f817abe64b2498e0f1393ca15b86c0e # 2025-01-14
     permissions:
       contents: read

@@ -23,21 +23,21 @@ jobs:
     permissions:
       contents: read
 
-  python-project:
+  python-build:
       name: "Python project"
       needs: repository
       if: needs.repository.outputs.python_project  == 'true'
       runs-on: ubuntu-24.04
       outputs:
-        matrix_json: ${{ steps.python-project.outputs.matrix_json }}
-        artefact_path: ${{ steps.python-project.outputs.artefact_path }}
+        matrix_json: ${{ steps.python-project-build.outputs.matrix_json }}
+        artefact_path: ${{ steps.python-project-build.outputs.artefact_path }}
       permissions:
         contents: read
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       steps:
         - name: "Build Python project"
-          id: python-project
+          id: python-project-build
           # yamllint disable-line rule:line-length
           uses: os-climate/osc-github-devops/.github/actions/python-project-build@1cc4e4a286ca57f407d88e1fad41070844d378c2 # 2024-01-14
           with:
@@ -48,11 +48,11 @@ jobs:
     # yamllint disable-line rule:line-length
     uses: os-climate/osc-github-devops/.github/workflows/python-tests.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
     needs:
-      - python-project
+      - python-build
     # Matrix job
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.python-project.outputs.matrix_json) }}
+      matrix: ${{ fromJson(needs.python-build.outputs.matrix_json) }}
     with:
       python_version: ${{ matrix.python-version }}
     permissions:
@@ -63,11 +63,11 @@ jobs:
     # yamllint disable-line rule:line-length
     uses: os-climate/osc-github-devops/.github/workflows/python-security.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
     needs:
-      - python-project
+      - python-build
     # Matrix job
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.python-project.outputs.matrix_json) }}
+      matrix: ${{ fromJson(needs.python-build.outputs.matrix_json) }}
     with:
       python_version: ${{ matrix.python-version }}
     permissions:
@@ -80,11 +80,11 @@ jobs:
     uses: os-climate/osc-github-devops/.github/workflows/jupyter-notebooks.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
     needs:
       - repository
-      - python-project
+      - python-build
     # Matrix job
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.python-project.outputs.matrix_json) }}
+      matrix: ${{ fromJson(needs.python-build.outputs.matrix_json) }}
     with:
       python_version: ${{ matrix.python-version }}
     permissions:

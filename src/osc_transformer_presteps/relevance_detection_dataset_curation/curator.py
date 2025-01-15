@@ -357,6 +357,29 @@ class Curator:
         return new_dfs
 
     def create_curator_df(self) -> pd.DataFrame:
+        """Create a DataFrame containing annotated data for relevance detection.
+
+        The method processes PDF content to extract relevant data, merges it with KPI mappings,
+        and ensures proper formatting and column ordering. If no content is available, it returns
+        an empty DataFrame with the required columns.
+
+        Returns:
+            pd.DataFrame: A DataFrame with the following columns:
+                - company
+                - year
+                - source_file
+                - source_page
+                - context
+                - question
+                - kpi_id
+                - label
+                - in_extraction_data_flag
+                - unique_paragraph_id
+                - annotation_file_name
+                - annotation_file_row
+                - annotation_answer
+
+        """
         # Define the column order
         columns_order = [
             "company",

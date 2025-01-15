@@ -2,21 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: 2024 The Linux Foundation
 
-name: "🤖 DevOps Automation [Merge]"
+name: "🤖 DevOps Automation [Tag Push]"
 
 # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
-    paths:
-      - "**"
-      - "!.github/**"
-      - "!.*"
-      - "!pdm.lock"
-      - "!tox.ini"
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 permissions: {}
 

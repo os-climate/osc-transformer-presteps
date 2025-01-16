@@ -12,6 +12,12 @@ on:
     branches:
       - main
       - master
+    paths:
+      - "**"
+      - "!.github/**"
+      - "!.*"
+      - "!pdm.lock"
+      - "!tox.ini"
 
 permissions: {}
 

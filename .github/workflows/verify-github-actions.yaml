@@ -24,6 +24,6 @@ jobs:
   verify:
     name: Verify
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/reuse-verify-github-actions.yaml@c79cd65f11421fedfadcc70ea1316471bbca565a # 2025-01-16
+    uses: lfit/releng-reusable-workflows/.github/workflows/reuse-verify-github-actions.yaml@fd9bc3881956c2645d4da312079580d331f562ed # v0.2.2
     permissions:
       contents: read

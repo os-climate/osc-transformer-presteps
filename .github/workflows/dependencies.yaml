@@ -13,8 +13,11 @@ on:
       - "main"
       - "master"
     paths:
-      - "!pdm.lock"
+      - "**"
       - "!.github/**"
+      - "!.*"
+      - "!pdm.lock"
+      - "!tox.ini"
 
 env:
   python-version: 3.11

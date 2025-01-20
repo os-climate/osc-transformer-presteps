@@ -138,7 +138,7 @@ jobs:
   pypi-test:
     name: "Test"
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/pypi-publish.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    uses: os-climate/osc-github-devops/.github/workflows/pypi-publish.yaml@b9ee0c17efe57a1bca21fffbf557315cc20ba8c8 # 2024-01-20
     needs:
       - repository
       - python-build
@@ -161,7 +161,7 @@ jobs:
     # yamllint disable-line rule:line-length
     if: startsWith(github.ref, 'refs/tags/') || contains(github.event.head_commit.message, '[release]')
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/pypi-publish.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    uses: os-climate/osc-github-devops/.github/workflows/pypi-publish.yaml@b9ee0c17efe57a1bca21fffbf557315cc20ba8c8 # 2024-01-20
     needs:
       - repository
       - python-build

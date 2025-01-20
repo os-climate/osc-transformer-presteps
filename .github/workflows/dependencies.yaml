@@ -25,7 +25,7 @@ jobs:
   python-dependencies:
     name: "Update Dependencies"
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/reuse-dependencies.yaml@9c69700bb86813e3ad08896f66173c52cb7da0ec # 2025-01-02
+    uses: os-climate/osc-github-devops/.github/workflows/reuse-dependencies.yaml@aa532e69075148a1be0fbc1ff034c440e2893965 # 2025-01-20
     permissions:
       # IMPORTANT: mandatory to raise the PR
       id-token: write

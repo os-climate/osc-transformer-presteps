@@ -23,4 +23,4 @@ jobs:
     permissions:
       contents: read
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/reuse-linting.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2025-01-14
+    uses: os-climate/osc-github-devops/.github/workflows/reuse-linting.yaml@b9ee0c17efe57a1bca21fffbf557315cc20ba8c8 # 2025-01-14

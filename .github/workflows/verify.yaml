@@ -25,7 +25,7 @@ jobs:
   repository:
     name: "Repository"
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/repository.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    uses: os-climate/osc-github-devops/.github/workflows/repository.yaml@c5395f432f2b12fcdbb643e1275d3e315060ce45 # 2024-01-14
     permissions:
       contents: read
 
@@ -45,14 +45,14 @@ jobs:
         - name: "Build Python project"
           id: python-project-build
           # yamllint disable-line rule:line-length
-          uses: os-climate/osc-github-devops/.github/actions/python-project-build@ff95ecc325084a197c8d8a98d6ac499d30164e89 # 2024-01-14
+          uses: os-climate/osc-github-devops/.github/actions/python-project-build@c5395f432f2b12fcdbb643e1275d3e315060ce45 # 2024-01-14
           with:
             build_tag: ${{ needs.repository.outputs.build_tag }}
 
   python-test:
     name: "Test"
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/python-tests.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    uses: os-climate/osc-github-devops/.github/workflows/python-tests.yaml@c5395f432f2b12fcdbb643e1275d3e315060ce45 # 2024-01-14
     needs:
       - python-build
     # Matrix job
@@ -67,7 +67,7 @@ jobs:
   python-security:
     name: "Security"
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/python-security.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    uses: os-climate/osc-github-devops/.github/workflows/python-security.yaml@c5395f432f2b12fcdbb643e1275d3e315060ce45 # 2024-01-14
     needs:
       - python-build
     # Matrix job
@@ -83,7 +83,7 @@ jobs:
     name: "Jupyter notebooks"
     if: needs.repository.outputs.jupyter_notebooks  == 'true'
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/jupyter-notebooks.yaml@6ec49941000685790f083eb83f97efd26c4b37a6 # 2024-01-14
+    uses: os-climate/osc-github-devops/.github/workflows/jupyter-notebooks.yaml@c5395f432f2b12fcdbb643e1275d3e315060ce45 # 2024-01-14
     needs:
       - repository
       - python-build

@@ -41,7 +41,7 @@ jobs:
         - name: "Build Python project"
           id: python-project-build
           # yamllint disable-line rule:line-length
-          uses: os-climate/osc-github-devops/.github/actions/python-project-build-action@b9ee0c17efe57a1bca21fffbf557315cc20ba8c8 # 2024-01-20
+          uses: os-climate/osc-github-devops/.github/actions/python-project-build-action@2c9d1ee71cfa84704310a285d96cd628cb8d017d # 2024-01-20
           with:
             github_attest: ${{ startsWith(github.ref, 'refs/tags/') }}
             sigstore_sign: ${{ startsWith(github.ref, 'refs/tags/') }}

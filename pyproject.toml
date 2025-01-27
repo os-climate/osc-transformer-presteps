@@ -67,8 +67,9 @@ osc-transformer-presteps = "osc_transformer_presteps.cli:run"
 ]
 test = [
     "pdm[pytest]",
-    "pytest>=8.1.1",
-    "pytest-cov>=5.0.0",
+    "pytest",
+    "pytest-cov",
+    "pytest-html",
 ]
 
 [tool.pdm.scripts]
@@ -89,7 +90,7 @@ lint = ["pre-commit"]
 testpaths = [
     "tests/",
 ]
-addopts = "--cov"
+addopts = ["--cov", "--cov-report=html"]
 
 [tool.coverage.run]
 source = ["src"]
@@ -99,7 +100,7 @@ omit = ["test/*"]
 [tool.coverage.report]
 fail_under = 95
 skip_empty = true
-format = ["term", "term-missing", "html", "text"]
+show_missing = true
 
 [tool.yapf]
 blank_line_before_nested_class_or_def = true

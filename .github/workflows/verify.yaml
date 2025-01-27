@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: 2024 The Linux Foundation
 
-name: "🤖 DevOps Automation [Verify]"
+# Runs on a new pull request, performs build and runs tests
+name: "🤖 Build/Test [Pull Request]"
 
 # yamllint disable-line rule:truthy
 on:
@@ -16,7 +17,6 @@ on:
       - "**"
       - "!.github/**"
       - "!.*"
-      - "!pdm.lock"
       - "!tox.ini"
 
 permissions: {}

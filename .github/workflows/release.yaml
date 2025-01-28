@@ -98,7 +98,7 @@ jobs:
       contents: read
 
   pypi-test:
-    name: "Test Package Publishing"
+    name: "Test Release: PyPI"
     needs:
       - repository
       - python-build

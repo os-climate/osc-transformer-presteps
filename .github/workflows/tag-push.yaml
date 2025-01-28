@@ -111,7 +111,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: "Publish to Test PyPI"
+      - name: "Test Package Publishing"
         # yamllint disable-line rule:line-length
         uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@main
         with:
@@ -122,7 +122,7 @@ jobs:
           pypi_credential: ${{ secrets.PYPI_PRODUCTION }}
 
   github-release:
-    name: "Release"
+    name: "Release to GitHub"
     # yamllint disable-line rule:line-length
     if: startsWith(github.ref, 'refs/tags/') || contains(github.event.head_commit.message, '[release]')
     needs:
@@ -165,7 +165,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   pypi-release:
-    name: "Publish to PyPI"
+    name: "Release to PyPI"
     if: startsWith(github.ref, 'refs/tags/') || contains(github.event.head_commit.message, '[release]')
     needs:
       - repository
@@ -182,7 +182,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: "Publish to PyPI"
+      - name: "Release to PyPI"
         # yamllint disable-line rule:line-length
         uses: ./.github/actions/python-pypi-publish-action
         with:

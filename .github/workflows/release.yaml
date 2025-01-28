@@ -114,7 +114,9 @@ jobs:
     steps:
       - name: "Test Package Publishing"
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@main
+        uses: ./.github/actions/python-pypi-publish-action
+        # Temporarily disabled to test using local action
+        # uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -180,7 +182,9 @@ jobs:
     steps:
       - name: "Release to PyPI"
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@main
+        uses: ./.github/actions/python-pypi-publish-action
+        # Temporarily disabled to test using local action
+        # uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

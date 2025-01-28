@@ -11,7 +11,7 @@ inputs:
     description: "Mandatory environment, e.g. development, production"
     type: string
     required: false
-    default: "test"
+    default: "production"
   BUILD_TAG:
     description: "Semantic tag for this release/build"
     type: string
@@ -230,12 +230,13 @@ runs:
       run: |
         # Print summary/job output
         if [ "${{ steps.conditions.outputs.publish_method }}" = "Skipped" ]; then
-          echo "# Publishing skipped due to existing content ⛔️" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Publishing skipped due to existing content ⛔️" >> "$GITHUB_STEP_SUMMARY"
           exit 0
         elif [ ${{ env.base_url }} != "https://pypi.org" ]; then
-          echo "# ✅ Published successfully to ${{ env.base_url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "# Test Release: PyPI" >> "$GITHUB_STEP_SUMMARY"
         else
-          echo "# 🚀 Published Python package to PyPI" >> "$GITHUB_STEP_SUMMARY"
+          echo "# 🚀 Release: PyPI" >> "$GITHUB_STEP_SUMMARY"
         fi
-        echo "Publishing method: ${{ steps.conditions.outputs.publish_method }}"
-        echo "${{ env.BASE_URL }}project/${{ steps.naming.outputs.python_project_name }}/${{ inputs.build_tag }}/" >> "$GITHUB_STEP_SUMMARY"
+        echo "Method: ${{ steps.conditions.outputs.publish_method }}"
+        echo "Method: ${{ steps.conditions.outputs.publish_method }}" >> "$GITHUB_STEP_SUMMARY"
+        echo "🔗 ${{ env.base_url }}/project/${{ steps.naming.outputs.python_project_name }}/${{ inputs.build_tag }}/" >> "$GITHUB_STEP_SUMMARY"

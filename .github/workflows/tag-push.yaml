@@ -183,7 +183,7 @@ jobs:
     steps:
       - name: "Publish to PyPI"
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@main
+        uses: ./.github/actions/python-pypi-publish-action
         with:
           environment: production
           build_tag: ${{ needs.repository.outputs.build_tag }}

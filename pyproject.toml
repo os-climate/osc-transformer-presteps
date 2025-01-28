@@ -1,6 +1,6 @@
 [project]
 name = "osc-transformer-presteps"
-version = "0.1.6"
+version = "0.1.7"
 description = "OS-Climate Data Extraction Tool"
 authors = [
     {name = "David Besslich", email = "90916810+DaBeIDS@users.noreply.github.com"},

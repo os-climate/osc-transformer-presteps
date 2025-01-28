@@ -30,7 +30,7 @@ jobs:
       contents: read
 
   python-build:
-      name: "Python project"
+      name: "Python build"
       needs: repository
       if: needs.repository.outputs.python_project  == 'true'
       runs-on: ubuntu-24.04

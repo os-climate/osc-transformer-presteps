@@ -111,13 +111,12 @@ jobs:
       id-token: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    environment: development
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: "Test Package Publishing"
         # yamllint disable-line rule:line-length
-        uses: ./.github/actions/python-pypi-publish-action
-        # Temporarily disabled to test using local action
-        # uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@main
+        uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@d10b7583e50c91c1c9f3f9ccced6a90744ba47f3 # 2025-01-29
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -180,13 +179,12 @@ jobs:
       id-token: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    environment: production
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: "Release to PyPI"
         # yamllint disable-line rule:line-length
-        uses: ./.github/actions/python-pypi-publish-action
-        # Temporarily disabled to test using local action
-        # uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@main
+        uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@d10b7583e50c91c1c9f3f9ccced6a90744ba47f3 # 2025-01-29
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

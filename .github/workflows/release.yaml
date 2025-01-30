@@ -18,7 +18,7 @@ jobs:
   repository:
     name: "Repository"
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/reuse-inspect-repository.yaml@d72609fb75686dd48a5e2855dff1869201390bb4 # 2024-01-30
+    uses: os-climate/osc-github-devops/.github/workflows/reuse-inspect-repository.yaml@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2024-01-30
     permissions:
       contents: read
 
@@ -42,7 +42,7 @@ jobs:
         - name: "Build Python project"
           id: python-project-build
           # yamllint disable-line rule:line-length
-          uses: os-climate/osc-github-devops/.github/actions/python-project-build-action@d72609fb75686dd48a5e2855dff1869201390bb4 # 2024-01-30
+          uses: os-climate/osc-github-devops/.github/actions/python-project-build-action@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2024-01-30
           with:
             github_attest: ${{ startsWith(github.ref, 'refs/tags/') }}
             sigstore_sign: ${{ startsWith(github.ref, 'refs/tags/') }}
@@ -51,7 +51,7 @@ jobs:
   python-test:
     name: "Test"
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/reuse-python-tests.yaml@d72609fb75686dd48a5e2855dff1869201390bb4 # 2024-01-30
+    uses: os-climate/osc-github-devops/.github/workflows/reuse-python-tests.yaml@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2024-01-30
     needs:
       - repository
       - python-build
@@ -67,7 +67,7 @@ jobs:
   python-audit:
     name: "Audit"
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/reuse-python-audit.yaml@d72609fb75686dd48a5e2855dff1869201390bb4 # 2024-01-30
+    uses: os-climate/osc-github-devops/.github/workflows/reuse-python-audit.yaml@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2024-01-30
     needs:
       - repository
       - python-build
@@ -84,7 +84,7 @@ jobs:
     name: "Notebooks"
     if: needs.repository.outputs.jupyter_notebooks  == 'true'
     # yamllint disable-line rule:line-length
-    uses: os-climate/osc-github-devops/.github/workflows/reuse-notebook-tests.yaml@d72609fb75686dd48a5e2855dff1869201390bb4 # 2024-01-30
+    uses: os-climate/osc-github-devops/.github/workflows/reuse-notebook-tests.yaml@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2024-01-30
     needs:
       - repository
       - python-build
@@ -116,12 +116,12 @@ jobs:
     steps:
       - name: "Test Package Publishing"
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@d72609fb75686dd48a5e2855dff1869201390bb4 # 2025-01-30
+        uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2025-01-30
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           environment: development
-          build_tag: ${{ needs.repository.outputs.build_tag }}
+          tag: ${{ needs.repository.outputs.build_tag }}
           one_password_item: "op://hdiyadcjno2knqgvcy4wj5ulya/tm2ffuusrynfivtcsnamginhm4/password"
           op_service_account_token: ${{ secrets.ONE_PASSWORD_PRODUCTION }}
           pypi_credential: ${{ secrets.PYPI_PRODUCTION }}
@@ -144,12 +144,12 @@ jobs:
     steps:
       - name: "Release to PyPI"
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@d72609fb75686dd48a5e2855dff1869201390bb4 # 2025-01-30
+        uses: os-climate/osc-github-devops/.github/actions/python-pypi-publish-action@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2025-01-30
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           environment: production
-          build_tag: ${{ needs.repository.outputs.build_tag }}
+          tag: ${{ needs.repository.outputs.build_tag }}
           one_password_item: "op://hdiyadcjno2knqgvcy4wj5ulya/vds5rebqxeqfrjqwpszxxicmzq/password"
           op_service_account_token: ${{ secrets.ONE_PASSWORD_PRODUCTION }}
           pypi_credential: ${{ secrets.PYPI_PRODUCTION }}
@@ -172,7 +172,7 @@ jobs:
       - name: "Extract project/repository naming"
         id: naming
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/python-project-name-action@d72609fb75686dd48a5e2855dff1869201390bb4 # 2024-01-30
+        uses: os-climate/osc-github-devops/.github/actions/python-project-name-action@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2024-01-30
 
       - name: "⬇ Download build artefacts"
         # yamllint disable-line rule:line-length
@@ -184,13 +184,13 @@ jobs:
       - name: "Check project version matches pushed tags"
         if: startsWith(github.ref, 'refs/tags/')
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/python-project-version-vs-tag-action@d72609fb75686dd48a5e2855dff1869201390bb4 # 2024-01-30
+        uses: os-climate/osc-github-devops/.github/actions/python-project-version-vs-tag-action@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2024-01-30
 
       - name: "GitHub Release"
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/github-release-action@d72609fb75686dd48a5e2855dff1869201390bb4 # 2024-01-30
+        uses: os-climate/osc-github-devops/.github/actions/github-release-action@74de4a1924a4d9ea89ac3c31546ef9c3be85e291 # 2024-01-30
         with:
           project_name: ${{ env.python_project_name }}
           artefact_location: "dist"
-          build_tag: ${{ needs.repository.outputs.build_tag }}
+          tag: ${{ needs.repository.outputs.build_tag }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

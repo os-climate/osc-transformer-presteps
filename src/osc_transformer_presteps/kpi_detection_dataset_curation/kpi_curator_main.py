@@ -69,6 +69,8 @@ def run_kpi_curator(
 
         # Format current date for file naming
         da = date.today().strftime("%d-%m-%Y")
+        train_df.rename(columns={'paragraph':'context', 'answer':'annotation_answer'}, inplace=True)
+        val_df.rename(columns={'paragraph':'context', 'answer':'annotation_answer'}, inplace=True)
 
         # Save DataFrames to Excel files
         train_output_path = Path(output_folder) / f"train_kpi_data_{da}.xlsx"

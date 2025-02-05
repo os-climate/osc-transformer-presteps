@@ -1,0 +1,14 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2024 The Linux Foundation
+
+version: 2
+updates:
+  # prettier-ignore
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    commit-message:
+      prefix: "[dependabot] Chore:"
+    open-pull-requests-limit: 1
+    schedule:
+      interval: "weekly"

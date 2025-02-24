@@ -4,8 +4,7 @@ import os
 
 
 def create_osc_folder_structure(base_path: str):
-    """
-    Create a predefined folder structure inside an 'OSC' directory at the given base path.
+    """Create a predefined folder structure inside an 'OSC' directory at the given base path.
 
     Args:
     base_path (str): The base directory where the 'OSC' folder will be created.

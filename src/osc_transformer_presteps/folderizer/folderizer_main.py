@@ -24,13 +24,17 @@ def create_osc_folder_structure(base_path: str):
     folders = [
         "inputs/pdfs_training",
         "inputs/pdfs_inference",
+        "inputs/kpi_mapping",
+        "inputs/annotation_files",
         "logs",
         "outputs/jsons_training",
         "outputs/jsons_inference",
         "outputs/curated_data_rel",
         "outputs/curated_data_kpi",
-        "model",
         "outputs/inference_rel",
+        "outputs/inference_kpi",
+        "models/relevance",
+        "models/kpi_detection",
     ]
     
     for folder in folders:
@@ -38,3 +42,5 @@ def create_osc_folder_structure(base_path: str):
     
     print(f"Folder structure created successfully under: {osc_path}")
 
+
+create_osc_folder_structure(r"C:\Users\Tanishq\Desktop\IDS_WORK\presteps\osc-transformer-presteps")

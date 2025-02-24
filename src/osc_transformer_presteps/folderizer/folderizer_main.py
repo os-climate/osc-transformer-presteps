@@ -2,6 +2,7 @@
 
 import os
 
+
 def create_osc_folder_structure(base_path: str):
     """
     Create a predefined folder structure inside an 'OSC' directory at the given base path.
@@ -19,6 +20,7 @@ def create_osc_folder_structure(base_path: str):
     - outputs/curated_data_kpi
     - model
     - outputs/inference_rel
+
     """
     osc_path = os.path.join(base_path, "OSC")
     folders = [
@@ -36,11 +38,13 @@ def create_osc_folder_structure(base_path: str):
         "models/relevance",
         "models/kpi_detection",
     ]
-    
+
     for folder in folders:
         os.makedirs(os.path.join(osc_path, folder), exist_ok=True)
-    
+
     print(f"Folder structure created successfully under: {osc_path}")
 
 
-create_osc_folder_structure(r"C:\Users\Tanishq\Desktop\IDS_WORK\presteps\osc-transformer-presteps")
+create_osc_folder_structure(
+    r"C:\Users\Tanishq\Desktop\IDS_WORK\presteps\osc-transformer-presteps"
+)

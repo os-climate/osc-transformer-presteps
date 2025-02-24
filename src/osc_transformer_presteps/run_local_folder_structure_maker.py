@@ -22,7 +22,7 @@ def run_folderizer(
         ..., help="Base Path where the folder structure will be made"
     ),
 ):
-    """Creates a folder structure needed for running OSC pipelines"""
+    """Create a folder structure needed for running OSC pipelines."""
     try:
         # Call the create folder maker function
         create_osc_folder_structure(

@@ -109,6 +109,8 @@ jobs:
       contents: read
       # Needed for trusted publishing; must also be passed from parent workflows
       id-token: write
+      # Needed for pypa/gh-action-pypi-publish to cache the docker container
+      packages: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     # Note: environment must be specified at BOTH job level, and input to publish action
@@ -140,6 +142,8 @@ jobs:
             contents: read
             # Needed for trusted publishing; must also be passed from parent workflows
             id-token: write
+            # Needed for pypa/gh-action-pypi-publish to cache the docker container
+            packages: write
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Note: environment must be specified at BOTH job level, and input to publish action

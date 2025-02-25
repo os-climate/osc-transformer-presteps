@@ -151,7 +151,7 @@ jobs:
 
             - name: "Release to PyPI"
               # yamllint disable-line rule:line-length
-              uses: ./.github/actions/pypi-publish-action # Local copy of upstream 2025-02-25
+              uses: os-climate/osc-github-devops/.github/actions/pypi-publish-action@e40c93a51cc32cbddd4767a75e2209af971df9e0 # 2025-02-25
               env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:

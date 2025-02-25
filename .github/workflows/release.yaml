@@ -114,11 +114,9 @@ jobs:
     # Note: environment must be specified at BOTH job level, and input to publish action
     environment: development
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - name: "Test Package Publishing"
         # yamllint disable-line rule:line-length
-        uses: ./.github/actions/pypi-publish-action # Local copy of upstream 2025-02-25
+        uses: os-climate/osc-github-devops/.github/actions/pypi-publish-action@e40c93a51cc32cbddd4767a75e2209af971df9e0 # 2025-02-25
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -131,37 +129,35 @@ jobs:
           attestations: "true"
 
   pypi-release:
-          name: "PyPI release"
-          # yamllint disable-line rule:line-length
-          if: startsWith(github.ref, 'refs/tags/') || contains(github.event.head_commit.message, '[release]')
-          needs:
-            - repository
-            - pypi-test
-          runs-on: "ubuntu-24.04"
-          permissions:
-            contents: read
-            # Needed for trusted publishing; must also be passed from parent workflows
-            id-token: write
-          env:
-            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Note: environment must be specified at BOTH job level, and input to publish action
+    name: "PyPI release"
+    # yamllint disable-line rule:line-length
+    if: startsWith(github.ref, 'refs/tags/') || contains(github.event.head_commit.message, '[release]')
+    needs:
+      - repository
+      - pypi-test
+    runs-on: "ubuntu-24.04"
+    permissions:
+      contents: read
+      # Needed for trusted publishing; must also be passed from parent workflows
+      id-token: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # Note: environment must be specified at BOTH job level, and input to publish action
+    environment: production
+    steps:
+      - name: "Release to PyPI"
+        # yamllint disable-line rule:line-length
+        uses: os-climate/osc-github-devops/.github/actions/pypi-publish-action@e40c93a51cc32cbddd4767a75e2209af971df9e0 # 2025-02-25
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
           environment: production
-          steps:
-            - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-            - name: "Release to PyPI"
-              # yamllint disable-line rule:line-length
-              uses: os-climate/osc-github-devops/.github/actions/pypi-publish-action@e40c93a51cc32cbddd4767a75e2209af971df9e0 # 2025-02-25
-              env:
-                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                environment: production
-                tag: ${{ needs.repository.outputs.build_tag }}
-                # yamllint disable-line rule:line-length
-                one_password_item: "op://hdiyadcjno2knqgvcy4wj5ulya/vds5rebqxeqfrjqwpszxxicmzq/password"
-                op_service_account_token: ${{ secrets.ONE_PASSWORD_PRODUCTION }}
-                pypi_credential: ${{ secrets.PYPI_PRODUCTION }}
-                attestations: "true"
+          tag: ${{ needs.repository.outputs.build_tag }}
+          # yamllint disable-line rule:line-length
+          one_password_item: "op://hdiyadcjno2knqgvcy4wj5ulya/vds5rebqxeqfrjqwpszxxicmzq/password"
+          op_service_account_token: ${{ secrets.ONE_PASSWORD_PRODUCTION }}
+          pypi_credential: ${{ secrets.PYPI_PRODUCTION }}
+          attestations: "true"
 
   github-release:
     name: "GitHub release"

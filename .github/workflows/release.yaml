@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2024 The Linux Foundation
 
 # Performs a build, runs tests, performs a release
-name: "🤖 Build/Test/Release [Tag Push]"
+name: "🤖 Release [Tag Push]"
 
 # yamllint disable-line rule:truthy
 on:

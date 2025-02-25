@@ -109,8 +109,6 @@ jobs:
       contents: read
       # Needed for trusted publishing; must also be passed from parent workflows
       id-token: write
-      # Needed for pypa/gh-action-pypi-publish to cache the docker container
-      packages: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     # Note: environment must be specified at BOTH job level, and input to publish action
@@ -118,7 +116,7 @@ jobs:
     steps:
       - name: "Test Package Publishing"
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/pypi-publish-action@e40c93a51cc32cbddd4767a75e2209af971df9e0 # 2025-02-25
+        uses: ./.github/actions/pypi-publish-action # Local copy of upstream 2025-02-25
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -142,8 +140,6 @@ jobs:
             contents: read
             # Needed for trusted publishing; must also be passed from parent workflows
             id-token: write
-            # Needed for pypa/gh-action-pypi-publish to cache the docker container
-            packages: write
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Note: environment must be specified at BOTH job level, and input to publish action
@@ -152,7 +148,7 @@ jobs:
             # Need repository content to extract project name
             - name: "Release to PyPI"
               # yamllint disable-line rule:line-length
-              uses: os-climate/osc-github-devops/.github/actions/pypi-publish-action@e40c93a51cc32cbddd4767a75e2209af971df9e0 # 2025-02-25
+              uses: ./.github/actions/pypi-publish-action # Local copy of upstream 2025-02-25
               env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:

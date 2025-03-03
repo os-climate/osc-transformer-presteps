@@ -136,7 +136,7 @@ jobs:
           index_url: ${{ env.base_url }}/simple
           package_name: ${{ steps.naming.outputs.python_project_name }}
           package_version: ${{ needs.repository.outputs.build_tag }}
-          environment: ${{ env.ENVIRONMENT }}
+          environment: "development"
 
       - name: "Publish PyPI [Trusted Publishing]"
         uses: pypa/gh-action-pypi-publish@fb13cb306901256ace3dab689990e13a5550ffaa # v1.11.0
@@ -190,7 +190,7 @@ jobs:
           index_url: ${{ env.base_url }}/simple
           package_name: ${{ steps.naming.outputs.python_project_name }}
           package_version: ${{ needs.repository.outputs.build_tag }}
-          environment: ${{ env.ENVIRONMENT }}
+          environment: "production"
 
       - name: "Publish PyPI [Trusted Publishing]"
         uses: pypa/gh-action-pypi-publish@fb13cb306901256ace3dab689990e13a5550ffaa # v1.11.0

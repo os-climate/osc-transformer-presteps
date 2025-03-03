@@ -139,10 +139,10 @@ jobs:
           environment: "development"
 
       - name: "Publish PyPI [Trusted Publishing]"
-        uses: pypa/gh-action-pypi-publish@fb13cb306901256ace3dab689990e13a5550ffaa # v1.11.0
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
         # yamllint disable-line rule:line-length
         with:
-          repository-url: https://test.pypi.org/legacy/
+          repository-url: https://test.pypi.org/simple/
           # We already validated earlier in the pipeline (twine)
           verify-metadata: false
           attestations: true
@@ -192,7 +192,7 @@ jobs:
           environment: "production"
 
       - name: "Publish PyPI [Trusted Publishing]"
-        uses: pypa/gh-action-pypi-publish@fb13cb306901256ace3dab689990e13a5550ffaa # v1.11.0
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
         # yamllint disable-line rule:line-length
         with:
           # We already validated earlier in the pipeline (twine)

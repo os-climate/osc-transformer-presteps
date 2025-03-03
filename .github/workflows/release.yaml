@@ -148,7 +148,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
         # yamllint disable-line rule:line-length
         with:
-          repository-url: https://test.pypi.org/simple/
+          repository-url: https://test.pypi.org/legacy/
           # We already validated earlier in the pipeline (twine)
           verify-metadata: false
           attestations: true

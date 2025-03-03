@@ -137,7 +137,7 @@ jobs:
       - name: "Checking package index for build/release"
         id: check-remote
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/pypi-version-check-action@main
+        uses: os-climate/osc-github-devops/.github/actions/pypi-version-check-action@50987892d52819798d74f5b381d3abfb8d54cbf0 # 2025-03-03
         with:
           index_url: https://test.pypi.org/simple
           package_name: ${{ steps.naming.outputs.python_project_name }}
@@ -197,7 +197,7 @@ jobs:
       - name: "Checking package index for build/release"
         id: check-remote
         # yamllint disable-line rule:line-length
-        uses: os-climate/osc-github-devops/.github/actions/pypi-version-check-action@main
+        uses: os-climate/osc-github-devops/.github/actions/pypi-version-check-action@50987892d52819798d74f5b381d3abfb8d54cbf0 # 2025-03-03
         with:
           package_name: ${{ steps.naming.outputs.python_project_name }}
           package_version: ${{ needs.repository.outputs.build_tag }}

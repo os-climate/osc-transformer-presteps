@@ -128,6 +128,12 @@ jobs:
           name: ${{ steps.naming.outputs.python_project_name }}
           path: "dist"
 
+      - name: "Remove unsupported artefact file types"
+        shell: bash
+        run: |
+          # Remove unsupported artefact file types
+          find . ! -name '*.whl' ! -name '*.tar.gz' -type f -exec rm -f {} + || true
+
       - name: "Checking package index for build/release"
         id: check-remote
         # yamllint disable-line rule:line-length
@@ -181,6 +187,12 @@ jobs:
         with:
           name: ${{ steps.naming.outputs.python_project_name }}
           path: "dist"
+
+      - name: "Remove unsupported artefact file types"
+        shell: bash
+        run: |
+          # Remove unsupported artefact file types
+          find . ! -name '*.whl' ! -name '*.tar.gz' -type f -exec rm -f {} + || true
 
       - name: "Checking package index for build/release"
         id: check-remote

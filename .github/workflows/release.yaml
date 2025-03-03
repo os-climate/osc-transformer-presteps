@@ -133,7 +133,7 @@ jobs:
         # yamllint disable-line rule:line-length
         uses: os-climate/osc-github-devops/.github/actions/pypi-version-check-action@main
         with:
-          index_url: ${{ env.base_url }}/simple
+          index_url: https://test.pypi.org/simple
           package_name: ${{ steps.naming.outputs.python_project_name }}
           package_version: ${{ needs.repository.outputs.build_tag }}
           environment: "development"
@@ -187,7 +187,6 @@ jobs:
         # yamllint disable-line rule:line-length
         uses: os-climate/osc-github-devops/.github/actions/pypi-version-check-action@main
         with:
-          index_url: ${{ env.base_url }}/simple
           package_name: ${{ steps.naming.outputs.python_project_name }}
           package_version: ${{ needs.repository.outputs.build_tag }}
           environment: "production"

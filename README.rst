@@ -34,22 +34,21 @@ Afterwards, you can use the tooling as a CLI tool by typing::
 
 We are using Typer to provide a user-friendly CLI. All details and help will be shown within the CLI itself and are not described here in more detail.
 
+Setting Up Folder Structure
+---------------------------
+
+To quickly set up the required folder structure, just run this command::
+
+    $ osc-transformer-presteps make-folder-structure run-folder-structure-maker
+
+This will automatically create the necessary folders for your project.
+
+
 Example 1: Extracting Data from PDFs
 ------------------------------------
 
-Assume the folder structure is as follows:
-
-.. code-block:: text
-
-    project/
-    ├-input/
-    │ ├-file_1.pdf
-    │ ├-file_2.pdf
-    │ └─file_3.pdf
-    ├-logs/
-    └─output/
-
-Now, after installing ``osc-transformer-presteps``, run the following command to extract data from the PDFs to JSON::
+Now, after installing ``osc-transformer-presteps``,and making into the folder-structure, move into the created folder.
+Finally, run the following command to extract data from the PDFs to JSON::
 
     $ osc-transformer-presteps extraction run-local-extraction 'input' --output-folder='output' --logs-folder='logs' --force
 

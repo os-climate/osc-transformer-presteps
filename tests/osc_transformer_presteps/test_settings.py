@@ -1,7 +1,9 @@
 """Module to test the settings.py."""
 
-import pytest
 import logging
+
+import pytest
+
 from osc_transformer_presteps.settings import ExtractionSettings
 
 _log_dict = {

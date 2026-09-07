@@ -1,9 +1,11 @@
-import pandas as pd
 from unittest.mock import patch
+
+import pandas as pd
+
 from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_example_creation import (
+    create_answerable,
     create_unanswerable,
     filter_relevant_examples,
-    create_answerable,
     find_extra_answerable,
     return_full_paragraph,
 )

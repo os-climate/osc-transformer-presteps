@@ -1,16 +1,17 @@
 """KPI-CURATOR-MAIN file."""
 
+import logging
 from datetime import date
 from pathlib import Path
-import logging
-from osc_transformer_presteps.utils import (
-    specify_root_logger,
-    set_log_folder,
-    log_dict,
-    LogLevel,
-)
+
 from osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_curation import (
     curate,
+)
+from osc_transformer_presteps.utils import (
+    LogLevel,
+    log_dict,
+    set_log_folder,
+    specify_root_logger,
 )
 
 
@@ -92,5 +93,5 @@ def run_kpi_curator(
 
     except Exception as e:
         # Log any exceptions that occur during the process
-        _logger.error(f"Error during KPI curation: {str(e)}", exc_info=True)
+        _logger.error(f"Error during KPI curation: {e!s}", exc_info=True)
         raise

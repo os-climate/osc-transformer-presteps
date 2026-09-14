@@ -1,17 +1,16 @@
 """Module to test the curator.py."""
 
+import ast
 import os
 from pathlib import Path
 
 import pandas as pd
 import pytest
-from pydantic import ValidationError
-
 from osc_transformer_presteps.dataset_creation_curation.curator import (
     AnnotationData,
     Curator,
 )
-import ast
+from pydantic import ValidationError
 
 # Define the common current working directory
 cwd = Path(__file__).resolve().parents[2] / "data"

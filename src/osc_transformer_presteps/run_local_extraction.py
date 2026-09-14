@@ -3,6 +3,7 @@
 import logging
 import traceback
 from pathlib import Path
+
 import numpy as np
 
 # External modules
@@ -10,16 +11,16 @@ import typer
 
 # Internal modules
 from osc_transformer_presteps.content_extraction.extraction_factory import get_extractor
-from osc_transformer_presteps.settings import ExtractionSettings
-from osc_transformer_presteps.utils import (
-    specify_root_logger,
-    set_log_folder,
-    log_dict,
-    LogLevel,
-    dict_to_json,
-)
 from osc_transformer_presteps.content_extraction.extractors.base_extractor import (
     ExtractionResponse,
+)
+from osc_transformer_presteps.settings import ExtractionSettings
+from osc_transformer_presteps.utils import (
+    LogLevel,
+    dict_to_json,
+    log_dict,
+    set_log_folder,
+    specify_root_logger,
 )
 
 _logger = logging.getLogger(__name__)

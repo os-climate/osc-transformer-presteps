@@ -1,7 +1,6 @@
 """Python script to run the extraction locally for testing."""
 
 from pathlib import Path
-from typing import Dict, Optional, Union
 
 from src.osc_transformer_presteps.content_extraction.extraction_factory import (
     get_extractor,
@@ -10,8 +9,8 @@ from src.osc_transformer_presteps.content_extraction.extraction_factory import (
 
 def extract_main(
     input_file_path: Path,
-    output_file_path: Optional[Path] = None,
-    settings: Optional[Dict[str, Union[str, bool]]] = None,
+    output_file_path: Path | None = None,
+    settings: dict[str, str | bool] | None = None,
 ) -> None:
     """Extract information from an input file using a specified extractor and save the extraction results to a file.
 
@@ -44,7 +43,7 @@ if __name__ == "__main__":
     output_file_path_main = (
         output_folder / input_file_path_main.with_suffix(".json").name
     )
-    settings_main: Optional[Dict[str, Union[str, bool]]] = {
+    settings_main: dict[str, str | bool] | None = {
         "skip_extracted_files": True,
         "protected_extraction": False,
     }

@@ -1,7 +1,7 @@
 """Python Script to register and call extraction factory."""
 
 import logging
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from .extractors.base_extractor import BaseExtractor
 from .extractors.pdf_text_extractor import PDFExtractor
@@ -26,14 +26,12 @@ def register_extractor(extractor_type: str) -> Callable:
 
 
 @register_extractor(".pdf")
-def pdf_extractor(settings: Optional[dict] = None) -> PDFExtractor:
+def pdf_extractor(settings: dict | None = None) -> PDFExtractor:
     """Create and return a PDFExtractor instance."""
     return PDFExtractor(settings)
 
 
-def get_extractor(
-    extractor_type: str, settings: Optional[dict] = None
-) -> BaseExtractor:
+def get_extractor(extractor_type: str, settings: dict | None = None) -> BaseExtractor:
     """Get an extractor instance based on the extractor_type.
 
     Args:

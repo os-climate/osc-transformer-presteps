@@ -3,10 +3,9 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 from pydantic import BaseModel
-
 
 _logger = logging.getLogger(__name__)
 
@@ -25,17 +24,17 @@ class _BaseSettings(BaseModel):
 
     """
 
-    annotation_folder: Optional[str] = None
-    min_paragraph_length: Optional[int] = 20
-    skip_extracted_files: Optional[bool] = False
-    protected_extraction: Optional[bool] = False
+    annotation_folder: str | None = None
+    min_paragraph_length: int | None = 20
+    skip_extracted_files: bool | None = False
+    protected_extraction: bool | None = False
 
 
 class ExtractionResponse(BaseModel):
     """Get Extraction Responses."""
 
     success: bool = True
-    dictionary: Dict[str, Any] = {}
+    dictionary: dict[str, Any] = {}
 
 
 class BaseExtractor(ABC):
@@ -44,7 +43,7 @@ class BaseExtractor(ABC):
     extractor_name = "base"
     _extraction_response = ExtractionResponse()
 
-    def __init__(self, settings: Optional[dict] = None):
+    def __init__(self, settings: dict | None = None):
         """Initialize a BaseExtractor instance."""
         settings_base: dict = {} if settings is None else settings
         settings_base = _BaseSettings(**settings_base).model_dump()
@@ -67,7 +66,7 @@ class BaseExtractor(ABC):
         return self._extraction_response
 
     def check_for_skip_files(
-        self, input_file_path: Path, output_folder_path: Optional[Path]
+        self, input_file_path: Path, output_folder_path: Path | None
     ) -> bool:
         """Check if a JSON file already exists in the output folder and determine whether to skip processing.
 

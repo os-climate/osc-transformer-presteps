@@ -1,9 +1,10 @@
 """Module to test the run_local_curation.py."""
 
-import pytest
-from typer.testing import CliRunner
-from osc_transformer_presteps.run_local_curation import app, curate_one_file
 from pathlib import Path
+
+import pytest
+from osc_transformer_presteps.run_local_curation import app, curate_one_file
+from typer.testing import CliRunner
 
 # Define a CliRunner instance for invoking CLI commands
 runner = CliRunner()

@@ -1,14 +1,16 @@
-import pytest
-import pandas as pd
 import os
 from unittest.mock import patch
+
+import pandas as pd
+import pytest
+
 from src.osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing import (
     aggregate_annots,
-    clean_annotation,
-    find_closest_paragraph,
-    find_answer_start,
-    clean_text,
     clean,
+    clean_annotation,
+    clean_text,
+    find_answer_start,
+    find_closest_paragraph,
 )
 
 

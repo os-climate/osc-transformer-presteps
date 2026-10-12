@@ -1,22 +1,23 @@
 """Python script for using local curation as CLI."""
 
 import logging
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
+import pandas as pd
 
 # External modules
 import typer
-import pandas as pd
+
 from osc_transformer_presteps.relevance_detection_dataset_curation.curator import (
     Curator,
 )
 from osc_transformer_presteps.utils import (
-    specify_root_logger,
-    set_log_folder,
-    log_dict,
     LogLevel,
+    log_dict,
+    set_log_folder,
+    specify_root_logger,
 )
-
 
 _logger = logging.getLogger(__name__)
 

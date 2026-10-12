@@ -1,6 +1,7 @@
 """File to locally run make-folder-structure module."""
 
 import typer
+
 from osc_transformer_presteps.folderizer.folderizer_main import (
     create_osc_folder_structure,
 )

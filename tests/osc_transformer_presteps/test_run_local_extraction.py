@@ -1,17 +1,17 @@
 """Module to test the run_local_extraction.py."""
 
+import os
 from pathlib import Path
+
+import pytest
+from typer.testing import CliRunner
+
+from osc_transformer_presteps.cli import app
 from osc_transformer_presteps.content_extraction.extractors.base_extractor import (
-    ExtractionResponse,
     BaseExtractor,
+    ExtractionResponse,
 )
 from osc_transformer_presteps.utils import dict_to_json
-from typing import Optional
-import pytest
-import os
-
-from typer.testing import CliRunner
-from osc_transformer_presteps.cli import app
 
 
 def empty_folder_beside_gitkeep(path: Path) -> None:
@@ -36,7 +36,7 @@ def concrete_base_extractor(name: str):
         def _generate_extractions(
             self,
             input_file_path: Path,
-        ) -> Optional[dict]:
+        ) -> dict | None:
             return None
 
     return ConcreteBaseExtractor()

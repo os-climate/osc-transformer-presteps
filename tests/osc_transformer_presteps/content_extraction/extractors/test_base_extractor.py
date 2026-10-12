@@ -1,7 +1,6 @@
 """Module to test the base_extractor.py."""
 
 from pathlib import Path
-from typing import Optional
 
 import pytest
 
@@ -20,7 +19,7 @@ def concrete_base_extractor(name: str):
         def _generate_extractions(
             self,
             input_file_path: Path,
-        ) -> Optional[dict]:
+        ) -> dict | None:
             return None
 
     return ConcreteBaseExtractor()
@@ -52,7 +51,7 @@ class TestBaseExtractor:
     def test_get_extractions(self, base_extractor):
         """Test if we can retrieve extraction response correctly."""
         base_extractor._extraction_response = ExtractionResponse(
-            **{"dictionary": {"a": "b"}, "success": True}
+            dictionary={"a": "b"}, success=True
         )
         assert base_extractor.get_extractions().dictionary == {"a": "b"}
         assert base_extractor.get_extractions().success is True

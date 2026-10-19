@@ -22,11 +22,13 @@ test_invalid_command(runner)
     Tests running the CLI with an invalid command.
 """
 
-import pytest
-from typer.testing import CliRunner
-from osc_transformer_presteps.cli import app, run  # Import the run function
 import re
 from unittest.mock import patch
+
+import pytest
+from typer.testing import CliRunner
+
+from osc_transformer_presteps.cli import app, run  # Import the run function
 
 
 @pytest.fixture

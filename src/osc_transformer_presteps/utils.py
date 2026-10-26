@@ -1,12 +1,11 @@
 """Module to collect multiple functions which are helping utils for the osc-transformer-presteps package."""
 
-import logging
-from pathlib import Path
-from typing import Optional
-from datetime import datetime
-import sys
-from enum import Enum
 import json
+import logging
+import sys
+from datetime import datetime
+from enum import Enum
+from pathlib import Path
 
 
 class LogLevel(str, Enum):
@@ -80,7 +79,7 @@ def create_file_handler(logs_path: Path) -> logging.FileHandler:
     return logging.FileHandler(log_file)
 
 
-def set_log_folder(cwd: Path, logs_folder: Optional[str] = None) -> Path:
+def set_log_folder(cwd: Path, logs_folder: str | None = None) -> Path:
     """Create a path object from a given logs_folder if one is given.
 
     This function creates a path object from a given logs_folder if one is given. If no string

@@ -4,7 +4,6 @@ import io
 import logging
 import re
 from pathlib import Path
-from typing import List, Optional
 
 import numpy as np
 from pdfminer.converter import TextConverter
@@ -81,7 +80,7 @@ class PDFExtractor(BaseExtractor):
 
     extractor_name = "pdf_text_extractor"
 
-    def __init__(self, settings: Optional[dict] = None):
+    def __init__(self, settings: dict | None = None):
         """Initialize the settings for pdf_text_extractor."""
         super().__init__(settings)
 
@@ -199,7 +198,7 @@ class PDFExtractor(BaseExtractor):
         return paragraphs_cleaned
 
     def update_extraction_dict(
-        self, idx: int, page_number: int, paragraphs_data: List[str], file_name: str
+        self, idx: int, page_number: int, paragraphs_data: list[str], file_name: str
     ) -> int:
         """Update the extraction dictionary with the provided data and return the updated index.
 

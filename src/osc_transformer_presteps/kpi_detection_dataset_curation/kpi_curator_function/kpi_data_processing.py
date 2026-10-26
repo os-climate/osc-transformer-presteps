@@ -1,12 +1,14 @@
 """Functions for Data Processing."""
 
-import os
-import re
 import ast
 import logging
-import pandas as pd
-import numpy as np
+import os
+import re
+
 import Levenshtein
+import numpy as np
+import pandas as pd
+
 from osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_utils import (
     load_kpi_mapping,
 )
@@ -89,7 +91,7 @@ def aggregate_annots(annotation_folder: str) -> pd.DataFrame:
             dfs.append(df[columns_to_read])
 
         except Exception as e:
-            _logger.error(f"Error processing file {f}: {str(e)}")
+            _logger.error(f"Error processing file {f}: {e!s}")
             continue  # Skip to the next file if there's an error
 
     # Log information about the aggregation process
@@ -122,14 +124,12 @@ def read_agg(
     """
     if not os.path.exists(agg_annotation):
         _logger.info(
-            "{} not available, will create it from the annotation folder.".format(
-                agg_annotation
-            )
+            f"{agg_annotation} not available, will create it from the annotation folder."
         )
         df = aggregate_annots(annotation_folder)
         df = clean_annotation(df, kpi_mapping_file)
     else:
-        _logger.info("{} found, loading the data.".format(agg_annotation))
+        _logger.info(f"{agg_annotation} found, loading the data.")
         df = pd.read_excel(agg_annotation)
 
         # Ensure columns are ordered according to COL_ORDER
@@ -207,9 +207,7 @@ def clean_annotation(
     invalid_source_page = df["source_page"][temp.isna()].unique().tolist()
     if invalid_source_page:
         _logger.warning(
-            "Has invalid source_page format: {} and {} such examples".format(
-                invalid_source_page, len(invalid_source_page)
-            )
+            f"Has invalid source_page format: {invalid_source_page} and {len(invalid_source_page)} such examples"
         )
 
     df["source_page"] = temp
@@ -236,17 +234,13 @@ def clean_annotation(
     # Log the number of dropped examples
     diff = correct_id_bool.shape[0] - df.shape[0]
     if diff > 0:
-        _logger.debug(
-            "Dropped {} examples due to incorrect kpi-data_type pair".format(diff)
-        )
+        _logger.debug(f"Dropped {diff} examples due to incorrect kpi-data_type pair")
 
     save_path = "aggregated_annotation.xlsx"
     # Save the cleaned DataFrame
     df.to_excel(save_path, index=False)
     _logger.info(
-        "Aggregated annotation file is created and saved at location {}.".format(
-            save_path
-        )
+        f"Aggregated annotation file is created and saved at location {save_path}."
     )
 
     return df
@@ -278,7 +272,7 @@ def clean_paragraph(r: pd.Series) -> list[str] | None:
     e = strp[-1]
 
     if s != "[" or e != "]":
-        _logger.warning("Input string is not a valid list format: {}".format(strp))
+        _logger.warning(f"Input string is not a valid list format: {strp}")
         return None  # Return None if unable to fix
 
     # Deal with multiple paragraphs

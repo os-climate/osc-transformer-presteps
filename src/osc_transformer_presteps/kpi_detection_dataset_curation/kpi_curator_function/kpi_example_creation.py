@@ -1,7 +1,9 @@
 """Functions to make examples."""
 
 import logging
+
 import pandas as pd
+
 from osc_transformer_presteps.kpi_detection_dataset_curation.kpi_curator_function.kpi_data_processing import (
     clean_text,
     find_answer_start,
@@ -86,7 +88,7 @@ def find_extra_answerable(
         kpi_id = t[4]
 
         # Skip if the PDF is not in the JSON dictionary
-        if pdf_name not in json_dict.keys():
+        if pdf_name not in json_dict:
             continue
 
         # Skip certain KPI IDs (year questions, company-related)

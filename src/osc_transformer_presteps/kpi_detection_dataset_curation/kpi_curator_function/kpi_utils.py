@@ -1,7 +1,8 @@
 """Utils functions."""
 
-import pandas as pd
 import logging
+
+import pandas as pd
 
 _logger = logging.getLogger(__name__)
 

@@ -3,11 +3,10 @@
 import logging
 
 import uvicorn
-from fastapi import APIRouter, FastAPI
-from starlette.responses import RedirectResponse
-from server_settings import ExtractionServerSettings
-
 from extract import router as extraction_router
+from fastapi import APIRouter, FastAPI
+from server_settings import ExtractionServerSettings
+from starlette.responses import RedirectResponse
 
 _logger = logging.getLogger(__name__)
 

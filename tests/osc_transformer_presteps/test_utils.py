@@ -1,10 +1,11 @@
 """Module to test the utils.py."""
 
-import pytest
-
-from osc_transformer_presteps.utils import specify_root_logger, set_log_folder
 import logging
 from pathlib import Path
+
+import pytest
+
+from osc_transformer_presteps.utils import set_log_folder, specify_root_logger
 
 cwd = Path(__file__).resolve().parent.parent
 

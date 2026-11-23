@@ -1,7 +1,8 @@
-import pytest
-from typer.testing import CliRunner
-from src.osc_transformer_presteps.kpi_curator_main import kpi_curator_app
 from pathlib import Path
+
+import pytest
+from src.osc_transformer_presteps.kpi_curator_main import kpi_curator_app
+from typer.testing import CliRunner
 
 # Define a CliRunner instance for invoking CLI commands
 runner = CliRunner()

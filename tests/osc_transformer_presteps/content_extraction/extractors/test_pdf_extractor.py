@@ -2,8 +2,9 @@
 
 import json
 from pathlib import Path
-from pypdf.errors import PdfStreamError
+
 import pytest
+from pypdf.errors import PdfStreamError
 
 from osc_transformer_presteps.content_extraction.extractors.pdf_text_extractor import (
     PDFExtractor,

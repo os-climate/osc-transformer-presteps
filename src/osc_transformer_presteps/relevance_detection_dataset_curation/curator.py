@@ -6,13 +6,13 @@ import math
 import os
 import random
 import re
-from typing import List, Tuple, Optional
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 from pydantic import BaseModel, FilePath
+from rapidfuzz.fuzz import ratio
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from rapidfuzz.fuzz import ratio
 
 
 class AnnotationData(BaseModel):
@@ -106,7 +106,7 @@ class Curator:
 
     def create_pos_examples(
         self, row: pd.Series
-    ) -> Tuple[List[Tuple[Optional[str], str]], bool]:
+    ) -> tuple[list[tuple[str | None, str]], bool]:
         """Create positive examples based on the provided row from a DataFrame.
 
         Returns a list of matching sentences or an empty list, along with a flag
@@ -165,8 +165,8 @@ class Curator:
         return ([(None, "")], False)
 
     def _get_closest_paragraph(
-        self, sentences: List[str], page_number: str
-    ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+        self, sentences: list[str], page_number: str
+    ) -> tuple[str | None, str | None, str | None]:
         """Find the closest paragraph on the given page and return it with its ID and the matched sentence."""
         closest_para = None
         closest_para_id = None
@@ -215,7 +215,7 @@ class Curator:
 
         return closest_para, closest_para_id, closest_sentence
 
-    def create_neg_examples(self, row: pd.Series) -> List[str]:
+    def create_neg_examples(self, row: pd.Series) -> list[str]:
         """Create negative examples excluding relevant paragraphs or close ones.
 
         Returns a list of context paragraphs or an empty list.
@@ -279,7 +279,7 @@ class Curator:
         )
         return context
 
-    def create_examples_annotate(self) -> List[pd.DataFrame]:
+    def create_examples_annotate(self) -> list[pd.DataFrame]:
         """Create examples for annotation.
 
         Returns
@@ -295,7 +295,7 @@ class Curator:
             lambda x: [str(p - 1) for p in ast.literal_eval(x)]
         )
 
-        new_dfs: List[pd.DataFrame] = []
+        new_dfs: list[pd.DataFrame] = []
 
         new_dfs = []
 
